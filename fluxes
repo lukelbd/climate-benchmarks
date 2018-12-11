@@ -8,7 +8,8 @@
 # Helper function
 # We require a subshell to redirect 'time' for some reason; because it's weird
 # builtin or something
-printf "| size (version) | name | real | user | sys |\n| --- | --- | --- | --- | --- |\n" >fluxes.md
+header="| size (version) | name | real | user | sys |\n| --- | --- | --- | --- | --- |\n"
+rm fluxes.md 2>/dev/null
 bench() {
   # Run time command
   res=$( (time ${@:2}) 2>&1 )
@@ -19,7 +20,7 @@ bench() {
   real=${array[1]}
   user=${array[3]}
   sys=${array[5]}
-  printf "| $size ($version) | $1 | $real | $user | $sys |\n" >>fluxes.md
+  printf "| $size ($version) | $1 | **$real** | $user | $sys |\n" >>fluxes.md
 }
 
 # Loop over datasets with different resolutions
@@ -30,13 +31,15 @@ for data in ${datas[@]}; do
   version=${data%.nc}
   version=${version##*_}
   echo; echo "Dataset: $data ($size)"
+  printf "\n$header" >>fluxes.md # add header for each new file
   sleep 2
   # Python with xarray method
-  bench "XArray + no Dask" python ${name}.py $data 0
+  bench "XArray + no dask" python ${name}.py $data 0
 
   # Python with xarray and Dask chunking by 2D slice
-  bench "XArray + 1-timestep Dask chunk" python ${name}.py $data 1
-  bench "XArray + 10-timestep Dask chunk" python ${name}.py $data 10
+  bench "XArray + 100-timestep chunks" python ${name}.py $data 100
+  bench "XArray + 10-timestep chunks" python ${name}.py $data 10
+  bench "XArray + 1-timestep chunks" python ${name}.py $data 1
 
   # NCL method
   # NOTE: NCL needs special dyld library path but so does brew, screws up
@@ -47,6 +50,7 @@ for data in ${datas[@]}; do
   # CDO method
   export DYLD_LIBRARY_PATH=""
   bench "CDO" ${name}.cdo $data
+  bench "CDO + serial IO" ${name}.cdo $data '-L'
 
   # NCO method with NCAP
   bench "NCO" ${name}.nco $data
