@@ -1,0 +1,60 @@
+
+Dataset: dataN0018T1000_3.nc (7.4M)
+XArray
+real 0m1.117s user 0m1.046s sys 0m0.203s
+XArray + 1-timestep Dask chunk
+real 0m6.787s user 0m5.951s sys 0m1.587s
+XArray + 10-timestep Dask chunk
+real 0m1.769s user 0m1.425s sys 0m0.336s
+NCL
+real 0m0.416s user 0m0.322s sys 0m0.075s
+CDO
+real 0m6.586s user 0m1.152s sys 0m6.575s
+NCO
+real 0m0.239s user 0m0.199s sys 0m0.030s
+
+Dataset: dataN0018T1000_4.nc (7.6M)
+XArray
+real 0m1.158s user 0m1.065s sys 0m0.191s
+XArray + 1-timestep Dask chunk
+real 0m6.779s user 0m6.150s sys 0m1.583s
+XArray + 10-timestep Dask chunk
+real 0m1.625s user 0m1.396s sys 0m0.326s
+NCL
+real 0m0.461s user 0m0.354s sys 0m0.080s
+CDO
+real 0m6.794s user 0m2.115s sys 0m7.059s
+NCO
+real 0m0.318s user 0m0.257s sys 0m0.048s
+
+Dataset: dataN0036T1000_3.nc (30M)
+XArray
+real 0m1.757s user 0m1.544s sys 0m0.388s
+XArray + 1-timestep Dask chunk
+real 0m6.651s user 0m5.792s sys 0m1.613s
+XArray + 10-timestep Dask chunk
+real 0m1.603s user 0m1.388s sys 0m0.341s
+NCL
+real 0m0.939s user 0m0.784s sys 0m0.142s
+CDO
+real 0m6.484s user 0m1.210s sys 0m6.592s
+NCO
+real 0m0.877s user 0m0.766s sys 0m0.095s
+
+Dataset: dataN0036T1000_4.nc (30M)
+XArray
+real 0m1.290s user 0m1.630s sys 0m0.299s
+XArray + 1-timestep Dask chunk
+real 0m6.512s user 0m5.997s sys 0m1.541s
+XArray + 10-timestep Dask chunk
+real 0m1.601s user 0m1.417s sys 0m0.323s
+NCL
+real 0m0.934s user 0m0.800s sys 0m0.121s
+CDO
+real 0m6.786s user 0m2.176s sys 0m7.099s
+NCO
+real 0m0.936s user 0m0.816s sys 0m0.104s
+
+Dataset: dataN0090T1000_3.nc (185M)
+XArray
+real 0m3.565s user 0m2.248s sys 0m0.837s

@@ -20,5 +20,5 @@ cdo $flags -chname,t,EHF \
   tmp2.nc
 
 # Cleanup
-cdo merge tmp1.nc tmp2.nc $out
+cdo $flags merge tmp1.nc tmp2.nc $out
 rm tmp1.nc tmp2.nc

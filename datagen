@@ -17,14 +17,15 @@ print(f'Resolution: {reso}')
 
 # Dimensions
 print('Initial stuff.')
+dtype = np.float32
 step = 2
 ntime = 1000
-time = np.arange(1/step, ntime, dtype='float32')/step
-plev = np.array([500.0], dtype='float32')
+time = np.arange(1/step, ntime, dtype=dtype)/step
+plev = np.array([500.0], dtype=dtype)
 # plev = np.linspace(0, 1013.25, 21)
-lat = np.arange(-90, 90 + reso/2, reso, dtype='float32')
+lat = np.arange(-90, 90 + reso/2, reso, dtype=dtype)
 lat = (lat[1:] + lat[:-1])/2
-lon = np.arange(-180, 180 - reso/2, reso, dtype='float32')
+lon = np.arange(-180, 180 - reso/2, reso, dtype=dtype)
 shape = (ntime, plev.size, lat.size, lon.size)
 # Variables
 params = ('u', 'v', 't')
@@ -42,31 +43,44 @@ coords_values = {
     'lon': lon,
     }
 coords_attrs = {
-    'time': {'long_name':'time', 'calendar':'no_calendar', 'units':'days since 0-1-1 00:00:00'},
-    'plev': {'long_name':'pressure level', 'units':'hPa'},
-    'lat': {'long_name':'latitude',  'units':'degN'},
-    'lon': {'long_name':'longitude', 'units':'degE'},
+    'time': {'long_name':'time', 'calendar':'360_day', 'units':'days since 00-01-01 00:00:00', 'axis':'T'},
+    'plev': {'long_name':'pressure level', 'units':'hPa', 'axis':'Z'},
+    'lat': {'long_name':'latitude',  'units':'degN', 'axis':'Y'},
+    'lon': {'long_name':'longitude', 'units':'degE', 'axis':'X'},
     }
+for attrs in coords_attrs.values():
+    attrs['standard_name'] = attrs['long_name']
 
 # Variables
 # Numpy is extremely slow at making tons of random variables, so need to
 # use dask so generation is done in parallel and we don't get memory overload
 # NOTE: Random routines (including numpy ones) don't accept chunks.
-# NOTE: NaN encoding causes issues with NCO
-# Diabled follwoing instructions here: http://xarray.pydata.org/en/stable/io.html
 print('Making variables.')
 scale = 50
 offset = 0.5
 chunks = (1, 1, *shape[2:]) # one chunk per horizontal slice, works pretty well
-params_map = {name: (coords, (scale*da.random.normal(0, 1, shape, chunks=chunks)).cumsum(axis=0).astype('float32'), params_attrs[name]) for name in params}
+params_map = {name: (coords, (scale*da.random.normal(0, 1, shape, chunks=chunks)).cumsum(axis=0).astype(dtype), params_attrs[name]) for name in params}
 coords_map = {name: ((name,), coords_values[name], coords_attrs[name]) for name in coords}
 print('Making dataset.')
 data = xr.Dataset(params_map, coords_map)
 for param in data.variables.values():
     param.encoding.update({'_FillValue':None}) # disable default fill value
+
+# Save
+# NOTE: NaN encoding causes issues with NCO
+# Diabled follwoing instructions here: http://xarray.pydata.org/en/stable/io.html
+# NOTE: Can reorder variables following directions here: https://github.com/pydata/xarray/issues/479
+# For some reason coordinates not first by default
+# NOTE: Try both NetCDF3 classic and NetCDF4. Xarray has good guide
+# on difference, found here: http://xarray.pydata.org/en/stable/generated/xarray.Dataset.to_netcdf.html
+# Hunch is that some tools may do much better with full NetCDF4.
 print('Saving dataset.')
-out = f'dataN{lat.size:04d}T{ntime}.nc'
-if os.path.exists(out):
-    os.remove(out)
-data.to_netcdf(out, mode='w')
+# format = 'NETCDF3_CLASSIC'
+format = 'NETCDF4' # may fail for some CDO versions, try to fix
+formats = {3:'NETCDF3_CLASSIC', 4:'NETCDF4'}
+for num,format in formats.items():
+    out = f'dataN{lat.size:04d}T{ntime}_{num}.nc'
+    if os.path.exists(out):
+        os.remove(out)
+    data[[*coords, *params]].to_netcdf(out, mode='w', format=format, unlimited_dims={'time':True})
 

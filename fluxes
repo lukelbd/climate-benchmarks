@@ -5,44 +5,49 @@
 # them, so we can compare their output. Consider automatically appending
 # results to a markdown table or something
 ################################################################################
+# Helper function
+# We require a subshell to redirect 'time' for some reason; because it's weird
+# builtin or something
+printf "| size (version) | name | real | user | sys |\n| --- | --- | --- | --- | --- |\n" >fluxes.md
+bench() {
+  # Run time command
+  res=$( (time ${@:2}) 2>&1 )
+  echo $1
+  echo $res
+  array=($res)
+  # Get result, tabulate it, add it to markdown file
+  real=${array[1]}
+  user=${array[3]}
+  sys=${array[5]}
+  printf "| $size ($version) | $1 | $real | $user | $sys |\n" >>fluxes.md
+}
 
 # Loop over datasets with different resolutions
 name=$0
 datas=(data*.nc)
 for data in ${datas[@]}; do
-  echo "Dataset: $data ($(du -h $data | xargs | cut -d' ' -f1))"
+  size=$(du -h $data | xargs | cut -d' ' -f1)
+  version=${data%.nc}
+  version=${version##*_}
+  echo; echo "Dataset: $data ($size)"
+  sleep 2
   # Python with xarray method
-  echo "Python with XArray"
-  sleep 5
-  time python ${name}.py $data 0
-  echo
+  bench "XArray + no Dask" python ${name}.py $data 0
 
   # Python with xarray and Dask chunking by 2D slice
-  echo "Python with XArray and Dask chunking"
-  sleep 5
-  time python ${name}.py $data 1
-  echo
+  bench "XArray + 1-timestep Dask chunk" python ${name}.py $data 1
+  bench "XArray + 10-timestep Dask chunk" python ${name}.py $data 10
 
   # NCL method
   # NOTE: NCL needs special dyld library path but so does brew, screws up
   # Homebrew if we set it, so set it locally
-  echo "NCL"
-  sleep 5
   export DYLD_LIBRARY_PATH="/usr/local/lib/gcc/4.9"
-  time ncl -Q -n "filename=\"$data\"" ${name}.ncl
-  echo
+  bench "NCL" ncl -Q -n "filename=\"$data\"" ${name}.ncl
 
   # CDO method
-  echo "CDO"
-  sleep 5
   export DYLD_LIBRARY_PATH=""
-  time ${name}.cdo $data
-  echo
+  bench "CDO" ${name}.cdo $data
 
-  # NCO method
-  echo "NCO"
-  sleep 5
-  time ${name}.nco $data
-  echo
-
+  # NCO method with NCAP
+  bench "NCO" ${name}.nco $data
 done
