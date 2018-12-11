@@ -8,8 +8,16 @@
 # Helper function
 # We require a subshell to redirect 'time' for some reason; because it's weird
 # builtin or something
-header="| size (version) | name | real | user | sys |\n| --- | --- | --- | --- | --- |\n"
+header="| size (version) | name | real (s) | user (s) | sys (s) |\n| --- | --- | --- | --- | --- |\n"
 rm fluxes.md 2>/dev/null
+seconds() {
+  # Convert time command output to raw seconds
+  m=${1%m*}
+  s=${1#*m}
+  s=${s%.*}
+  t=${1#*.} # tail
+  echo $((m*60 + s)).${t%s} # converts e.g. 1m35.23s to 85.23s
+}
 bench() {
   # Run time command
   res=$( (time ${@:2}) 2>&1 )
@@ -17,9 +25,9 @@ bench() {
   echo $res
   array=($res)
   # Get result, tabulate it, add it to markdown file
-  real=${array[1]}
-  user=${array[3]}
-  sys=${array[5]}
+  real=$(seconds ${array[1]})
+  user=$(seconds ${array[3]})
+  sys=$(seconds ${array[5]})
   printf "| $size ($version) | $1 | **$real** | $user | $sys |\n" >>fluxes.md
 }
 
@@ -41,16 +49,16 @@ for data in ${datas[@]}; do
   bench "XArray + 10-timestep chunks" python ${name}.py $data 10
   bench "XArray + 1-timestep chunks" python ${name}.py $data 1
 
+  # CDO method
+  export DYLD_LIBRARY_PATH=""
+  bench "CDO" ${name}.cdo $data
+  bench "CDO + serial IO" ${name}.cdo $data '-L'
+
   # NCL method
   # NOTE: NCL needs special dyld library path but so does brew, screws up
   # Homebrew if we set it, so set it locally
   export DYLD_LIBRARY_PATH="/usr/local/lib/gcc/4.9"
   bench "NCL" ncl -Q -n "filename=\"$data\"" ${name}.ncl
-
-  # CDO method
-  export DYLD_LIBRARY_PATH=""
-  bench "CDO" ${name}.cdo $data
-  bench "CDO + serial IO" ${name}.cdo $data '-L'
 
   # NCO method with NCAP
   bench "NCO" ${name}.nco $data

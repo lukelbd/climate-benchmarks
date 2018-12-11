@@ -1,109 +1,109 @@
 
-| size (version) | name | real | user | sys |
+| size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- |
-| 7.4M (3) | XArray + no dask | **0m2.273s** | 0m1.182s | 0m0.679s |
-| 7.4M (3) | XArray + 100-timestep chunks | **0m1.100s** | 0m0.896s | 0m0.177s |
-| 7.4M (3) | XArray + 10-timestep chunks | **0m1.539s** | 0m1.292s | 0m0.293s |
-| 7.4M (3) | XArray + 1-timestep chunks | **0m6.507s** | 0m5.660s | 0m1.495s |
-| 7.4M (3) | NCL | **0m0.480s** | 0m0.324s | 0m0.084s |
-| 7.4M (3) | CDO | **0m6.348s** | 0m1.015s | 0m6.428s |
-| 7.4M (3) | CDO + IO locked | **0m3.026s** | 0m0.703s | 0m3.220s |
-| 7.4M (3) | NCO | **0m0.238s** | 0m0.199s | 0m0.028s |
+| 7.4M (3) | XArray + no dask | **0.980** | 1.009 | 0.164 |
+| 7.4M (3) | XArray + 100-timestep chunks | **1.089** | 0.892 | 0.178 |
+| 7.4M (3) | XArray + 10-timestep chunks | **1.557** | 1.310 | 0.301 |
+| 7.4M (3) | XArray + 1-timestep chunks | **6.493** | 5.616 | 1.502 |
+| 7.4M (3) | NCL | **0.384** | 0.313 | 0.062 |
+| 7.4M (3) | CDO | **6.600** | 1.089 | 6.621 |
+| 7.4M (3) | CDO + serial IO | **3.349** | 0.780 | 3.411 |
+| 7.4M (3) | NCO | **0.239** | 0.200 | 0.029 |
 
-| size (version) | name | real | user | sys |
+| size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- |
-| 7.6M (4) | XArray + no dask | **0m1.182s** | 0m1.110s | 0m0.216s |
-| 7.6M (4) | XArray + 100-timestep chunks | **0m1.124s** | 0m0.933s | 0m0.177s |
-| 7.6M (4) | XArray + 10-timestep chunks | **0m1.568s** | 0m1.370s | 0m0.306s |
-| 7.6M (4) | XArray + 1-timestep chunks | **0m6.724s** | 0m6.086s | 0m1.532s |
-| 7.6M (4) | NCL | **0m0.440s** | 0m0.340s | 0m0.087s |
-| 7.6M (4) | CDO | **0m6.766s** | 0m2.072s | 0m7.103s |
-| 7.6M (4) | CDO + IO locked | **0m2.407s** | 0m1.305s | 0m1.824s |
-| 7.6M (4) | NCO | **0m0.323s** | 0m0.263s | 0m0.043s |
+| 7.6M (4) | XArray + no dask | **1.204** | 1.135 | 0.219 |
+| 7.6M (4) | XArray + 100-timestep chunks | **1.136** | 0.947 | 0.192 |
+| 7.6M (4) | XArray + 10-timestep chunks | **1.634** | 1.431 | 0.340 |
+| 7.6M (4) | XArray + 1-timestep chunks | **7.051** | 6.413 | 1.673 |
+| 7.6M (4) | NCL | **0.521** | 0.374 | 0.102 |
+| 7.6M (4) | CDO | **7.093** | 2.245 | 7.289 |
+| 7.6M (4) | CDO + serial IO | **2.526** | 1.383 | 1.924 |
+| 7.6M (4) | NCO | **0.318** | 0.265 | 0.040 |
 
-| size (version) | name | real | user | sys |
+| size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- |
-| 30M (3) | XArray + no dask | **0m1.757s** | 0m1.683s | 0m0.328s |
-| 30M (3) | XArray + 100-timestep chunks | **0m1.080s** | 0m0.947s | 0m0.193s |
-| 30M (3) | XArray + 10-timestep chunks | **0m1.561s** | 0m1.350s | 0m0.322s |
-| 30M (3) | XArray + 1-timestep chunks | **0m6.530s** | 0m5.750s | 0m1.579s |
-| 30M (3) | NCL | **0m0.921s** | 0m0.782s | 0m0.131s |
-| 30M (3) | CDO | **0m6.422s** | 0m1.165s | 0m6.570s |
-| 30M (3) | CDO + IO locked | **0m2.892s** | 0m0.812s | 0m3.022s |
-| 30M (3) | NCO | **0m0.870s** | 0m0.775s | 0m0.086s |
+| 30M (3) | XArray + no dask | **1.864** | 1.656 | 0.365 |
+| 30M (3) | XArray + 100-timestep chunks | **1.251** | 1.029 | 0.214 |
+| 30M (3) | XArray + 10-timestep chunks | **1.601** | 1.402 | 0.332 |
+| 30M (3) | XArray + 1-timestep chunks | **7.141** | 6.185 | 1.742 |
+| 30M (3) | NCL | **0.912** | 0.773 | 0.127 |
+| 30M (3) | CDO | **6.472** | 1.176 | 6.567 |
+| 30M (3) | CDO + serial IO | **2.844** | 0.790 | 2.949 |
+| 30M (3) | NCO | **0.858** | 0.762 | 0.082 |
 
-| size (version) | name | real | user | sys |
+| size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- |
-| 30M (4) | XArray + no dask | **0m1.295s** | 0m1.684s | 0m0.277s |
-| 30M (4) | XArray + 100-timestep chunks | **0m1.100s** | 0m0.954s | 0m0.189s |
-| 30M (4) | XArray + 10-timestep chunks | **0m1.589s** | 0m1.408s | 0m0.309s |
-| 30M (4) | XArray + 1-timestep chunks | **0m6.570s** | 0m6.013s | 0m1.549s |
-| 30M (4) | NCL | **0m0.921s** | 0m0.783s | 0m0.129s |
-| 30M (4) | CDO | **0m6.626s** | 0m2.059s | 0m6.966s |
-| 30M (4) | CDO + IO locked | **0m2.474s** | 0m1.433s | 0m1.800s |
-| 30M (4) | NCO | **0m0.956s** | 0m0.826s | 0m0.114s |
+| 30M (4) | XArray + no dask | **1.284** | 1.634 | 0.298 |
+| 30M (4) | XArray + 100-timestep chunks | **1.115** | 0.960 | 0.191 |
+| 30M (4) | XArray + 10-timestep chunks | **1.698** | 1.452 | 0.349 |
+| 30M (4) | XArray + 1-timestep chunks | **6.702** | 6.104 | 1.583 |
+| 30M (4) | NCL | **0.905** | 0.772 | 0.123 |
+| 30M (4) | CDO | **6.817** | 2.174 | 7.166 |
+| 30M (4) | CDO + serial IO | **failed** | **failed** | **failed** |
+| 30M (4) | NCO | **0.946** | 0.826 | 0.109 |
 
-| size (version) | name | real | user | sys |
+| size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- |
-| 185M (3) | XArray + no dask | **0m5.978s** | 0m2.355s | 0m1.219s |
-| 185M (3) | XArray + 100-timestep chunks | **0m1.742s** | 0m1.950s | 0m2.913s |
-| 185M (3) | XArray + 10-timestep chunks | **0m1.917s** | 0m1.878s | 0m0.425s |
-| 185M (3) | XArray + 1-timestep chunks | **0m7.362s** | 0m6.552s | 0m1.984s |
-| 185M (3) | NCL | **0m4.775s** | 0m4.050s | 0m0.669s |
-| 185M (3) | CDO | **0m6.424s** | 0m2.159s | 0m6.638s |
-| 185M (3) | CDO + IO locked | **0m2.976s** | 0m1.532s | 0m2.546s |
-| 185M (3) | NCO | **0m5.285s** | 0m4.718s | 0m0.531s |
+| 185M (3) | XArray + no dask | **3.740** | 2.291 | 0.874 |
+| 185M (3) | XArray + 100-timestep chunks | **1.665** | 3.067 | 2.602 |
+| 185M (3) | XArray + 10-timestep chunks | **1.696** | 1.708 | 0.368 |
+| 185M (3) | XArray + 1-timestep chunks | **6.787** | 6.183 | 1.790 |
+| 185M (3) | NCL | **4.689** | 4.029 | 0.639 |
+| 185M (3) | CDO | **6.038** | 1.981 | 6.266 |
+| 185M (3) | CDO + serial IO | **2.952** | 1.524 | 2.526 |
+| 185M (3) | NCO | **5.255** | 4.689 | 0.544 |
 
-| size (version) | name | real | user | sys |
+| size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- |
-| 186M (4) | XArray + no dask | **0m1.856s** | 0m2.157s | 0m0.629s |
-| 186M (4) | XArray + 100-timestep chunks | **0m1.526s** | 0m2.738s | 0m2.062s |
-| 186M (4) | XArray + 10-timestep chunks | **0m1.673s** | 0m1.649s | 0m0.362s |
-| 186M (4) | XArray + 1-timestep chunks | **0m6.950s** | 0m6.453s | 0m1.814s |
-| 186M (4) | NCL | **0m4.455s** | 0m3.929s | 0m0.477s |
-| 186M (4) | CDO | **0m6.642s** | 0m2.685s | 0m7.019s |
-| 186M (4) | CDO + IO locked | **fail** | **fail** | **fail** |
-| 186M (4) | NCO | **0m5.449s** | 0m4.758s | 0m0.565s |
+| 186M (4) | XArray + no dask | **1.863** | 2.202 | 0.624 |
+| 186M (4) | XArray + 100-timestep chunks | **1.425** | 1.672 | 2.769 |
+| 186M (4) | XArray + 10-timestep chunks | **1.694** | 1.648 | 0.373 |
+| 186M (4) | XArray + 1-timestep chunks | **6.782** | 6.371 | 1.752 |
+| 186M (4) | NCL | **4.431** | 3.947 | 0.463 |
+| 186M (4) | CDO | **6.205** | 2.465 | 6.716 |
+| 186M (4) | CDO + serial IO | **2.587** | 1.678 | 1.926 |
+| 186M (4) | NCO | **5.245** | 4.697 | 0.528 |
 
-| size (version) | name | real | user | sys |
+| size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- |
-| 742M (3) | XArray + no dask | **0m8.600s** | 0m3.541s | 0m2.145s |
-| 742M (3) | XArray + 100-timestep chunks | **0m3.135s** | 0m5.664s | 0m7.727s |
-| 742M (3) | XArray + 10-timestep chunks | **0m2.910s** | 0m4.725s | 0m9.983s |
-| 742M (3) | XArray + 1-timestep chunks | **0m6.784s** | 0m7.179s | 0m1.783s |
-| 742M (3) | NCL | **0m18.390s** | 0m15.814s | 0m2.425s |
-| 742M (3) | CDO | **0m5.416s** | 0m5.297s | 0m5.489s |
-| 742M (3) | CDO + IO locked | **0m5.280s** | 0m4.600s | 0m2.850s |
-| 742M (3) | NCO | **0m22.255s** | 0m19.114s | 0m2.985s |
+| 742M (3) | XArray + no dask | **8.672** | 3.605 | 2.114 |
+| 742M (3) | XArray + 100-timestep chunks | **2.989** | 4.895 | 8.799 |
+| 742M (3) | XArray + 10-timestep chunks | **2.825** | 5.216 | 8.680 |
+| 742M (3) | XArray + 1-timestep chunks | **6.884** | 7.258 | 1.830 |
+| 742M (3) | NCL | **18.336** | 15.825 | 2.369 |
+| 742M (3) | CDO | **5.474** | 5.369 | 5.519 |
+| 742M (3) | CDO + serial IO | **5.324** | 4.538 | 2.908 |
+| 742M (3) | NCO | **27.239** | 19.955 | 3.949 |
 
-| size (version) | name | real | user | sys |
+| size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- |
-| 742M (4) | XArray + no dask | **0m3.867s** | 0m2.997s | 0m1.586s |
-| 742M (4) | XArray + 100-timestep chunks | **0m2.649s** | 0m5.138s | 0m5.704s |
-| 742M (4) | XArray + 10-timestep chunks | **0m2.784s** | 0m5.121s | 0m8.594s |
-| 742M (4) | XArray + 1-timestep chunks | **0m7.247s** | 0m7.363s | 0m1.977s |
-| 742M (4) | NCL | **0m17.596s** | 0m15.302s | 0m2.118s |
-| 742M (4) | CDO | **0m5.761s** | 0m4.116s | 0m6.229s |
-| 742M (4) | CDO + IO locked | **0m3.888s** | 0m3.501s | 0m2.734s |
-| 742M (4) | NCO | **0m21.788s** | 0m18.899s | 0m2.773s |
+| 742M (4) | XArray + no dask | **5.116** | 3.147 | 1.959 |
+| 742M (4) | XArray + 100-timestep chunks | **2.595** | 4.461 | 6.652 |
+| 742M (4) | XArray + 10-timestep chunks | **2.827** | 4.571 | 7.981 |
+| 742M (4) | XArray + 1-timestep chunks | **7.118** | 7.303 | 1.904 |
+| 742M (4) | NCL | **17.802** | 15.440 | 2.117 |
+| 742M (4) | CDO | **5.753** | 4.078 | 6.213 |
+| 742M (4) | CDO + serial IO | **3.679** | 3.267 | 2.638 |
+| 742M (4) | NCO | **21.913** | 18.955 | 2.813 |
 
-| size (version) | name | real | user | sys |
+| size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- |
-| 2.9G (3) | XArray + no dask | **0m31.394s** | 0m8.622s | 0m12.044s |
-| 2.9G (3) | XArray + 100-timestep chunks | **0m10.938s** | 0m21.416s | 0m19.349s |
-| 2.9G (3) | XArray + 10-timestep chunks | **0m9.168s** | 0m18.578s | 0m34.787s |
-| 2.9G (3) | XArray + 1-timestep chunks | **0m9.044s** | 0m12.650s | 0m2.417s |
-| 2.9G (3) | NCL | **1m23.872s** | 1m4.234s | 0m15.995s |
-| 2.9G (3) | CDO | **0m12.835s** | 0m19.522s | 0m4.934s |
-| 2.9G (3) | CDO + IO locked | **0m14.426s** | 0m17.453s | 0m3.816s |
-| 2.9G (3) | NCO | **1m30.020s** | 1m17.207s | 0m11.976s |
+| 2.9G (3) | XArray + no dask | **30.634** | 8.646 | 11.681 |
+| 2.9G (3) | XArray + 100-timestep chunks | **11.532** | 21.696 | 19.811 |
+| 2.9G (3) | XArray + 10-timestep chunks | **8.726** | 19.082 | 34.452 |
+| 2.9G (3) | XArray + 1-timestep chunks | **8.751** | 12.496 | 2.395 |
+| 2.9G (3) | NCL | **85.473** | 64.158 | 16.353 |
+| 2.9G (3) | CDO | **15.637** | 18.439 | 5.015 |
+| 2.9G (3) | CDO + serial IO | **14.300** | 17.374 | 3.708 |
+| 2.9G (3) | NCO | **90.682** | 78.015 | 12.078 |
 
-| size (version) | name | real | user | sys |
+| size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- |
-| 2.9G (4) | XArray + no dask | **0m16.507s** | 0m5.976s | 0m8.493s |
-| 2.9G (4) | XArray + 100-timestep chunks | **0m7.890s** | 0m17.754s | 0m20.861s |
-| 2.9G (4) | XArray + 10-timestep chunks | **0m7.165s** | 0m16.122s | 0m28.299s |
-| 2.9G (4) | XArray + 1-timestep chunks | **0m8.288s** | 0m11.177s | 0m2.506s |
-| 2.9G (4) | NCL | **1m34.056s** | 1m3.156s | 0m21.200s |
-| 2.9G (4) | CDO | **0m11.629s** | 0m13.760s | 0m6.234s |
-| 2.9G (4) | CDO + IO locked | **0m7.090s** | 0m12.376s | 0m3.549s |
+| 2.9G (4) | XArray + no dask | **16.961** | 6.424 | 8.868 |
+| 2.9G (4) | XArray + 100-timestep chunks | **8.280** | 18.203 | 21.770 |
+| 2.9G (4) | XArray + 10-timestep chunks | **7.468** | 16.122 | 27.476 |
+| 2.9G (4) | XArray + 1-timestep chunks | **8.694** | 11.835 | 2.718 |
+| 2.9G (4) | NCL | **84.788** | 62.625 | 16.650 |
+| 2.9G (4) | CDO | **9.099** | 12.188 | 5.711 |
+| 2.9G (4) | CDO + serial IO | **6.503** | 11.323 | 3.273 |
