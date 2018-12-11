@@ -123,6 +123,7 @@ Results are summarized in the below table. Turns out **NCL is much faster than a
 | 2.9G (4) | CDO | **9.099** | 12.188 | 5.711 |
 | 2.9G (4) | CDO + serial IO | **6.503** | 11.323 | 3.273 |
 | 2.9G (4) | NCL | **84.788** | 62.625 | 16.650 |
+| 2.9G (4) | NCO | **89.145** | 76.988 | 11.485 |
 
 # Installation notes
 ## CDO for macOS
