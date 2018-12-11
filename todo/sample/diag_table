@@ -1,0 +1,19 @@
+"Model results from the Held-Suarez benchmark"
+0 0 0 0 0 0
+# Filenames (name, save-frequency [-1==at end, 0==all, >0==units], save-frequency units, 
+# format [1 = netCDF, only supported format], time dimension units, time dimension names)
+"4xdaily_inst",  6,   "hours",  1,  "days",  "time",
+# Variables to save (module name, fortran name, save name, file name, time-sampling freq 
+# for averages, whether we take average, other options, and save size [currently F32]; 
+# note cannot save time-average data in same file as non-time-average data, it seems)
+"dynamics",   "pres_full",      "p",     "4xdaily_inst", "all", .false., "none", 2,
+"dynamics",   "temp",           "t",     "4xdaily_inst", "all", .false., "none", 2,
+"dynamics",   "ucomp",          "u",     "4xdaily_inst", "all", .false., "none", 2,
+"dynamics",   "vcomp",          "v",     "4xdaily_inst", "all", .false., "none", 2,
+"dynamics",   "height",         "z",     "4xdaily_inst", "all", .false., "none", 2,
+"dynamics",   "slp",            "slp",   "4xdaily_inst", "all", .false., "none", 2,
+"dynamics",   "omega",          "omega", "4xdaily_inst", "all", .false., "none", 2,
+"dynamics",   "bk",             "hybi",  "4xdaily_inst", "all", .false., "none", 2,
+"dynamics",   "pk",             "hyai",  "4xdaily_inst", "all", .false., "none", 2,
+"hs_forcing", "tdt_ndamp",      "ndamp", "4xdaily_inst", "all", .false., "none", 2,
+"hs_forcing", "tdt_diss_rdamp", "rdamp", "4xdaily_inst", "all", .false., "none", 2,

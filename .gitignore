@@ -1,0 +1,16 @@
+# Ignore many files #
+#####################
+*.nc
+  # data
+.vimsession
+  # vim sessions
+__pycache__
+old
+trash
+garbage
+  # temp
+.DS_Store
+.DS_Store?
+.Trashes
+._*
+  # os-generated files

@@ -1,0 +1,12 @@
+#!/bin/bash
+file=eraint_interpolate.nc
+griddes=eraint_griddes.txt
+levels=$(cat eraint_zaxisdes.txt | grep -A100 "levels" | grep -B100 "lbounds" | \
+  sed '$d' | sed 's/[^0-9]*//' | xargs | tr ' ' ',') # the ERA-Interim level list
+echo $levels
+# Remap with different methods
+names=t,u
+REMAP_EXTRAPOLATE='on' cdo -intlevel,$levels -remapbil,$griddes -selname,$names $file ${file%%_*}_linear.nc
+REMAP_EXTRAPOLATE='on' cdo -intlevel,$levels -remapbic,$griddes -selname,$names $file ${file%%_*}_cubic.nc
+REMAP_EXTRAPOLATE='on' cdo -intlevel,$levels -remapdis,$griddes,2 -selname,$names $file ${file%%_*}_distance.nc
+REMAP_EXTRAPOLATE='on' cdo -intlevel,$levels -remapcon,$griddes -selname,$names $file ${file%%_*}_area.nc

@@ -1,0 +1,17 @@
+Climate Data Operators version 1.9.1 (http://mpimet.mpg.de/cdo)
+Compiled: by root on monde.atmos.colostate.edu (x86_64-unknown-linux-gnu) Nov  7 2017 15:01:47
+CXX Compiler: g++ -std=gnu++11 -g -O2 -fopenmp 
+CXX version : g++ (GCC) 4.8.5 20150623 (Red Hat 4.8.5-16)
+C Compiler: gcc -std=gnu99 -g -O2 -fopenmp 
+C version : gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-16)
+Features: DATA PTHREADS OpenMP3 HDF5 SSE2
+Libraries: HDF5/1.8.12
+Filetypes: srv ext ieg grb1 nc1 
+     CDI library version : 1.9.1 of Nov  7 2017 14:58:42
+ CGRIBEX library version : 1.9.0 of Sep 29 2017 10:16:02
+  NetCDF library version : 4.3.3.1 of Dec 10 2015 16:44:18 $
+ SERVICE library version : 1.4.0 of Nov  7 2017 14:58:26
+   EXTRA library version : 1.4.0 of Nov  7 2017 14:58:19
+     IEG library version : 1.4.0 of Nov  7 2017 14:58:23
+    FILE library version : 1.8.3 of Nov  7 2017 14:58:19
+

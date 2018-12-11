@@ -1,0 +1,63 @@
+#!/bin/bash
+ncfile=$1
+flags="-s -O"
+g=9.80 # gravity
+R=287.04 # dry gas constant
+cp=1004.64 # R divided by kappa (2/7)
+function wrapup() { # segregate the grids
+  [ ! -r $1 ] && echo "ERROR: File $1 not found." && exit 3
+  ncrename -O -d lon,x -d lat,y $1 $1 # renames the singleton dimensions
+  ncatted -O -a units,x,d,, $1
+  ncatted -O -a standard_name,x,d,, $1
+  ncatted -O -a long_name,x,c,c,"X" $1
+  ncatted -O -a units,y,d,, $1
+  ncatted -O -a long_name,y,d,, $1
+  ncatted -O -a standard_name,y,c,c,"Y" $1
+} # tests if a given file was created or if the CDO script failed for some reason
+
+################################################################################
+# Gets the terms G (generation), APE (total sum), C (conversion), TKE (total energy), 
+# and D (dissipation); equation for the last one can be found in hs_forcing.90 source code
+t=$(date +%s)
+torig=$t
+echo "Getting Lorenz cycle parameters with CDO..."
+out=energy1.nc
+cdo $flags -setattribute,G@long_name="APE generation",G@units="W/m2" \
+    -setname,G -mulc,$R -divc,$g \
+      -div -sub -fldmean -mul -selname,ndamp $ncfile -selname,t $ncfile \
+                -mul -fldmean -selname,ndamp $ncfile -fldmean -selname,t $ncfile \
+           -fldmean -selname,s $ncfile \
+      $out; wrapup $out
+echo "  * Time for APE generation: $(($(date +%s) - $t))s."
+t=$(date +%s)
+out=energy2.nc
+cdo $flags -setattribute,APE@long_name="available potential energy",APE@units="J/m2" \
+    -setname,APE -mulc,0.5 -mulc,$R -divc,$g \
+      -div -sub -fldmean -sqr -selname,t $ncfile \
+                -sqr -fldmean -selname,t $ncfile \
+           -fldmean -selname,s $ncfile \
+      $out; wrapup $out
+echo "  * Time for APE: $(($(date +%s) - $t))s."
+t=$(date +%s)
+out=energy3.nc
+cdo $flags -setattribute,C@long_name="APE conversion",C@units="W/m2" \
+    -setname,C -mulc,$R -divc,$g \
+      -sub -fldmean -mul -selname,omega $ncfile -selname,t $ncfile \
+           -mul -fldmean -selname,omega $ncfile -fldmean -selname,t $ncfile \
+      $out; wrapup $out
+echo "  * Time for APE conversion: $(($(date +%s) - $t))s."
+t=$(date +%s)
+out=energy4.nc
+cdo $flags -setattribute,TKE@long_name="total kinetic energy",TKE@units="J/m2 Pa" \
+    -setname,TKE -mulc,0.5 -divc,$g \
+      -fldmean -add -sqr -selname,u $ncfile -sqr -selname,v $ncfile \
+      $out; wrapup $out
+echo "  * Time for kinetic energy: $(($(date +%s) - $t))s."
+t=$(date +%s)
+out=energy5.nc
+cdo $flags -setattribute,D@long_name="kinetic energy dissipation",D@units="W/m2 Pa" \
+    -setname,D -mulc,$cp -divc,$g \
+      -fldmean -selname,rdamp $ncfile \
+      $out; wrapup $out
+echo "  * Time for kinetic energy dissipation: $(($(date +%s) - $t))s."
+echo "TOTAL TIME ELAPSED: $(($(date +%s) - $torig))s."

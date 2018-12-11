@@ -1,0 +1,63 @@
+#!/bin/bash
+file=4xdaily_inst.nc
+# The APE total
+# Get on pressure levs, don't sum across pressure until we have to do it yo
+# Remember kappa is 2/7 and cp == R/kappa
+flags="-L"
+g=9.80 # gravity
+R=287.04 # dry gas constant
+cp=1004.64 # R divided by kappa (2/7)
+output="lorenz.nc" # final file
+cdo $flags -setattribute,G@long_name="APE generation",G@units="W/m2" \
+    -setname,G -mulc,$R -divc,$g \
+      -div -sub -fldmean -mul -selname,ndamp $file -selname,t $file \
+                -mul -fldmean -selname,ndamp $file -fldmean -selname,t $file \
+           -fldmean -selname,s $file \
+    lorenz1.nc
+cdo $flags -setattribute,APE@long_name="available potential energy",APE@units="W/m2" \
+    -setname,APE -mulc,0.5 -mulc,$R -divc,$g \
+      -div -sub -fldmean -sqr -selname,t $file \
+                -sqr -fldmean -selname,t $file \
+           -fldmean -selname,s $file \
+    lorenz2.nc
+cdo $flags -setattribute,C@long_name="APE conversion",C@units="W/m2" \
+    -setname,C -mulc,$R -divc,$g \
+      -sub -fldmean -mul -selname,omega $file -selname,t $file \
+           -mul -fldmean -selname,omega $file -fldmean -selname,t $file \
+    lorenz3.nc
+cdo $flags -setattribute,TKE@long_name="total kinetic energy",TKE@units="W/m2 Pa" \
+    -setname,TKE -mulc,0.5 -divc,$g \
+      -fldmean -add -sqr -selname,u $file -sqr -selname,v $file \
+    lorenz4.nc
+cdo $flags -setattribute,D@long_name="kinetic energy dissipation",D@units="W/m2 Pa" \
+    -setname,D -mulc,$cp -divc,$g \
+      -fldmean -selname,rdamp $file \
+    lorenz5.nc
+cdo -O merge lorenz?.nc $output
+rm lorenz?.nc
+
+# Next get the energy terms by integrating over pressure
+# ncl << EOF
+# f = addfile("$output", "c")
+# G = f->G
+#
+# EOF
+
+# Energy merge file
+# cdo -merge \
+#     -setname,G -mulc,$R -divc,$g \
+#       -div -sub -fldmean -mul -selname,ndamp $file -selname,t $file \
+#                 -mul -fldmean -selname,ndamp $file -fldmean -selname,t $file \
+#            -selname,s $file \
+#     -setname,APE -mulc,0.5 -mulc,$R -divc,$g \
+#       -div -sub -fldmean -sqr -selname,t $file \
+#                 -sqr -fldmean -selname,t $file \
+#            -selname,s $file \
+#     -setname,C -mulc,$R -divc,$g \
+#       -div -sub -fldmean -mul -selname,omega $file -selname,t $file \
+#                 -mul -fldmean -selname,omega $file -fldmean -selname,t $file \
+#     -setname,TKE -mulc,0.5 -divc,$g \
+#       -add -sqr -selname,u $file -sqr -selname,v $file \
+#     -setname,D -mulc,$cp -divc,$g \
+#       -selname,rdamp $file \
+#     lorenz.nc

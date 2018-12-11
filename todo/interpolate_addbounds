@@ -1,0 +1,22 @@
+#!/bin/bash
+for f in *.nc; do
+  ncvarlist=($(nclist "$f" | xargs))
+  ncatted -a edges,lat,d,, "$f"
+  ncatted -a edges,lon,d,, "$f"
+  if [[ " ${ncvarlist[@]} " =~ " plev " ]]; then
+    ncatted -a bounds,plev,d,, "$f"
+    ncatted -a edges,plev,d,, "$f"
+  fi
+  if [[ " ${ncvarlist[@]} " =~ " lev_p " ]]; then
+    ncatted -a bounds,lev_p,d,, "$f"
+    ncatted -a edges,lev_p,d,, "$f"
+  fi
+  if [[ " ${ncvarlist[@]} " =~ " pfull " ]]; then
+    ncatted -a bounds,pfull,d,, "$f"
+    ncatted -a edges,pfull,d,, "$f"
+  fi
+  if [[ " ${ncvarlist[@]} " =~ " mlev " ]]; then
+    ncatted -a bounds,mlev,d,, "$f"
+    ncatted -a edges,mlev,d,, "$f"
+  fi
+done

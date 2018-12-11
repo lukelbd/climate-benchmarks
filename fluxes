@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+################################################################################
+# For *this task*, we get the the eddy heat flux and eddy momentum flux
+# Use this to call successively call the different task1.x files, then time
+# them, so we can compare their output. Consider automatically appending
+# results to a markdown table or something
+################################################################################
+
+# Loop over datasets with different resolutions
+name=$0
+datas=(data*.nc)
+for data in ${datas[@]}; do
+  echo "Dataset: $data ($(du -h $data | xargs | cut -d' ' -f1))"
+  # Python with xarray method
+  echo "Python with XArray"
+  sleep 5
+  time python ${name}.py $data 0
+  echo
+
+  # Python with xarray and Dask chunking by 2D slice
+  echo "Python with XArray and Dask chunking"
+  sleep 5
+  time python ${name}.py $data 1
+  echo
+
+  # NCL method
+  # NOTE: NCL needs special dyld library path but so does brew, screws up
+  # Homebrew if we set it, so set it locally
+  echo "NCL"
+  sleep 5
+  export DYLD_LIBRARY_PATH="/usr/local/lib/gcc/4.9"
+  time ncl -Q -n "filename=\"$data\"" ${name}.ncl
+  echo
+
+  # CDO method
+  echo "CDO"
+  sleep 5
+  export DYLD_LIBRARY_PATH=""
+  time ${name}.cdo $data
+  echo
+
+  # NCO method
+  echo "NCO"
+  sleep 5
+  time ${name}.nco $data
+  echo
+
+done

@@ -1,0 +1,18 @@
+Climate Data Operators version 1.9.1 (http://mpimet.mpg.de/cdo)
+Compiled: by ldavis on uriah.local (x86_64-apple-darwin16.1.0) Nov 21 2017 20:50:50
+CXX Compiler: clang++ -std=gnu++11 -g -O2  -D_THREAD_SAFE -pthread
+CXX version : Apple LLVM version 8.1.0 (clang-802.0.41)
+C Compiler: clang -g -O2  -D_THREAD_SAFE -pthread
+C version : Apple LLVM version 8.1.0 (clang-802.0.41)
+Features: DATA PTHREADS HDF5 NC4/HDF5 OPeNDAP SZ AVX2
+Libraries: HDF5/1.10.1
+Filetypes: srv ext ieg grb1 nc1 nc2 nc4 nc4c nc5 
+     CDI library version : 1.9.1 of Nov 21 2017 20:50:19
+ CGRIBEX library version : 1.9.0 of Sep 29 2017 10:16:02
+  NetCDF library version : 4.5.0 of Nov 10 2017 11:05:10 $
+    HDF5 library version : 1.10.1
+ SERVICE library version : 1.4.0 of Nov 21 2017 20:50:16
+   EXTRA library version : 1.4.0 of Nov 21 2017 20:50:15
+     IEG library version : 1.4.0 of Nov 21 2017 20:50:15
+    FILE library version : 1.8.3 of Nov 21 2017 20:50:15
+

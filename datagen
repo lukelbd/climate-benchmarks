@@ -1,0 +1,72 @@
+#!/usr/bin/env python3
+# Generate random datasets with xarray and Dask, easiest way
+# Then can test some very simple operations across several different methods
+import os
+import numpy as np
+import dask.array as da
+import xarray as xr
+import datetime
+import sys
+
+# Check
+try:
+    reso = float(sys.argv[-1])
+except ValueError:
+    raise ValueError('Must pass grid resolution convertible to float.')
+print(f'Resolution: {reso}')
+
+# Dimensions
+print('Initial stuff.')
+step = 2
+ntime = 1000
+time = np.arange(1/step, ntime, dtype='float32')/step
+plev = np.array([500.0], dtype='float32')
+# plev = np.linspace(0, 1013.25, 21)
+lat = np.arange(-90, 90 + reso/2, reso, dtype='float32')
+lat = (lat[1:] + lat[:-1])/2
+lon = np.arange(-180, 180 - reso/2, reso, dtype='float32')
+shape = (ntime, plev.size, lat.size, lon.size)
+# Variables
+params = ('u', 'v', 't')
+params_attrs = {
+    'u': {'long_name':'zonal wind', 'units':'m/s'},
+    'v': {'long_name':'meridional wind', 'units':'m/s'},
+    't': {'long_name':'temperature', 'units':'degC'}
+    }
+# Coordinates
+coords = ('time', 'plev', 'lat', 'lon')
+coords_values = {
+    'time': time,
+    'plev': plev,
+    'lat': lat,
+    'lon': lon,
+    }
+coords_attrs = {
+    'time': {'long_name':'time', 'calendar':'no_calendar', 'units':'days since 0-1-1 00:00:00'},
+    'plev': {'long_name':'pressure level', 'units':'hPa'},
+    'lat': {'long_name':'latitude',  'units':'degN'},
+    'lon': {'long_name':'longitude', 'units':'degE'},
+    }
+
+# Variables
+# Numpy is extremely slow at making tons of random variables, so need to
+# use dask so generation is done in parallel and we don't get memory overload
+# NOTE: Random routines (including numpy ones) don't accept chunks.
+# NOTE: NaN encoding causes issues with NCO
+# Diabled follwoing instructions here: http://xarray.pydata.org/en/stable/io.html
+print('Making variables.')
+scale = 50
+offset = 0.5
+chunks = (1, 1, *shape[2:]) # one chunk per horizontal slice, works pretty well
+params_map = {name: (coords, (scale*da.random.normal(0, 1, shape, chunks=chunks)).cumsum(axis=0).astype('float32'), params_attrs[name]) for name in params}
+coords_map = {name: ((name,), coords_values[name], coords_attrs[name]) for name in coords}
+print('Making dataset.')
+data = xr.Dataset(params_map, coords_map)
+for param in data.variables.values():
+    param.encoding.update({'_FillValue':None}) # disable default fill value
+print('Saving dataset.')
+out = f'dataN{lat.size:04d}T{ntime}.nc'
+if os.path.exists(out):
+    os.remove(out)
+data.to_netcdf(out, mode='w')
+

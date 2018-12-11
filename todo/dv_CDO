@@ -1,0 +1,22 @@
+#!/bin/bash
+file=$1
+[ ! -r $file ] && echo "ERROR: File $file does not exist." && exit 1
+# cdo -O -merge -delname,u,v $file -sp2gp,42 -uv2dv -selname,u,v $file \
+#   vordiv.nc
+# cdo -O -merge -delname,u,v $file -sp2gp,42 -uv2dv -selname,u,v $file \
+#   vordiv.nc
+# * CDO is amazing and will only apply the uv2dv and sp2gp on variables corresponding
+#   to the 'griddes' describing spherical harmonic coefficients; leaves other variables alone
+# * CDO will also detect automatically the truncation to bring parameters back onto the latlon
+#   best corresponding to current truncation number
+# * If select individual terms first the default sp2gp will put latitdues ascending
+#   instead of descending
+t=$(date +%s)
+cdo -O -uv2dv -selname,u,v $file dv0.nc
+cdo -O -chname,sd,div,svo,vor -invertlat -sp2gp dv0.nc dv1.nc
+cdo -O -invertlat -sp2gp -dv2ps dv0.nc dv2.nc
+cdo -O -merge $file dv1.nc dv2.nc dvALL.nc
+echo $(($(date +%s) - $t))s
+# cdo -O -merge -invertlat -sp2gp -selname,u,v
+# cdo -O -sp2gp -merge $file dv1.nc -dv2ps dv1.nc dv2.nc
+# cdo -O -merge -selname,u,v $file -sp2gp -uv2dv $file -sp2gp -uv2dv

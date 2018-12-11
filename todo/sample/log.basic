@@ -1,0 +1,40 @@
+Getting basic parameters with CDO...
+cdo(2) delname   : Enter variable names > Warning (set_calendar) : calendar >no_calendar< unsupported!
+  * Time for basic zonal mean: 0s.
+Warning (set_calendar) : calendar >no_calendar< unsupported!
+Warning (set_calendar) : calendar >no_calendar< unsupported!
+Warning (set_calendar) : calendar >no_calendar< unsupported!
+Warning (set_calendar) : calendar >no_calendar< unsupported!
+Warning (set_calendar) : calendar >no_calendar< unsupported!
+Warning (set_calendar) : calendar >no_calendar< unsupported!
+  * Time for eddy momentum flux: 0s.
+Warning (set_calendar) : calendar >no_calendar< unsupported!
+Warning (set_calendar) : calendar >no_calendar< unsupported!
+Warning (set_calendar) : calendar >no_calendar< unsupported!
+Warning (set_calendar) : calendar >no_calendar< unsupported!
+Warning (set_calendar) : calendar >no_calendar< unsupported!
+Warning (set_calendar) : calendar >no_calendar< unsupported!
+  * Time for eddy heat flux: 0s.
+Warning (set_calendar) : calendar >no_calendar< unsupported!
+Warning (set_calendar) : calendar >no_calendar< unsupported!
+Warning (set_calendar) : calendar >no_calendar< unsupported!
+Warning (set_calendar) : calendar >no_calendar< unsupported!
+Warning (set_calendar) : calendar >no_calendar< unsupported!
+Warning (set_calendar) : calendar >no_calendar< unsupported!
+  * Time for vertical heat flux: 0s.
+Warning (set_calendar) : calendar >no_calendar< unsupported!
+Warning (set_calendar) : calendar >no_calendar< unsupported!
+Warning (set_calendar) : calendar >no_calendar< unsupported!
+Warning (set_calendar) : calendar >no_calendar< unsupported!
+Warning (set_calendar) : calendar >no_calendar< unsupported!
+Warning (set_calendar) : calendar >no_calendar< unsupported!
+  * Time for EKE: 0s.
+Warning (set_calendar) : calendar >no_calendar< unsupported!
+Warning (set_calendar) : calendar >no_calendar< unsupported!
+Warning (set_calendar) : calendar >no_calendar< unsupported!
+  * Time for temperature variance: 0s.
+Warning (set_calendar) : calendar >no_calendar< unsupported!
+Warning (set_calendar) : calendar >no_calendar< unsupported!
+Warning (set_calendar) : calendar >no_calendar< unsupported!
+  * Time for zonal wind variance: 1s.
+TOTAL TIME ELAPSED: 1s.
