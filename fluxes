@@ -34,13 +34,18 @@ bench() {
 # Loop over datasets with different resolutions
 name=$0
 datas=(data*.nc)
+counter=0
 for data in ${datas[@]}; do
+  # Header
   size=$(du -h $data | xargs | cut -d' ' -f1)
   version=${data%.nc}
   version=${version##*_}
   echo; echo "Dataset: $data ($size)"
   printf "\n$header" >>fluxes.md # add header for each new file
-  sleep 2
+
+  # Skip to big files
+  # let counter+=1
+  # [ $counter -le 6 ] && continue
   # Python with xarray method
   bench "XArray + no dask" python ${name}.py $data 0
 
@@ -58,7 +63,8 @@ for data in ${datas[@]}; do
   # NOTE: NCL needs special dyld library path but so does brew, screws up
   # Homebrew if we set it, so set it locally
   export DYLD_LIBRARY_PATH="/usr/local/lib/gcc/4.9"
-  bench "NCL" ncl -Q -n "filename=\"$data\"" ${name}.ncl
+  bench "NCL" ncl -Q -n "filename=\"$data\"" "large=\"0\"" ${name}.ncl
+  bench "NCL + LargeFile" ncl -Q -n "filename=\"$data\"" "large=\"1\"" ${name}.ncl
 
   # NCO method with NCAP
   bench "NCO" ${name}.nco $data

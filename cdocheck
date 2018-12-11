@@ -4,7 +4,7 @@ files=(dataN0018T1000_3.nc dataN0018T1000_4.nc)
 for file in ${files[@]}; do
   counter=0
   while [ $? -eq 0 ]; do
-    counter+=1
+    let counter+=1
     cdo -O -copy $file tmp.nc
   done
   echo "Took $counter tries to produce error."

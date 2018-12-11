@@ -8,12 +8,21 @@ if (.not. isvar("filename")) then
     print("fatal:File name must be passed as variable 'filename' as follows: " + demo)
     exit ; almost impossible to put double-quote in string
 end if
+if (.not. isvar("large")) then
+    print("fatal:Variable 'large' must be passed as follows: " + demo)
+    exit ; almost impossible to put double-quote in string
+end if
 system("rm fluxes_ncl.nc 2>/dev/null") ; remove file
 f = addfile(filename, "r") ; just read data from here
-o = addfile("fluxes_ncl.nc", "c") ; create new file; don't want to read old values or anything
 t = f->t
 u = f->u
 v = f->v
+
+; Optionally turn on large file mode
+if (toint(large) .eq. 1) then
+  setfileoption("nc", "Format", "LargeFile") 
+end if
+o = addfile("fluxes_ncl.nc", "c") ; create new file; don't want to read old values or anything
 
 ; Calculate fluxes
 ; tbar := conform(t, dim_avg_n(t, dimlon), (/0, 1, 2/)
