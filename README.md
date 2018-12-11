@@ -15,6 +15,8 @@ for reso in 5 2 1 0.5; do ./datagen $reso; done
 ```
 Results are summarized in the below table. Turns out **NCL is much faster than all other tools**, to my surprise. Dask chunking didn't work well for small files.
 
+### Macbook Pro
+
 | size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- |
 | 7.4M (3) | XArray + no dask | **0.980** | 1.009 | 0.164 |
@@ -124,6 +126,9 @@ Results are summarized in the below table. Turns out **NCL is much faster than a
 | 2.9G (4) | CDO + serial IO | **6.503** | 11.323 | 3.273 |
 | 2.9G (4) | NCL | **84.788** | 62.625 | 16.650 |
 | 2.9G (4) | NCO | **89.145** | 76.988 | 11.485 |
+
+### Linux server
+To be added.
 
 # Installation notes
 ## CDO for macOS
