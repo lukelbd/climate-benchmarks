@@ -1,60 +1,90 @@
 
-Dataset: dataN0018T1000_3.nc (7.4M)
-XArray
-real 0m1.117s user 0m1.046s sys 0m0.203s
-XArray + 1-timestep Dask chunk
-real 0m6.787s user 0m5.951s sys 0m1.587s
-XArray + 10-timestep Dask chunk
-real 0m1.769s user 0m1.425s sys 0m0.336s
-NCL
-real 0m0.416s user 0m0.322s sys 0m0.075s
-CDO
-real 0m6.586s user 0m1.152s sys 0m6.575s
-NCO
-real 0m0.239s user 0m0.199s sys 0m0.030s
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 9 | 22M (3) | XArray + no dask | **1.850** | 1.637 | 0.381 |
+| 9 | 22M (3) | XArray + 200 t chunks | **1.160** | 1.180 | 0.851 |
+| 9 | 22M (3) | XArray + 50 t chunks | **1.117** | 0.937 | 0.181 |
+| 9 | 22M (3) | XArray + 20 t chunks | **1.094** | 0.969 | 0.184 |
+| 9 | 22M (3) | XArray + 10 t chunks | **1.234** | 1.006 | 0.203 |
+| 9 | 22M (3) | XArray + 5 t chunks | **1.331** | 1.093 | 0.232 |
+| 9 | 22M (3) | XArray + 2 t chunks | **1.594** | 1.394 | 0.334 |
+| 9 | 22M (3) | XArray + 1 t chunks | **2.249** | 1.852 | 0.515 |
 
-Dataset: dataN0018T1000_4.nc (7.6M)
-XArray
-real 0m1.158s user 0m1.065s sys 0m0.191s
-XArray + 1-timestep Dask chunk
-real 0m6.779s user 0m6.150s sys 0m1.583s
-XArray + 10-timestep Dask chunk
-real 0m1.625s user 0m1.396s sys 0m0.326s
-NCL
-real 0m0.461s user 0m0.354s sys 0m0.080s
-CDO
-real 0m6.794s user 0m2.115s sys 0m7.059s
-NCO
-real 0m0.318s user 0m0.257s sys 0m0.048s
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 9 | 22M (3) | CDO | **62.858** | 9.241 | 62.275 |
+| 9 | 22M (3) | CDO + serial IO | **34.465** | 7.605 | 34.887 |
+| 9 | 22M (3) | NCL | **1.348** | 0.975 | 0.184 |
+| 9 | 22M (3) | NCO | **0.933** | 0.813 | 0.079 |
+| 9 | 22M (3) | NCO + no tmp file | **0.961** | 0.808 | 0.075 |
 
-Dataset: dataN0036T1000_3.nc (30M)
-XArray
-real 0m1.757s user 0m1.544s sys 0m0.388s
-XArray + 1-timestep Dask chunk
-real 0m6.651s user 0m5.792s sys 0m1.613s
-XArray + 10-timestep Dask chunk
-real 0m1.603s user 0m1.388s sys 0m0.341s
-NCL
-real 0m0.939s user 0m0.784s sys 0m0.142s
-CDO
-real 0m6.484s user 0m1.210s sys 0m6.592s
-NCO
-real 0m0.877s user 0m0.766s sys 0m0.095s
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 9 | 22M (4) | XArray + no dask | **1.998** | 1.911 | 0.382 |
+| 9 | 22M (4) | XArray + 200 t chunks | **1.533** | 1.542 | 1.016 |
+| 9 | 22M (4) | XArray + 50 t chunks | **1.463** | 1.263 | 0.253 |
+| 9 | 22M (4) | XArray + 20 t chunks | **1.606** | 1.330 | 0.274 |
+| 9 | 22M (4) | XArray + 10 t chunks | **1.791** | 1.378 | 0.287 |
+| 9 | 22M (4) | XArray + 5 t chunks | **1.712** | 1.479 | 0.321 |
+| 9 | 22M (4) | XArray + 2 t chunks | **2.330** | 1.956 | 0.485 |
+| 9 | 22M (4) | XArray + 1 t chunks | **2.878** | 2.531 | 0.676 |
 
-Dataset: dataN0036T1000_4.nc (30M)
-XArray
-real 0m1.290s user 0m1.630s sys 0m0.299s
-XArray + 1-timestep Dask chunk
-real 0m6.512s user 0m5.997s sys 0m1.541s
-XArray + 10-timestep Dask chunk
-real 0m1.601s user 0m1.417s sys 0m0.323s
-NCL
-real 0m0.934s user 0m0.800s sys 0m0.121s
-CDO
-real 0m6.786s user 0m2.176s sys 0m7.099s
-NCO
-real 0m0.936s user 0m0.816s sys 0m0.104s
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 9 | 22M (4) | CDO | **fail** | **fail** | **fail** |
+| 9 | 22M (4) | CDO + serial IO | **30.895** | 15.881 | 23.815 |
+| 9 | 22M (4) | NCL | **1.026** | 0.890 | 0.118 |
+| 9 | 22M (4) | NCO | **0.934** | 0.841 | 0.076 |
+| 9 | 22M (4) | NCO + no tmp file | **0.951** | 0.852 | 0.080 |
 
-Dataset: dataN0090T1000_3.nc (185M)
-XArray
-real 0m3.565s user 0m2.248s sys 0m0.837s
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 18 | 89M (3) | XArray + no dask | **2.675** | 2.359 | 0.656 |
+| 18 | 89M (3) | XArray + 200 t chunks | **1.840** | 2.108 | 1.420 |
+| 18 | 89M (3) | XArray + 50 t chunks | **1.875** | 2.019 | 2.280 |
+| 18 | 89M (3) | XArray + 20 t chunks | **1.917** | 2.060 | 2.546 |
+| 18 | 89M (3) | XArray + 10 t chunks | **1.915** | 1.890 | 0.354 |
+| 18 | 89M (3) | XArray + 5 t chunks | **2.023** | 1.968 | 0.384 |
+| 18 | 89M (3) | XArray + 2 t chunks | **2.604** | 2.483 | 0.564 |
+| 18 | 89M (3) | XArray + 1 t chunks | **3.776** | 3.526 | 0.935 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 18 | 89M (3) | CDO | **93.317** | 15.351 | 90.746 |
+| 18 | 89M (3) | CDO + serial IO | **36.421** | 8.844 | 37.682 |
+| 18 | 89M (3) | NCL | **4.405** | 3.676 | 0.531 |
+| 18 | 89M (3) | NCO | **3.663** | 3.283 | 0.330 |
+| 18 | 89M (3) | NCO + no tmp file | **3.232** | 2.912 | 0.293 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 18 | 89M (4) | XArray + no dask | **2.067** | 2.087 | 0.564 |
+| 18 | 89M (4) | XArray + 200 t chunks | **1.498** | 1.963 | 1.713 |
+| 18 | 89M (4) | XArray + 50 t chunks | **1.531** | 1.638 | 2.122 |
+| 18 | 89M (4) | XArray + 20 t chunks | **1.545** | 1.634 | 2.528 |
+| 18 | 89M (4) | XArray + 10 t chunks | **1.415** | 1.386 | 0.264 |
+| 18 | 89M (4) | XArray + 5 t chunks | **1.585** | 1.519 | 0.308 |
+| 18 | 89M (4) | XArray + 2 t chunks | **2.363** | 2.109 | 0.505 |
+| 18 | 89M (4) | XArray + 1 t chunks | **3.225** | 3.010 | 0.790 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 18 | 89M (4) | CDO | **83.782** | 21.679 | 83.866 |
+| 18 | 89M (4) | CDO + serial IO | **23.610** | 13.286 | 18.369 |
+| 18 | 89M (4) | NCL | **3.115** | 2.665 | 0.341 |
+| 18 | 89M (4) | NCO | **3.165** | 2.846 | 0.274 |
+| 18 | 89M (4) | NCO + no tmp file | **3.165** | 2.854 | 0.275 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 24 | 158M (3) | XArray + no dask | **3.684** | 2.489 | 0.931 |
+| 24 | 158M (3) | XArray + 200 t chunks | **1.941** | 3.718 | 1.388 |
+| 24 | 158M (3) | XArray + 50 t chunks | **1.829** | 2.264 | 2.926 |
+| 24 | 158M (3) | XArray + 20 t chunks | **1.840** | 2.245 | 3.066 |
+| 24 | 158M (3) | XArray + 10 t chunks | **2.010** | 2.319 | 3.178 |
+| 24 | 158M (3) | XArray + 5 t chunks | **1.923** | 2.012 | 0.376 |
+| 24 | 158M (3) | XArray + 2 t chunks | **2.397** | 2.437 | 0.518 |
+| 24 | 158M (3) | XArray + 1 t chunks | **4.513** | 4.310 | 1.100 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |

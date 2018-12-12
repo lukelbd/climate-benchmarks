@@ -8,8 +8,8 @@
 # Helper function
 # We require a subshell to redirect 'time' for some reason; because it's weird
 # builtin or something
-output=fluxes.log
-header="| size (version) | name | real (s) | user (s) | sys (s) |\n| --- | --- | --- | --- | --- |\n"
+output=fluxes_${HOSTNAME%%.*}.log # store here
+header="| nlat | size (version) | name | real (s) | user (s) | sys (s) |\n| --- | --- | --- | --- | --- | --- |\n"
 rm $output 2>/dev/null
 seconds() {
   # Convert time command output to raw seconds
@@ -29,38 +29,47 @@ bench() {
   real=$(seconds ${array[1]})
   user=$(seconds ${array[3]})
   sys=$(seconds ${array[5]})
-  printf "| $size ($version) | $1 | **$real** | $user | $sys |\n" >>$output
+  printf "| $nlat | $size ($version) | $1 | **$real** | $user | $sys |\n" >>$output
 }
 
 # Loop over datasets with different resolutions
+dir=60lev # directories where data is stored
 name=$0
-datas=(data*.nc)
+datas=($dir/data*.nc)
 counter=0
 for data in ${datas[@]}; do
   # Header
   size=$(du -h $data | xargs | cut -d' ' -f1)
   version=${data%.nc}
-  version=${version##*_}
+  version=${version#*_}
+  nlat=${data#*N}
+  nlat=$(printf '%.0f' ${nlat%T*})
   echo; echo "Dataset: $data ($size)"
   printf "\n$header" >>$output # add header for each new file
 
   # Skip to big files
   # let counter+=1
-  # [ $counter -le 6 ] && continue
+  # [ $counter -le 2 ] && continue
   # Python with xarray method
   bench "XArray + no dask" python ${name}.py $data 0 0
 
   # Python with xarray and Dask chunking by 2D slice
-  # bench "XArray + 100-timestep chunks" python ${name}.py $data 100
-  bench "XArray + 10 t, 60 p chunks" python ${name}.py $data 10 60
-  bench "XArray + 5 t, 60 p chunks" python ${name}.py $data 5 60
-  bench "XArray + 1 t, 60 p chunks" python ${name}.py $data 1 60
-  bench "XArray + 10 t, 10 p chunks" python ${name}.py $data 10 10
-  bench "XArray + 5 t, 10 p chunks" python ${name}.py $data 5 10
-  bench "XArray + 1 t, 10 p chunks" python ${name}.py $data 1 10
-  bench "XArray + 10 t, 1 p chunks" python ${name}.py $data 10 1
-  bench "XArray + 5 t, 1 p chunks" python ${name}.py $data 5 1
-  bench "XArray + 1 t, 1 p chunks" python ${name}.py $data 1 1
+  # bench "XArray + 100-timestep chunks" python ${name}.py $data 100 60
+  bench "XArray + 200 t chunks" python ${name}.py $data 200 60
+  bench "XArray + 50 t chunks"  python ${name}.py $data 50 60
+  bench "XArray + 20 t chunks"  python ${name}.py $data 20 60
+  bench "XArray + 10 t chunks"  python ${name}.py $data 10 60
+  bench "XArray + 5 t chunks"   python ${name}.py $data 5 60
+  bench "XArray + 2 t chunks"   python ${name}.py $data 2 60
+  bench "XArray + 1 t chunks"   python ${name}.py $data 1 60
+  # bench "XArray + 200 t, 60 p chunks" python ${name}.py $data 1 10
+  # bench "XArray + 200 t, 20 p chunks" python ${name}.py $data 10 1
+  # bench "XArray + 200 t, 10 p chunks" python ${name}.py $data 5 1
+  # bench "XArray + 200 t, 5 p chunks" python ${name}.py $data 5 1
+  # bench "XArray + 200 t, 1 p chunks" python ${name}.py $data 1 1
+
+  # Break table
+  printf "\n$header" >>$output # add header for each new file
 
   # CDO method
   export DYLD_LIBRARY_PATH=""
@@ -72,8 +81,15 @@ for data in ${datas[@]}; do
   # Homebrew if we set it, so set it locally
   export DYLD_LIBRARY_PATH="/usr/local/lib/gcc/4.9"
   bench "NCL" ncl -Q -n "filename=\"$data\"" "large=\"0\"" ${name}.ncl
-  bench "NCL + LargeFile" ncl -Q -n "filename=\"$data\"" "large=\"1\"" ${name}.ncl
+  # bench "NCL + LargeFile" ncl -Q -n "filename=\"$data\"" "large=\"1\"" ${name}.ncl
 
   # NCO method with NCAP
+  # Add options for handling large files; see: http://nco.sourceforge.net/nco.html#Temporary-Output-Files
+  # No need to do both; we just need to 'open' or 'create' in RAM to prevent
+  # issues with overwrites (2nd example). In this case we aren't writing to the
+  # same file so we don't need to worry about those options.
   bench "NCO" ${name}.nco $data
+  bench "NCO + no tmp file" ${name}.nco $data --no_tmp_fl
+  # bench "NCO + open in RAM" ${name}.nco $data --open_ram --no_tmp_fl
+  # bench "NCO + create in RAM" ${name}.nco $data --create_ram --no_tmp_fl
 done
