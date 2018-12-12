@@ -130,6 +130,8 @@ since individual "timesteps" contain much more data.
 
 These results were surprising: turned out **more pressure levels *significantly* slowed** the CDO operations. And I have no idea why. Maybe has to do with the particular operation used, e.g. the `-enlarge` calculated independently for each pressure level?
 
+**Note**: Suspect the CDO issues had something to do with my compilation. These will be updated.
+
 | nlat | size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
 | 9 | 22M (3) | XArray + no dask | **1.850** | 1.637 | 0.381 |
@@ -207,8 +209,82 @@ These results were surprising: turned out **more pressure levels *significantly*
 | 120 | 3.9G (3) | NCL | **really slow** | **really slow** | **really slow** |
 | 120 | 3.9G (3) | NCO | **really slow** | **really slow** | **really slow** |
 
-### Linux test
-To be added.
+### Cheyenne interactive node: 60 level, 200 timesteps
+This time, the benchmarks were run on a Cheyenne HPC compute cluster interactive node, which is a shared resource consisting of approximately 72 cores.
+
+Here we see CDO performs just fine (the issues on the Macbook were likely an error). But again, XArray is the strongest performer.
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 18 | 178M (3) | XArray + no dask | **2.078** | 0.976 | 0.416 |
+| 18 | 178M (3) | XArray + 200 t chunks | **1.145** | 0.924 | 0.396 |
+| 18 | 178M (3) | XArray + 20 t chunks | **1.004** | 1.124 | 0.768 |
+| 18 | 178M (3) | XArray + 2 t chunks | **1.191** | 1.184 | 0.292 |
+| 18 | 178M (3) | Julia | **14.440** | 13.288 | 0.664 |
+| 18 | 178M (3) | CDO | **3.050** | 5.504 | 8.156 |
+| 18 | 178M (3) | CDO + serial IO | **3.104** | 4.968 | 4.572 |
+| 18 | 178M (3) | NCL | **3.051** | 2.272 | 0.368 |
+| 18 | 178M (3) | NCO | **2.981** | 2.532 | 0.328 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 24 | 317M (3) | XArray + no dask | **1.754** | 1.104 | 0.628 |
+| 24 | 317M (3) | XArray + 200 t chunks | **1.220** | 0.980 | 0.656 |
+| 24 | 317M (3) | XArray + 20 t chunks | **1.075** | 1.356 | 1.192 |
+| 24 | 317M (3) | XArray + 2 t chunks | **1.281** | 1.372 | 0.420 |
+| 24 | 317M (3) | Julia | **9.153** | 8.716 | 0.424 |
+| 24 | 317M (3) | CDO | **3.118** | 6.436 | 7.196 |
+| 24 | 317M (3) | CDO + serial IO | **3.766** | 6.060 | 4.420 |
+| 24 | 317M (3) | NCL | **4.735** | 3.956 | 0.528 |
+| 24 | 317M (3) | NCO | **5.523** | 4.556 | 0.732 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 36 | 712M (3) | XArray + no dask | **5.309** | 1.576 | 1.256 |
+| 36 | 712M (3) | XArray + 200 t chunks | **1.744** | 1.516 | 1.080 |
+| 36 | 712M (3) | XArray + 20 t chunks | **1.183** | 1.816 | 2.828 |
+| 36 | 712M (3) | XArray + 2 t chunks | **1.341** | 1.916 | 0.788 |
+| 36 | 712M (3) | Julia | **13.309** | 9.992 | 0.832 |
+| 36 | 712M (3) | CDO | **3.270** | 8.812 | 5.072 |
+| 36 | 712M (3) | CDO + serial IO | **5.075** | 8.600 | 4.104 |
+| 36 | 712M (3) | NCL | **9.572** | 8.556 | 0.992 |
+| 36 | 712M (3) | NCO | **11.711** | 10.064 | 1.576 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 60 | 2.0G (3) | XArray + no dask | **10.750** | 3.060 | 3.132 |
+| 60 | 2.0G (3) | XArray + 200 t chunks | **2.902** | 2.728 | 2.616 |
+| 60 | 2.0G (3) | XArray + 20 t chunks | **1.544** | 3.316 | 7.812 |
+| 60 | 2.0G (3) | XArray + 2 t chunks | **1.577** | 3.808 | 2.836 |
+| 60 | 2.0G (3) | Julia | **17.567** | 15.376 | 1.544 |
+| 60 | 2.0G (3) | CDO | **5.268** | 17.524 | 4.120 |
+| 60 | 2.0G (3) | CDO + serial IO | **10.485** | 17.308 | 4.672 |
+| 60 | 2.0G (3) | NCL | **26.114** | 23.368 | 2.712 |
+| 60 | 2.0G (3) | NCO | **32.614** | 28.044 | 3.796 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 90 | 4.4G (3) | XArray + no dask | **21.418** | 5.792 | 7.020 |
+| 90 | 4.4G (3) | XArray + 200 t chunks | **5.429** | 5.228 | 5.692 |
+| 90 | 4.4G (3) | XArray + 20 t chunks | **2.423** | 7.092 | 15.916 |
+| 90 | 4.4G (3) | XArray + 2 t chunks | **2.214** | 7.876 | 15.216 |
+| 90 | 4.4G (3) | Julia | **28.902** | 25.700 | 3.172 |
+| 90 | 4.4G (3) | CDO | **9.459** | 34.380 | 5.228 |
+| 90 | 4.4G (3) | CDO + serial IO | **18.924** | 34.948 | 6.076 |
+| 90 | 4.4G (3) | NCL | **58.569** | 52.504 | 5.840 |
+| 90 | 4.4G (3) | NCO | **81.452** | 63.240 | 8.300 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 120 | 7.8G (3) | XArray + no dask | **33.881** | 10.076 | 12.264 |
+| 120 | 7.8G (3) | XArray + 200 t chunks | **9.000** | 8.800 | 9.708 |
+| 120 | 7.8G (3) | XArray + 20 t chunks | **3.705** | 13.712 | 30.576 |
+| 120 | 7.8G (3) | XArray + 2 t chunks | **3.010** | 14.520 | 31.884 |
+| 120 | 7.8G (3) | Julia | **58.495** | 40.452 | 5.916 |
+| 120 | 7.8G (3) | CDO | **14.893** | 55.396 | 6.924 |
+| 120 | 7.8G (3) | CDO + serial IO | **32.032** | 54.436 | 7.952 |
+| 120 | 7.8G (3) | NCL | **113.611** | 93.564 | 10.284 |
+| 120 | 7.8G (3) | NCO | **140.847** | 112.292 | 13.788 |
 
 # Installation notes
 ## CDO for macOS
