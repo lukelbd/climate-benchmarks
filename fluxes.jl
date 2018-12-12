@@ -16,6 +16,8 @@
 # a = rand(Float32, 5, 3)
 # a = zeros(5, 3)
 # rand!(a) # populates array
+# NOTE: To re-install packages after you change underlying OS libraries
+# e.g. NetCDF, just use Pkg.build("name")
 ################################################################################
 # First load modules and file
 # NOTE: Julia has issues with year 0 (reads as year -1, then jumps from
