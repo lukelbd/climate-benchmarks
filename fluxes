@@ -9,7 +9,7 @@
 # We require a subshell to redirect 'time' for some reason; because it's weird
 # builtin or something
 name=$0
-dir=60lev # directories where data is stored
+dir=1lev # directories where data is stored
 output=$dir/fluxes_${HOSTNAME%%.*}.log # store here
 header="| nlat | size (version) | name | real (s) | user (s) | sys (s) |\n| --- | --- | --- | --- | --- | --- |\n"
 rm $output 2>/dev/null
@@ -47,12 +47,9 @@ for data in ${datas[@]}; do
   echo; echo "Dataset: $data ($size)"
   printf "\n$header" >>$output # add header for each new file
 
-  # Julia
-  bench "Julia" julia ${name}.jl $data
-
   # Skip to big files
-  # let counter+=1
-  # [ $counter -le 2 ] && continue
+  let counter+=1
+  [ $counter -le 10 ] && continue
   # Python with xarray method
   bench "XArray + no dask" python ${name}.py $data 0 0
 
@@ -85,6 +82,9 @@ for data in ${datas[@]}; do
   # Break table
   printf "\n$header" >>$output # add header for each new file
 
+  # Julia
+  bench "Julia" julia ${name}.jl $data
+
   # CDO method
   export DYLD_LIBRARY_PATH=""
   bench "CDO" ${name}.cdo $data
@@ -102,8 +102,9 @@ for data in ${datas[@]}; do
   # No need to do both; we just need to 'open' or 'create' in RAM to prevent
   # issues with overwrites (2nd example). In this case we aren't writing to the
   # same file so we don't need to worry about those options.
+  # NOTE: Turned out no tmp file made pretty much zero difference
   bench "NCO" ${name}.nco $data
-  bench "NCO + no tmp file" ${name}.nco $data --no_tmp_fl
+  # bench "NCO + no tmp file" ${name}.nco $data --no_tmp_fl
   # bench "NCO + open in RAM" ${name}.nco $data --open_ram --no_tmp_fl
   # bench "NCO + create in RAM" ${name}.nco $data --create_ram --no_tmp_fl
 done

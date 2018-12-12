@@ -1,13 +1,21 @@
 # Benchmarks for climate data analysis
 Use this repo to benchmark data analysis techniques across CDO, NCL, NCO, python, and julia. Matlab and IDL are the past so I'm not bothering with them ;)
 
+## A Note on NetCDF3 vs. NetCDF4
+There were two major performance differences observed between the NetCDF3 and NetCDF4 versions of the sample data:
+
+* It turned out that, **in general**, CDO with NetCDF3 (on a Macbook) responded **less favorably** to thread-safe disk IO locking (the `-L` flag) -- it tended to speed things up for smaller datasets (over-optimization?) then slow things down for larger datasets, but **more-so** for NetCDF3.
+* We also found that **non-dask** python datasets (i.e. XArray datasets loaded with `chunks=None`) were **somewhat slower** for NetCDF3 than NetCDF4. The effect was **more pronounced** with larger datasets. When chunking was used, the speed improvements for NetCDF4 were marginal, even toward 2GB datasets (around **7s** vs **9s**).
+
+Since most large general circulation models produce NetCDF3 files, only the results for these datasets were shown. But anyway, as explained above, the differences weren't that huge.
+
 ## Interpolation tests
 Setup is 4 times daily 100-day T42L40 resolution files, from dry dynamical core model.
 
 * Time for NCL interpolation script with **automatic iteration**: ***70s exactly***
 * Time for interpolation script with **explicit iteration through variables**: ***71s almost identical***
 * Time for interpolation with CDO: ***30s pre-processing*** (probably due to inefficiency of overwriting original ncfile with file that dleetes coordinates), ***94s for setting things up*** (because we have to write surface geopotential to same massive file, instead of declaring as separate variable in NCL), and ***122s actual interpolation*** (with bunch of warnings) so ***216 total***
-
+    
 ## Eddy flux term tests
 ### Macbook: 1 level, 1000 timesteps
 Data used was generated with the `datagen` script via the line:
@@ -17,181 +25,141 @@ for reso in 5 2 1 0.5; do ./datagen $reso; done
 
 Results are summarized in the below table. Turns out **NCL is much faster than all other tools**, to my surprise. Dask chunking didn't work well for small files. Note that using the NCL feature `setfileoption("nc", "Format", "LargeFile")` made absolutely **neglibile** difference in final wall-clock time, to my surprise. Also note there are no options to improve large file handling, recommendation is to split up by level or time; see [this NCL talk post](https://www.ncl.ucar.edu/Support/talk_archives/2011/2636.html) and [this stackoverflow post](https://stackoverflow.com/questions/44474507/read-large-netcdf-data-by-ncl).
 
-| size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- |
-| 7.4M (3) | XArray + no dask | **1.297** | 1.039 | 0.258 |
-| 7.4M (3) | XArray + 100-timestep chunks | **1.116** | 0.913 | 0.179 |
-| 7.4M (3) | XArray + 10-timestep chunks | **1.541** | 1.291 | 0.296 |
-| 7.4M (3) | XArray + 1-timestep chunks | **6.515** | 5.640 | 1.481 |
-| 7.4M (3) | CDO | **6.336** | 1.026 | 6.319 |
-| 7.4M (3) | CDO + serial IO | **2.911** | 0.695 | 3.086 |
-| 7.4M (3) | NCL | **0.604** | 0.325 | 0.082 |
-| 7.4M (3) | NCO | **0.270** | 0.201 | 0.034 |
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 18 | 7.4M (3) | XArray + no dask | **2.544** | 1.216 | 0.679 |
+| 18 | 7.4M (3) | XArray + 1000 t chunks | **1.110** | 1.105 | 1.259 |
+| 18 | 7.4M (3) | XArray + 200 t chunks | **1.097** | 0.876 | 0.170 |
+| 18 | 7.4M (3) | XArray + 100 t chunks | **1.107** | 0.904 | 0.174 |
+| 18 | 7.4M (3) | XArray + 50 t chunks | **1.088** | 0.929 | 0.191 |
+| 18 | 7.4M (3) | XArray + 20 t chunks | **1.303** | 1.062 | 0.227 |
 
-| size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- |
-| 7.6M (4) | XArray + no dask | **1.110** | 1.075 | 0.192 |
-| 7.6M (4) | XArray + 100-timestep chunks | **1.072** | 0.891 | 0.163 |
-| 7.6M (4) | XArray + 10-timestep chunks | **1.552** | 1.355 | 0.298 |
-| 7.6M (4) | XArray + 1-timestep chunks | **6.453** | 5.890 | 1.485 |
-| 7.6M (4) | CDO | **6.495** | 2.001 | 6.801 |
-| 7.6M (4) | CDO + serial IO | **2.471** | 1.290 | 1.936 |
-| 7.6M (4) | NCL | **0.425** | 0.339 | 0.073 |
-| 7.6M (4) | NCO | **0.302** | 0.258 | 0.035 |
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 18 | 7.4M (3) | Julia | **5.777** | 5.732 | 0.283 |
+| 18 | 7.4M (3) | CDO | **6.310** | 1.001 | 6.335 |
+| 18 | 7.4M (3) | CDO + serial IO | **2.962** | 0.677 | 3.154 |
+| 18 | 7.4M (3) | NCL | **0.634** | 0.319 | 0.102 |
+| 18 | 7.4M (3) | NCO | **0.264** | 0.194 | 0.036 |
 
-| size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- |
-| 30M (3) | XArray + no dask | **1.683** | 1.597 | 0.328 |
-| 30M (3) | XArray + 100-timestep chunks | **1.089** | 0.935 | 0.193 |
-| 30M (3) | XArray + 10-timestep chunks | **1.556** | 1.343 | 0.314 |
-| 30M (3) | XArray + 1-timestep chunks | **6.336** | 5.609 | 1.462 |
-| 30M (3) | CDO | **6.226** | 1.138 | 6.327 |
-| 30M (3) | CDO + serial IO | **2.791** | 0.778 | 2.891 |
-| 30M (3) | NCL | **0.929** | 0.790 | 0.131 |
-| 30M (3) | NCO | **0.859** | 0.764 | 0.083 |
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 36 | 30M (3) | XArray + no dask | **1.804** | 1.634 | 0.362 |
+| 36 | 30M (3) | XArray + 1000 t chunks | **1.089** | 1.184 | 1.037 |
+| 36 | 30M (3) | XArray + 200 t chunks | **1.098** | 1.429 | 0.626 |
+| 36 | 30M (3) | XArray + 100 t chunks | **1.084** | 0.940 | 0.176 |
+| 36 | 30M (3) | XArray + 50 t chunks | **1.188** | 0.982 | 0.193 |
+| 36 | 30M (3) | XArray + 20 t chunks | **1.307** | 1.113 | 0.239 |
 
-| size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- |
-| 30M (4) | XArray + no dask | **1.305** | 1.547 | 0.294 |
-| 30M (4) | XArray + 100-timestep chunks | **1.090** | 0.946 | 0.184 |
-| 30M (4) | XArray + 10-timestep chunks | **1.575** | 1.405 | 0.317 |
-| 30M (4) | XArray + 1-timestep chunks | **6.594** | 6.083 | 1.567 |
-| 30M (4) | CDO | **6.519** | 2.045 | 6.873 |
-| 30M (4) | CDO + serial IO | **2.389** | 1.359 | 1.785 |
-| 30M (4) | NCL | **0.898** | 0.767 | 0.124 |
-| 30M (4) | NCO | **0.935** | 0.822 | 0.102 |
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 36 | 30M (3) | Julia | **6.650** | 5.985 | 0.392 |
+| 36 | 30M (3) | CDO | **6.239** | 1.108 | 6.365 |
+| 36 | 30M (3) | CDO + serial IO | **2.712** | 0.755 | 2.827 |
+| 36 | 30M (3) | NCL | **0.931** | 0.779 | 0.130 |
+| 36 | 30M (3) | NCO | **0.852** | 0.756 | 0.082 |
 
-| size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- |
-| 82M (3) | XArray + no dask | **2.410** | 2.051 | 0.530 |
-| 82M (3) | XArray + 100-timestep chunks | **1.217** | 1.277 | 1.661 |
-| 82M (3) | XArray + 10-timestep chunks | **1.573** | 1.476 | 0.332 |
-| 82M (3) | XArray + 1-timestep chunks | **6.432** | 5.781 | 1.606 |
-| 82M (3) | CDO | **6.107** | 1.412 | 6.269 |
-| 82M (3) | CDO + serial IO | **2.619** | 0.999 | 2.548 |
-| 82M (3) | NCL | **2.194** | 1.894 | 0.286 |
-| 82M (3) | NCO | **2.345** | 2.107 | 0.228 |
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 60 | 82M (3) | XArray + no dask | **2.033** | 1.909 | 0.488 |
+| 60 | 82M (3) | XArray + 1000 t chunks | **1.312** | 1.624 | 1.543 |
+| 60 | 82M (3) | XArray + 200 t chunks | **1.209** | 1.354 | 1.734 |
+| 60 | 82M (3) | XArray + 100 t chunks | **1.413** | 2.384 | 2.176 |
+| 60 | 82M (3) | XArray + 50 t chunks | **1.200** | 1.092 | 0.208 |
+| 60 | 82M (3) | XArray + 20 t chunks | **1.319** | 1.231 | 0.254 |
 
-| size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- |
-| 83M (4) | XArray + no dask | **1.485** | 1.925 | 0.405 |
-| 83M (4) | XArray + 100-timestep chunks | **1.270** | 1.271 | 1.550 |
-| 83M (4) | XArray + 10-timestep chunks | **1.549** | 1.446 | 0.323 |
-| 83M (4) | XArray + 1-timestep chunks | **6.749** | 6.141 | 1.680 |
-| 83M (4) | CDO | **6.372** | 2.189 | 6.736 |
-| 83M (4) | CDO + serial IO | **2.472** | 1.512 | 1.806 |
-| 83M (4) | NCL | **2.121** | 1.855 | 0.251 |
-| 83M (4) | NCO | **2.391** | 2.158 | 0.223 |
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 60 | 82M (3) | Julia | **7.830** | 6.556 | 0.544 |
+| 60 | 82M (3) | CDO | **6.043** | 1.373 | 6.239 |
+| 60 | 82M (3) | CDO + serial IO | **2.619** | 0.994 | 2.568 |
+| 60 | 82M (3) | NCL | **2.188** | 1.873 | 0.284 |
+| 60 | 82M (3) | NCO | **2.340** | 2.099 | 0.220 |
 
-| size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- |
-| 185M (3) | XArray + no dask | **3.611** | 2.310 | 0.820 |
-| 185M (3) | XArray + 100-timestep chunks | **1.624** | 2.984 | 2.802 |
-| 185M (3) | XArray + 10-timestep chunks | **1.688** | 1.695 | 0.355 |
-| 185M (3) | XArray + 1-timestep chunks | **6.736** | 6.137 | 1.764 |
-| 185M (3) | CDO | **5.931** | 1.943 | 6.162 |
-| 185M (3) | CDO + serial IO | **2.930** | 1.509 | 2.507 |
-| 185M (3) | NCL | **4.687** | 4.054 | 0.615 |
-| 185M (3) | NCO | **5.324** | 4.764 | 0.540 |
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 90 | 185M (3) | XArray + no dask | **4.088** | 2.024 | 0.946 |
+| 90 | 185M (3) | XArray + 1000 t chunks | **2.568** | 2.691 | 1.589 |
+| 90 | 185M (3) | XArray + 200 t chunks | **2.188** | 2.317 | 2.796 |
+| 90 | 185M (3) | XArray + 100 t chunks | **1.857** | 2.216 | 3.628 |
+| 90 | 185M (3) | XArray + 50 t chunks | **1.708** | 1.997 | 3.444 |
+| 90 | 185M (3) | XArray + 20 t chunks | **1.559** | 1.637 | 0.308 |
 
-| size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- |
-| 186M (4) | XArray + no dask | **1.868** | 2.135 | 0.637 |
-| 186M (4) | XArray + 100-timestep chunks | **1.432** | 1.659 | 2.774 |
-| 186M (4) | XArray + 10-timestep chunks | **1.692** | 1.669 | 0.370 |
-| 186M (4) | XArray + 1-timestep chunks | **6.884** | 6.386 | 1.771 |
-| 186M (4) | CDO | **6.251** | 2.501 | 6.511 |
-| 186M (4) | CDO + serial IO | **2.604** | 1.697 | 1.894 |
-| 186M (4) | NCL | **4.465** | 3.978 | 0.472 |
-| 186M (4) | NCO | **5.269** | 4.740 | 0.509 |
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 90 | 185M (3) | Julia | **10.510** | 7.720 | 0.849 |
+| 90 | 185M (3) | CDO | **7.220** | 2.327 | 7.343 |
+| 90 | 185M (3) | CDO + serial IO | **4.488** | 2.257 | 3.678 |
+| 90 | 185M (3) | NCL | **5.383** | 4.368 | 0.733 |
+| 90 | 185M (3) | NCO | **5.376** | 4.675 | 0.526 |
 
-| size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- |
-| 330M (3) | XArray + no dask | **6.169** | 2.577 | 1.301 |
-| 330M (3) | XArray + 100-timestep chunks | **1.923** | 2.453 | 4.830 |
-| 330M (3) | XArray + 10-timestep chunks | **1.757** | 1.965 | 0.371 |
-| 330M (3) | XArray + 1-timestep chunks | **6.774** | 6.396 | 1.763 |
-| 330M (3) | CDO | **5.617** | 2.729 | 5.835 |
-| 330M (3) | CDO + serial IO | **3.797** | 2.507 | 2.692 |
-| 330M (3) | NCL | **8.363** | 7.185 | 1.148 |
-| 330M (3) | NCO | **9.281** | 8.313 | 0.911 |
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 120 | 330M (3) | XArray + no dask | **2.995** | 2.618 | 1.045 |
+| 120 | 330M (3) | XArray + 1000 t chunks | **2.157** | 4.810 | 1.903 |
+| 120 | 330M (3) | XArray + 200 t chunks | **2.042** | 2.910 | 4.854 |
+| 120 | 330M (3) | XArray + 100 t chunks | **2.159** | 2.944 | 5.407 |
+| 120 | 330M (3) | XArray + 50 t chunks | **2.243** | 3.065 | 5.751 |
+| 120 | 330M (3) | XArray + 20 t chunks | **2.237** | 2.991 | 5.775 |
 
-| size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- |
-| 330M (4) | XArray + no dask | **2.931** | 2.399 | 0.997 |
-| 330M (4) | XArray + 100-timestep chunks | **1.753** | 2.260 | 3.571 |
-| 330M (4) | XArray + 10-timestep chunks | **1.783** | 1.910 | 0.412 |
-| 330M (4) | XArray + 1-timestep chunks | **7.076** | 6.709 | 1.852 |
-| 330M (4) | CDO | **6.355** | 3.090 | 6.704 |
-| 330M (4) | CDO + serial IO | **3.283** | 2.304 | 2.350 |
-| 330M (4) | NCL | **8.106** | 6.967 | 0.932 |
-| 330M (4) | NCO | **9.216** | 8.305 | 0.869 |
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 120 | 330M (3) | Julia | **12.211** | 8.272 | 1.046 |
+| 120 | 330M (3) | CDO | **7.907** | 3.790 | 8.209 |
+| 120 | 330M (3) | CDO + serial IO | **5.228** | 3.332 | 3.857 |
+| 120 | 330M (3) | NCL | **9.583** | 8.049 | 1.297 |
+| 120 | 330M (3) | NCO | **9.200** | 8.290 | 0.870 |
 
-| size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- |
-| 742M (3) | XArray + no dask | **9.669** | 3.711 | 2.377 |
-| 742M (3) | XArray + 100-timestep chunks | **3.238** | 5.851 | 7.868 |
-| 742M (3) | XArray + 10-timestep chunks | **3.163** | 5.596 | 9.481 |
-| 742M (3) | XArray + 1-timestep chunks | **6.901** | 7.175 | 1.808 |
-| 742M (3) | CDO | **5.408** | 5.129 | 5.357 |
-| 742M (3) | CDO + serial IO | **5.175** | 4.562 | 2.721 |
-| 742M (3) | NCL | **18.155** | 15.812 | 2.284 |
-| 742M (3) | NCO | **21.926** | 19.039 | 2.830 |
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 180 | 742M (3) | XArray + no dask | **4.914** | 3.328 | 1.809 |
+| 180 | 742M (3) | XArray + 1000 t chunks | **3.399** | 6.015 | 3.833 |
+| 180 | 742M (3) | XArray + 200 t chunks | **3.452** | 5.424 | 5.157 |
+| 180 | 742M (3) | XArray + 100 t chunks | **3.109** | 5.884 | 6.267 |
+| 180 | 742M (3) | XArray + 50 t chunks | **3.266** | 5.693 | 6.147 |
+| 180 | 742M (3) | XArray + 20 t chunks | **3.591** | 5.726 | 7.023 |
 
-| size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- |
-| 742M (4) | XArray + no dask | **3.906** | 3.081 | 1.500 |
-| 742M (4) | XArray + 100-timestep chunks | **2.525** | 5.058 | 6.678 |
-| 742M (4) | XArray + 10-timestep chunks | **2.701** | 4.965 | 8.274 |
-| 742M (4) | XArray + 1-timestep chunks | **6.919** | 7.064 | 1.824 |
-| 742M (4) | CDO | **5.316** | 3.897 | 5.787 |
-| 742M (4) | CDO + serial IO | **3.548** | 3.140 | 2.561 |
-| 742M (4) | NCL | **17.428** | 15.209 | 2.033 |
-| 742M (4) | NCO | **21.820** | 19.057 | 2.715 |
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 180 | 742M (3) | Julia | **17.755** | 11.294 | 2.012 |
+| 180 | 742M (3) | CDO | **7.725** | 6.317 | 6.374 |
+| 180 | 742M (3) | CDO + serial IO | **7.321** | 5.714 | 3.501 |
+| 180 | 742M (3) | NCL | **18.497** | 15.741 | 2.351 |
+| 180 | 742M (3) | NCO | **21.434** | 18.521 | 2.797 |
 
-| size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- |
-| 1.3G (3) | XArray + no dask | **15.818** | 4.604 | 3.875 |
-| 1.3G (3) | XArray + 100-timestep chunks | **4.342** | 9.189 | 11.659 |
-| 1.3G (3) | XArray + 10-timestep chunks | **4.335** | 8.750 | 16.860 |
-| 1.3G (3) | XArray + 1-timestep chunks | **7.248** | 8.445 | 1.860 |
-| 1.3G (3) | CDO | **5.561** | 9.696 | 4.972 |
-| 1.3G (3) | CDO + serial IO | **7.344** | 7.483 | 2.967 |
-| 1.3G (3) | NCL | **31.795** | 27.663 | 3.807 |
-| 1.3G (3) | NCO | **39.458** | 34.031 | 5.232 |
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 240 | 1.3G (3) | XArray + no dask | **6.412** | 3.851 | 2.281 |
+| 240 | 1.3G (3) | XArray + 1000 t chunks | **5.075** | 7.799 | 5.497 |
+| 240 | 1.3G (3) | XArray + 200 t chunks | **4.486** | 9.304 | 7.782 |
+| 240 | 1.3G (3) | XArray + 100 t chunks | **4.405** | 8.505 | 11.017 |
+| 240 | 1.3G (3) | XArray + 50 t chunks | **4.296** | 8.347 | 12.335 |
+| 240 | 1.3G (3) | XArray + 20 t chunks | **4.309** | 8.501 | 13.294 |
 
-| size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- |
-| 1.3G (4) | XArray + no dask | **7.732** | 3.709 | 3.510 |
-| 1.3G (4) | XArray + 100-timestep chunks | **4.222** | 8.178 | 11.442 |
-| 1.3G (4) | XArray + 10-timestep chunks | **4.159** | 9.086 | 14.940 |
-| 1.3G (4) | XArray + 1-timestep chunks | **7.161** | 8.148 | 2.017 |
-| 1.3G (4) | CDO | **6.070** | 6.765 | 6.089 |
-| 1.3G (4) | CDO + serial IO | **4.537** | 5.301 | 2.957 |
-| 1.3G (4) | NCL | **31.076** | 27.203 | 3.643 |
-| 1.3G (4) | NCO | **38.764** | 33.702 | 4.999 |
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 240 | 1.3G (3) | Julia | **27.056** | 15.799 | 3.570 |
+| 240 | 1.3G (3) | CDO | **6.023** | 9.904 | 5.008 |
+| 240 | 1.3G (3) | CDO + serial IO | **7.731** | 7.938 | 2.989 |
+| 240 | 1.3G (3) | NCL | **34.025** | 27.370 | 4.687 |
+| 240 | 1.3G (3) | NCO | **38.321** | 32.955 | 4.922 |
 
-| size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- |
-| 2.9G (3) | XArray + no dask | **33.205** | 9.416 | 12.419 |
-| 2.9G (3) | XArray + 100-timestep chunks | **11.477** | 23.268 | 20.029 |
-| 2.9G (3) | XArray + 10-timestep chunks | **8.876** | 18.641 | 40.981 |
-| 2.9G (3) | XArray + 1-timestep chunks | **8.703** | 12.396 | 2.311 |
-| 2.9G (3) | CDO | **8.332** | 22.239 | 4.523 |
-| 2.9G (3) | CDO + serial IO | **14.467** | 17.852 | 3.762 |
-| 2.9G (3) | NCL | **83.779** | 63.280 | 16.465 |
-| 2.9G (3) | NCO | **88.465** | 73.347 | 11.464 |
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 360 | 2.9G (3) | XArray + no dask | **20.444** | 7.523 | 7.504 |
+| 360 | 2.9G (3) | XArray + 1000 t chunks | **18.417** | 13.535 | 11.109 |
+| 360 | 2.9G (3) | XArray + 200 t chunks | **10.261** | 15.328 | 14.876 |
+| 360 | 2.9G (3) | XArray + 100 t chunks | **8.398** | 19.395 | 18.011 |
+| 360 | 2.9G (3) | XArray + 50 t chunks | **8.833** | 19.087 | 25.503 |
+| 360 | 2.9G (3) | XArray + 20 t chunks | **8.481** | 18.571 | 27.829 |
 
-| size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- |
-| 2.9G (4) | XArray + no dask | **16.529** | 6.211 | 8.986 |
-| 2.9G (4) | XArray + 100-timestep chunks | **7.939** | 17.366 | 19.754 |
-| 2.9G (4) | XArray + 10-timestep chunks | **6.618** | 14.956 | 28.725 |
-| 2.9G (4) | XArray + 1-timestep chunks | **7.556** | 10.298 | 2.278 |
-| 2.9G (4) | CDO | **6.169** | 12.271 | 4.140 |
-| 2.9G (4) | CDO + serial IO | **6.150** | 11.162 | 3.127 |
-| 2.9G (4) | NCL | **72.196** | 58.627 | 11.331 |
-| 2.9G (4) | NCO | **85.414** | 74.449 | 10.379 |
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 360 | 2.9G (3) | Julia | **47.591** | 28.088 | 8.230 |
+| 360 | 2.9G (3) | CDO | **8.505** | 22.760 | 4.508 |
+| 360 | 2.9G (3) | CDO + serial IO | **14.390** | 17.319 | 3.711 |
+| 360 | 2.9G (3) | NCL | **75.075** | 60.429 | 12.742 |
+| 360 | 2.9G (3) | NCO | **89.726** | 73.230 | 11.331 |
 
 ### Macbook: 60 level, 200 timesteps
 This time data was generated using
@@ -219,26 +187,6 @@ These results were surprising: turned out **more pressure levels *significantly*
 | 9 | 22M (3) | CDO + serial IO | **34.465** | 7.605 | 34.887 |
 | 9 | 22M (3) | NCL | **1.348** | 0.975 | 0.184 |
 | 9 | 22M (3) | NCO | **0.933** | 0.813 | 0.079 |
-| 9 | 22M (3) | NCO + no tmp file | **0.961** | 0.808 | 0.075 |
-
-| nlat | size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- | --- |
-| 9 | 22M (4) | XArray + no dask | **1.998** | 1.911 | 0.382 |
-| 9 | 22M (4) | XArray + 200 t chunks | **1.533** | 1.542 | 1.016 |
-| 9 | 22M (4) | XArray + 50 t chunks | **1.463** | 1.263 | 0.253 |
-| 9 | 22M (4) | XArray + 20 t chunks | **1.606** | 1.330 | 0.274 |
-| 9 | 22M (4) | XArray + 10 t chunks | **1.791** | 1.378 | 0.287 |
-| 9 | 22M (4) | XArray + 5 t chunks | **1.712** | 1.479 | 0.321 |
-| 9 | 22M (4) | XArray + 2 t chunks | **2.330** | 1.956 | 0.485 |
-| 9 | 22M (4) | XArray + 1 t chunks | **2.878** | 2.531 | 0.676 |
-
-| nlat | size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- | --- |
-| 9 | 22M (4) | CDO | **fail** | **fail** | **fail** |
-| 9 | 22M (4) | CDO + serial IO | **30.895** | 15.881 | 23.815 |
-| 9 | 22M (4) | NCL | **1.026** | 0.890 | 0.118 |
-| 9 | 22M (4) | NCO | **0.934** | 0.841 | 0.076 |
-| 9 | 22M (4) | NCO + no tmp file | **0.951** | 0.852 | 0.080 |
 
 | nlat | size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
@@ -257,26 +205,6 @@ These results were surprising: turned out **more pressure levels *significantly*
 | 18 | 89M (3) | CDO + serial IO | **36.421** | 8.844 | 37.682 |
 | 18 | 89M (3) | NCL | **4.405** | 3.676 | 0.531 |
 | 18 | 89M (3) | NCO | **3.663** | 3.283 | 0.330 |
-| 18 | 89M (3) | NCO + no tmp file | **3.232** | 2.912 | 0.293 |
-
-| nlat | size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- | --- |
-| 18 | 89M (4) | XArray + no dask | **2.067** | 2.087 | 0.564 |
-| 18 | 89M (4) | XArray + 200 t chunks | **1.498** | 1.963 | 1.713 |
-| 18 | 89M (4) | XArray + 50 t chunks | **1.531** | 1.638 | 2.122 |
-| 18 | 89M (4) | XArray + 20 t chunks | **1.545** | 1.634 | 2.528 |
-| 18 | 89M (4) | XArray + 10 t chunks | **1.415** | 1.386 | 0.264 |
-| 18 | 89M (4) | XArray + 5 t chunks | **1.585** | 1.519 | 0.308 |
-| 18 | 89M (4) | XArray + 2 t chunks | **2.363** | 2.109 | 0.505 |
-| 18 | 89M (4) | XArray + 1 t chunks | **3.225** | 3.010 | 0.790 |
-
-| nlat | size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- | --- |
-| 18 | 89M (4) | CDO | **83.782** | 21.679 | 83.866 |
-| 18 | 89M (4) | CDO + serial IO | **23.610** | 13.286 | 18.369 |
-| 18 | 89M (4) | NCL | **3.115** | 2.665 | 0.341 |
-| 18 | 89M (4) | NCO | **3.165** | 2.846 | 0.274 |
-| 18 | 89M (4) | NCO + no tmp file | **3.165** | 2.854 | 0.275 |
 
 | nlat | size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
@@ -295,26 +223,6 @@ These results were surprising: turned out **more pressure levels *significantly*
 | 24 | 158M (3) | CDO + serial IO | **36.076** | 9.517 | 37.937 |
 | 24 | 158M (3) | NCL | **5.310** | 4.495 | 0.570 |
 | 24 | 158M (3) | NCO | **5.533** | 4.980 | 0.511 |
-| 24 | 158M (3) | NCO + no tmp file | **5.321** | 4.789 | 0.500 |
-
-| nlat | size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- | --- |
-| 24 | 158M (4) | XArray + no dask | **2.442** | 2.271 | 0.763 |
-| 24 | 158M (4) | XArray + 200 t chunks | **2.085** | 2.897 | 1.967 |
-| 24 | 158M (4) | XArray + 50 t chunks | **1.878** | 2.520 | 2.169 |
-| 24 | 158M (4) | XArray + 20 t chunks | **1.814** | 2.093 | 2.429 |
-| 24 | 158M (4) | XArray + 10 t chunks | **2.014** | 2.896 | 2.802 |
-| 24 | 158M (4) | XArray + 5 t chunks | **2.047** | 2.068 | 0.442 |
-| 24 | 158M (4) | XArray + 2 t chunks | **2.623** | 2.582 | 0.615 |
-| 24 | 158M (4) | XArray + 1 t chunks | **3.468** | 3.313 | 0.843 |
-
-| nlat | size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- | --- |
-| 24 | 158M (4) | CDO | **78.266** | 20.603 | 77.889 |
-| 24 | 158M (4) | CDO + serial IO | **29.124** | 16.458 | 22.057 |
-| 24 | 158M (4) | NCL | **6.164** | 5.233 | 0.629 |
-| 24 | 158M (4) | NCO | **5.627** | 5.088 | 0.498 |
-| 24 | 158M (4) | NCO + no tmp file | **4.865** | 4.414 | 0.432 |
 
 | nlat | size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
@@ -333,26 +241,6 @@ These results were surprising: turned out **more pressure levels *significantly*
 | 36 | 356M (3) | CDO + serial IO | **36.543** | 12.035 | 36.878 |
 | 36 | 356M (3) | NCL | **12.972** | 11.161 | 1.460 |
 | 36 | 356M (3) | NCO | **13.601** | 12.286 | 1.211 |
-| 36 | 356M (3) | NCO + no tmp file | **12.030** | 10.868 | 1.119 |
-
-| nlat | size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- | --- |
-| 36 | 356M (4) | XArray + no dask | **2.924** | 2.525 | 1.135 |
-| 36 | 356M (4) | XArray + 200 t chunks | **2.301** | 3.403 | 3.604 |
-| 36 | 356M (4) | XArray + 50 t chunks | **2.281** | 3.327 | 4.153 |
-| 36 | 356M (4) | XArray + 20 t chunks | **2.333** | 4.330 | 3.885 |
-| 36 | 356M (4) | XArray + 10 t chunks | **2.646** | 4.556 | 4.468 |
-| 36 | 356M (4) | XArray + 5 t chunks | **2.802** | 4.621 | 5.220 |
-| 36 | 356M (4) | XArray + 2 t chunks | **2.603** | 3.034 | 0.660 |
-| 36 | 356M (4) | XArray + 1 t chunks | **3.122** | 3.370 | 0.787 |
-
-| nlat | size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- | --- |
-| 36 | 356M (4) | CDO | **79.169** | 21.161 | 79.478 |
-| 36 | 356M (4) | CDO + serial IO | **26.189** | 15.167 | 19.568 |
-| 36 | 356M (4) | NCL | **10.746** | 9.450 | 1.186 |
-| 36 | 356M (4) | NCO | **12.929** | 11.732 | 1.106 |
-| 36 | 356M (4) | NCO + no tmp file | **11.360** | 10.296 | 1.005 |
 
 | nlat | size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
@@ -371,26 +259,6 @@ These results were surprising: turned out **more pressure levels *significantly*
 | 60 | 989M (3) | CDO + serial IO | **21.694** | 13.159 | 19.198 |
 | 60 | 989M (3) | NCL | **31.795** | 27.746 | 3.571 |
 | 60 | 989M (3) | NCO | **35.165** | 30.703 | 4.343 |
-| 60 | 989M (3) | NCO + no tmp file | **36.595** | 31.913 | 4.520 |
-
-| nlat | size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- | --- |
-| 60 | 989M (4) | XArray + no dask | **5.205** | 3.281 | 2.140 |
-| 60 | 989M (4) | XArray + 200 t chunks | **5.711** | 8.548 | 5.936 |
-| 60 | 989M (4) | XArray + 50 t chunks | **6.102** | 10.557 | 11.273 |
-| 60 | 989M (4) | XArray + 20 t chunks | **5.945** | 10.100 | 10.858 |
-| 60 | 989M (4) | XArray + 10 t chunks | **6.192** | 10.504 | 8.871 |
-| 60 | 989M (4) | XArray + 5 t chunks | **8.126** | 12.315 | 10.254 |
-| 60 | 989M (4) | XArray + 2 t chunks | **7.381** | 12.694 | 18.260 |
-| 60 | 989M (4) | XArray + 1 t chunks | **4.726** | 6.402 | 1.615 |
-
-| nlat | size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- | --- |
-| 60 | 989M (4) | CDO | **81.558** | 23.116 | 81.029 |
-| 60 | 989M (4) | CDO + serial IO | **19.866** | 13.334 | 15.244 |
-| 60 | 989M (4) | NCL | **28.179** | 23.592 | 3.626 |
-| 60 | 989M (4) | NCO | **35.082** | 30.758 | 4.105 |
-| 60 | 989M (4) | NCO + no tmp file | **34.482** | 30.119 | 4.008 |
 
 | nlat | size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
@@ -409,26 +277,6 @@ These results were surprising: turned out **more pressure levels *significantly*
 | 90 | 2.2G (3) | CDO + serial IO | **28.416** | 23.982 | 18.300 |
 | 90 | 2.2G (3) | NCL | **76.985** | 60.432 | 13.390 |
 | 90 | 2.2G (3) | NCO | **86.957** | 74.774 | 10.855 |
-| 90 | 2.2G (3) | NCO + no tmp file | **88.198** | 76.474 | 10.995 |
-
-| nlat | size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- | --- |
-| 90 | 2.2G (4) | XArray + no dask | **14.651** | 6.971 | 8.245 |
-| 90 | 2.2G (4) | XArray + 200 t chunks | **14.631** | 15.453 | 16.103 |
-| 90 | 2.2G (4) | XArray + 50 t chunks | **9.936** | 19.444 | 19.655 |
-| 90 | 2.2G (4) | XArray + 20 t chunks | **9.412** | 18.550 | 18.795 |
-| 90 | 2.2G (4) | XArray + 10 t chunks | **10.693** | 19.027 | 18.079 |
-| 90 | 2.2G (4) | XArray + 5 t chunks | **13.548** | 23.398 | 19.477 |
-| 90 | 2.2G (4) | XArray + 2 t chunks | **15.646** | 25.833 | 15.669 |
-| 90 | 2.2G (4) | XArray + 1 t chunks | **18.741** | 30.060 | 30.747 |
-
-| nlat | size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- | --- |
-| 90 | 2.2G (4) | CDO | **119.049** | 43.083 | 111.332 |
-| 90 | 2.2G (4) | CDO + serial IO | **41.024** | 29.512 | 28.918 |
-| 90 | 2.2G (4) | NCL | **129.229** | 80.965 | 28.766 |
-| 90 | 2.2G (4) | NCO | **96.546** | 80.539 | 12.356 |
-| 90 | 2.2G (4) | NCO + no tmp file | **78.907** | 65.833 | 11.634 |
 
 | nlat | size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
@@ -445,6 +293,8 @@ These results were surprising: turned out **more pressure levels *significantly*
 | --- | --- | --- | --- | --- | --- |
 | 120 | 3.9G (3) | CDO | **102.655** | 66.191 | 92.321 |
 | 120 | 3.9G (3) | CDO + serial IO | **70.412** | 49.457 | 28.073 |
+| 120 | 3.9G (3) | NCL | **really slow** | **really slow** | **really slow** |
+| 120 | 3.9G (3) | NCO | **really slow** | **really slow** | **really slow** |
 
 ### Linux test
 To be added.
