@@ -16,7 +16,16 @@ Setup is 4 times daily 100-day T42L40 resolution files, from dry dynamical core 
 * Time for interpolation script with **explicit iteration through variables**: ***71s almost identical***
 * Time for interpolation with CDO: ***30s pre-processing*** (probably due to inefficiency of overwriting original ncfile with file that dleetes coordinates), ***94s for setting things up*** (because we have to write surface geopotential to same massive file, instead of declaring as separate variable in NCL), and ***122s actual interpolation*** (with bunch of warnings) so ***216 total***
     
+Alternative explanation is that, language tools like python and NCl more appropriate for parallel computation because **data is loaded into memory once**, then calculations can proceed quickly. Maybe issue was just the multiple (5) disk reads compared to 1 NCL disk read?
+
 ## Eddy flux term tests
+### Puzzles
+See the Macbook 60 level results below: it turned out that **more pressure levels *significantly* slowed** the CDO operations. And I have no idea why. Maybe has to do with the particular operation used, e.g. the `-enlarge` calculated independently for each pressure level?
+This was true for **Homebrew** CDO, **MacPorts** CDO, and custom installed version. This was **not** true on Linux. Maybe some sort of compatibility issue.
+<!-- Suspect the CDO issues had something to do with my compilation. These will be updated. -->
+
+Another strange note: for some reason CDO is **much much slower** than NCL (which performs a ton of calculation) running in parallel on the compute cluster. Maybe CDO is bad at parallel computations, the threads conflict or something? But they are separate background processes. Meanwhile NCL was blazingly fast.
+
 ### Macbook: 1 level, 1000 timesteps
 Data used was generated with the `datagen` script via the line:
 ```
@@ -127,10 +136,6 @@ This time data was generated using
 for reso in 10 7.5 5 3 2 1.5; do ./datagen $reso; done
 ```
 since individual "timesteps" contain much more data.
-
-These results were surprising: turned out **more pressure levels *significantly* slowed** the CDO operations. And I have no idea why. Maybe has to do with the particular operation used, e.g. the `-enlarge` calculated independently for each pressure level?
-
-**Note**: Suspect the CDO issues had something to do with my compilation. These will be updated.
 
 | nlat | size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
@@ -285,6 +290,80 @@ Here we see CDO performs just fine (the issues on the Macbook were likely an err
 | 120 | 7.8G (3) | CDO + serial IO | **32.032** | 54.436 | 7.952 |
 | 120 | 7.8G (3) | NCL | **113.611** | 93.564 | 10.284 |
 | 120 | 7.8G (3) | NCO | **140.847** | 112.292 | 13.788 |
+
+### Cheyenne submission: 40 cores
+Next I used `qsub`, and again, the results were quite similar. Not sure why we are seeing the issues with CDO during model runs.
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 18 | 178M (3) | XArray + no dask | **1.173** | 2.356 | 0.400 |
+| 18 | 178M (3) | XArray + 200 t chunks | **0.951** | 3.400 | 0.452 |
+| 18 | 178M (3) | XArray + 20 t chunks | **1.055** | 10.080 | 12.028 |
+| 18 | 178M (3) | XArray + 2 t chunks | **1.091** | 1.112 | 0.256 |
+| 18 | 178M (3) | Julia | **8.667** | 8.020 | 0.632 |
+| 18 | 178M (3) | CDO | **2.942** | 5.916 | 6.928 |
+| 18 | 178M (3) | CDO + serial IO | **3.024** | 5.088 | 4.484 |
+| 18 | 178M (3) | NCL | **2.573** | 2.192 | 0.364 |
+| 18 | 178M (3) | NCO | **2.890** | 2.516 | 0.308 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 24 | 317M (3) | XArray + no dask | **1.492** | 3.348 | 0.712 |
+| 24 | 317M (3) | XArray + 200 t chunks | **1.148** | 4.452 | 0.784 |
+| 24 | 317M (3) | XArray + 20 t chunks | **1.059** | 8.796 | 12.480 |
+| 24 | 317M (3) | XArray + 2 t chunks | **1.219** | 1.332 | 0.364 |
+| 24 | 317M (3) | Julia | **9.006** | 8.600 | 0.740 |
+| 24 | 317M (3) | CDO | **3.030** | 6.304 | 7.180 |
+| 24 | 317M (3) | CDO + serial IO | **3.551** | 6.040 | 4.380 |
+| 24 | 317M (3) | NCL | **4.436** | 3.868 | 0.520 |
+| 24 | 317M (3) | NCO | **5.265** | 4.444 | 0.792 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 36 | 712M (3) | XArray + no dask | **4.679** | 5.348 | 1.416 |
+| 36 | 712M (3) | XArray + 200 t chunks | **1.463** | 5.676 | 1.244 |
+| 36 | 712M (3) | XArray + 20 t chunks | **1.344** | 10.848 | 25.072 |
+| 36 | 712M (3) | XArray + 2 t chunks | **1.639** | 21.664 | 31.216 |
+| 36 | 712M (3) | Julia | **10.784** | 10.152 | 0.960 |
+| 36 | 712M (3) | CDO | **3.216** | 8.772 | 5.284 |
+| 36 | 712M (3) | CDO + serial IO | **5.153** | 8.844 | 4.220 |
+| 36 | 712M (3) | NCL | **9.574** | 8.620 | 0.928 |
+| 36 | 712M (3) | NCO | **11.751** | 10.088 | 1.580 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 60 | 2.0G (3) | XArray + no dask | **9.826** | 7.972 | 3.472 |
+| 60 | 2.0G (3) | XArray + 200 t chunks | **2.574** | 9.648 | 3.192 |
+| 60 | 2.0G (3) | XArray + 20 t chunks | **1.899** | 28.012 | 31.980 |
+| 60 | 2.0G (3) | XArray + 2 t chunks | **3.022** | 47.212 | 100.940 |
+| 60 | 2.0G (3) | Julia | **17.202** | 15.716 | 1.816 |
+| 60 | 2.0G (3) | CDO | **5.246** | 17.416 | 4.232 |
+| 60 | 2.0G (3) | CDO + serial IO | **10.366** | 17.528 | 4.756 |
+| 60 | 2.0G (3) | NCL | **26.122** | 23.488 | 2.600 |
+| 60 | 2.0G (3) | NCO | **31.881** | 27.896 | 3.932 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 90 | 4.4G (3) | XArray + no dask | **18.705** | 11.156 | 7.708 |
+| 90 | 4.4G (3) | XArray + 200 t chunks | **4.813** | 12.172 | 7.492 |
+| 90 | 4.4G (3) | XArray + 20 t chunks | **2.762** | 29.908 | 59.560 |
+| 90 | 4.4G (3) | XArray + 2 t chunks | **3.737** | 68.036 | 121.884 |
+| 90 | 4.4G (3) | Julia | **31.706** | 26.472 | 3.488 |
+| 90 | 4.4G (3) | CDO | **9.824** | 34.300 | 5.444 |
+| 90 | 4.4G (3) | CDO + serial IO | **19.190** | 35.036 | 6.372 |
+| 90 | 4.4G (3) | NCL | **59.335** | 52.484 | 5.860 |
+| 90 | 4.4G (3) | NCO | **74.060** | 63.236 | 8.096 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 120 | 7.8G (3) | XArray + no dask | **30.443** | 15.376 | 13.232 |
+| 120 | 7.8G (3) | XArray + 200 t chunks | **7.703** | 16.108 | 12.044 |
+| 120 | 7.8G (3) | XArray + 20 t chunks | **4.069** | 41.852 | 81.632 |
+| 120 | 7.8G (3) | XArray + 2 t chunks | **4.771** | 92.560 | 152.648 |
+| 120 | 7.8G (3) | Julia | **56.144** | 41.032 | 5.976 |
+| 120 | 7.8G (3) | CDO | **15.368** | 57.296 | 6.508 |
+| 120 | 7.8G (3) | CDO + serial IO | **31.701** | 57.076 | 7.296 |
+| 120 | 7.8G (3) | NCL | **111.396** | 93.536 | 10.064 |
 
 # Installation notes
 ## CDO for macOS
