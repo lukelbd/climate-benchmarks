@@ -84,16 +84,13 @@ for data in ${datas[@]}; do
   # Break table
   # printf "\n$header" >>$output # add header for each new file
 
-  # Julia
-  bench "Julia" julia ${name}.jl $data
-
   # CDO method
   # NOTE: On mac just run with serial IO
+  # NOTE: Serial IO turned out to be really small difference
   export DYLD_LIBRARY_PATH=""
-  if [ ${HOSTNAME%%.*} != "uriah" ]; then
-    bench "CDO" ${name}.cdo $data
-  fi
-  bench "CDO + serial IO" ${name}.cdo $data '-L'
+  bench "CDO" ${name}.cdo $data
+  # bench "CDO no expr" ${name}_stupid.cdo $data
+  # bench "CDO + serial IO" ${name}_stupid.cdo $data '-L'
 
   # NCL method
   # NOTE: NCL needs special dyld library path but so does brew, screws up
@@ -112,4 +109,7 @@ for data in ${datas[@]}; do
   # bench "NCO + no tmp file" ${name}.nco $data --no_tmp_fl
   # bench "NCO + open in RAM" ${name}.nco $data --open_ram --no_tmp_fl
   # bench "NCO + create in RAM" ${name}.nco $data --create_ram --no_tmp_fl
+
+  # Julia
+  bench "Julia" julia ${name}.jl $data
 done
