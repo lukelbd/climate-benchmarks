@@ -57,18 +57,19 @@ for data in ${datas[@]}; do
   # bench "XArray + 100-timestep chunks" python ${name}.py $data 100 60
   if [ $dir == 1lev ]; then
     bench "XArray + 1000 t chunks" python ${name}.py $data 1000 1
-    bench "XArray + 200 t chunks"  python ${name}.py $data 200 1
+    # bench "XArray + 200 t chunks"  python ${name}.py $data 200 1
     bench "XArray + 100 t chunks"  python ${name}.py $data 100 1
-    bench "XArray + 50 t chunks"   python ${name}.py $data 50 1
-    bench "XArray + 20 t chunks"   python ${name}.py $data 20 1
+    # bench "XArray + 50 t chunks"   python ${name}.py $data 50 1
+    # bench "XArray + 20 t chunks"   python ${name}.py $data 20 1
+    bench "XArray + 10 t chunks"   python ${name}.py $data 20 1
   elif [ $dir == 60lev ]; then
     bench "XArray + 200 t chunks" python ${name}.py $data 200 60
-    bench "XArray + 50 t chunks"  python ${name}.py $data 50 60
+    # bench "XArray + 50 t chunks"  python ${name}.py $data 50 60
     bench "XArray + 20 t chunks"  python ${name}.py $data 20 60
-    bench "XArray + 10 t chunks"  python ${name}.py $data 10 60
-    bench "XArray + 5 t chunks"   python ${name}.py $data 5 60
+    # bench "XArray + 10 t chunks"  python ${name}.py $data 10 60
+    # bench "XArray + 5 t chunks"   python ${name}.py $data 5 60
     bench "XArray + 2 t chunks"   python ${name}.py $data 2 60
-    bench "XArray + 1 t chunks"   python ${name}.py $data 1 60
+    # bench "XArray + 1 t chunks"   python ${name}.py $data 1 60
   else
     echo "Error: Unknown chunk combos for sample data in dir \"$dir\"."
     exit 1
@@ -80,7 +81,7 @@ for data in ${datas[@]}; do
   # bench "XArray + 200 t, 1 p chunks" python ${name}.py $data 1 1
 
   # Break table
-  printf "\n$header" >>$output # add header for each new file
+  # printf "\n$header" >>$output # add header for each new file
 
   # Julia
   bench "Julia" julia ${name}.jl $data
