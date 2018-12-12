@@ -12,7 +12,6 @@ if (.not. isvar("large")) then
     print("fatal:Variable 'large' must be passed as follows: " + demo)
     exit ; almost impossible to put double-quote in string
 end if
-system("rm fluxes_ncl.nc 2>/dev/null") ; remove file
 f = addfile(filename, "r") ; just read data from here
 t = f->t
 u = f->u
@@ -22,7 +21,10 @@ v = f->v
 if (toint(large) .eq. 1) then
   setfileoption("nc", "Format", "LargeFile") 
 end if
-o = addfile("fluxes_ncl.nc", "c") ; create new file; don't want to read old values or anything
+dir = str_split(filename, "/")
+dir := dir(0)
+system("rm " + dir + "/fluxes_ncl.nc 2>/dev/null") ; remove file
+o = addfile(dir + "/fluxes_ncl.nc", "c") ; create new file; don't want to read old values or anything
 
 ; Calculate fluxes
 ; tbar := conform(t, dim_avg_n(t, dimlon), (/0, 1, 2/)

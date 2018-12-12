@@ -1,14 +1,11 @@
 #!/bin/bash
+ncfile=$1
+outfile=$2
+flags="-s -O"
 ################################################################################
-# Testing interpolation and extrapolation with CDO from model levels
-# to pressure levels
-origfile=4xdaily_inst.nc
-flags="-O"
-cp $origfile ${origfile%.*}_copy.nc
-ncfile=${origfile%.*}_copy.nc
-function ncdimlist() { \ncdump -h "$1" | sed -n '/dimensions:/,$p' | sed '/variables:/q' \
-    | cut -d '=' -f 1 -s | xargs | tr ' ' '\n' | grep -v '[{}]' | sort; }
-
+# This function interpolates model level output to pressure levels
+# Turns out this is *much slower* than NCL interpolation; compare
+# performance of this script with process_interp.ncl
 ############################################################################
 # 1) Pre-processing steps. CDO expects levels to be named mlev/ilev for
 # middle/intermediate levs, so change dim names. Can't be done in CDO. Also
@@ -17,22 +14,12 @@ function ncdimlist() { \ncdump -h "$1" | sed -n '/dimensions:/,$p' | sed '/varia
 #  * why I can read-write same file: http://nco.sourceforge.net/nco.html#Temporary-Output-Files
 #  * try zaxisdes to see if CDO detects the hybrid axis correctly
 t=$(date +%s)
-# First change the names to ECHAM conventions for CDO
-# Behavior of commands can be weird; I tried them 50 times and sometimes get
-# errors when trying to put them all together. Just run them separately, they are cheap.
-if [[ " $(ncdimlist $ncfile | xargs) " =~ " pfull " ]]; then
-  ncrename -d pfull,mlev $ncfile # dimensions
-  ncrename -v pfull,mlev $ncfile # variables of same name
-fi
-if [[ " $(ncdimlist $ncfile | xargs) " =~ " phalf " ]]; then
-  ncrename -d phalf,ilev $ncfile
-  ncrename -v phalf,ilev $ncfile
-fi
+torig=$t
 # Next output the coordinates into a separate file; NCL can't completely overwrite
 # variable dimensions/name/etc., would require delete which it can't do
 # Also can't use CDO delname because CDO cannot find variables that don't fit
 # into its model of (x by y by z)/(x by y by z by t), e.g. hybrid coords
-coordsfile=coords.nc
+coordsfile=interp0.nc
 ncks -O -v hyai,hybi $ncfile $coordsfile # put coords here
 ncks -O -x -v hyai,hybi $ncfile $ncfile # delete from original
 # Get the pressure suitable for interpolation with a quick python script
@@ -46,11 +33,6 @@ with nc4.Dataset("$coordsfile") as f:
 psurf = 101325 # average surface pressure
 phalf = hyai + hybi*psurf
 pfull = (phalf[1:] + phalf[:-1])/2
-#### testing
-# Nextra = 5
-# pfull = np.concatenate([pfull, pfull[-Nextra:] + (pfull[-1]-pfull[-Nextra-1])])
-#### testing
-# Print, or save into file
 print(",".join("%.f" % i for i in pfull.flat)) # just print output we want
 # plevels = np.savetxt("plevels.txt", pfull, fmt="%.f", delimiter='', newline=',')
 EOF
@@ -103,60 +85,35 @@ echo "  * Time for pre-processing with NCO and python: $(($(date +%s) - $t))s."
 #   * you also cannot use "ncks -v hyai,hybi coords.nc; cdo enlarge,<infile> coords.nc"
 #       because CDO will not read coords.nc at all.
 #   * use "cat plevels.txt | sed 's/,/ /g' | wc -w" to get level count
-#
 # Part 1: # MUST change standard_name attribute so CDO will detect surface
 # pressure; this is CF convention name; and it's all we have to do!
 #   * first command is slow because need to make copy with setzaxis; obviously not
 #     ideal workflow but still probably faster than any NCL approach
 #   * second command is fast because it's a 1-level variable
 echo "Interpolating coordinates..."
-tempfix=true
-$tempfix && string="NEW" || string=""
-$tempfix && tname=temp || tname=t
-# cdo -setzaxis,zaxis.txt -delname,p $ncfile prep1.nc
-cdo -setzaxis,zaxis.txt -delname,p -chname,t,$tname $ncfile prep1.nc
-ncap2 -O -s 'zs=slp; zs(:,:,:)=0' prep1.nc prep1.nc
+cdo -setzaxis,zaxis.txt $ncfile interp1.nc
+ncap2 -O -s 'zs=slp; zs(:,:,:)=0' interp1.nc interp1.nc
 ncatted -O -a standard_name,slp,o,c,"surface_air_pressure" \
+   -a standard_name,t,o,c,"air_temperature" \
    -a standard_name,zs,o,c,"surface_geopotential" \
    -a long_name,zs,o,c,"surface geopotential" \
-   -a units,zs,o,c,"m" prep1.nc
-! $tempfix && ncatted -O -a standard_name,t,o,c,"air_temperature" prep1.nc
+   -a units,zs,o,c,"m" interp1.nc
 echo "  * Time for setting things up before interpolation: $(($(date +%s) - $t))s."
 t=$(date +%s)
 
 # Part 2: Interpolate onto the pressure-levels file created before
 #   * will overwrite the old $ncfile with this new, interpolated one
 #   * results here turned out weird in tropics-surface; identially weird when using
-#     just prep1.nc (CDO detects geopotential in bottom layer)
-export EXTRAPOLATE=1
-cdo $flags ml2pl,$(cat plevels.txt) 'prep1.nc' ${origfile%.*}_interp$string${EXTRAPOLATE}.nc
+#     just interp1.nc (CDO detects geopotential in bottom layer)
+EXTRAPOLATE=1 cdo $flags ml2pl,$(cat plevels.txt) interp1.nc interp2.nc
 
 # Part 3: Extra processing of the result so things are nice
 # Includes some extra attributes, and change back to mb units
-# Option A: Bounds with CDO
-cdo $flags -genlevelbounds,ztop=101325,zbot=0 ${origfile%.*}_interp$string${EXTRAPOLATE}.nc prep2.nc
-ncatted -O -a units,plev,o,c,"mb" prep2.nc
-ncatted -O -a units,plev_bnds,o,c,"mb" prep2.nc
-ncatted -O -a long_name,plev_bnds,o,c,"pressure bounds" prep2.nc
-ncatted -O -a positive,plev_bnds,o,c,"down" prep2.nc
-ncap2 -O -s "plev=plev/100; plev_bnds=plev_bnds/100" prep2.nc prep2.nc
-cp prep2.nc ${origfile%.*}_interp${EXTRAPOLATE}.nc
-# # Option B: Bounds with NCO
-# Unfortunately fails even with latest version; previously could use 'ncap' with
-# create_bounds and prevent segmentation fault, but that would also raise error
-# cp ${origfile%.*}_interp${EXTRAPOLATE}.nc prep2.nc
-# cat > genbounds.nco << EOF
-# defdim("bnds",2);
-# plev=plev/100;
-# plev_bnds=create_bounds(plev,"bnds","plev_bnds");
-# EOF
-# ncap2 -O -S genbounds.nco prep2.nc prep2.nc
-# ncap2 -O -s 'defdim("bnds",2); plev=plev/100; plev_bnds=create_bounds(plev,"bnds","plev_bnds")' prep2.nc prep2.nc
-echo "  * Time for interpolating to pressure coordinates with CDO: $(($(date +%s) - $t))s."
+# ncap2 -O -s "defdim(\"bnds\",2); plev=plev/100; plev_bnds=create_bounds(plev,\$bnds,\"plev_bnds\")" interp2.nc interp2.nc
+# couldn't get the create_bounds function to work; followed example but kept getting segfaults and stuff
+cdo $flags -delname,zs -genlevelbounds,ztop=101325,zbot=0 interp2.nc $outfile
 
-# For testing purposes
-# Difference
-echo "Creating difference file..."
-cdo sub -selname,t $origfile -selname,$tname ${origfile%.*}_interp$string${EXTRAPOLATE}.nc \
-  ${origfile%.*}_diff$string${EXTRAPOLATE}.nc
+# Message
+echo "  * Time for interpolating to pressure coordinates with CDO: $(($(date +%s) - $t))s."
+echo "TOTAL TIME ELAPSED: $(($(date +%s) - $torig))s."
 

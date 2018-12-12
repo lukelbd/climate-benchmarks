@@ -8,7 +8,9 @@
 # Helper function
 # We require a subshell to redirect 'time' for some reason; because it's weird
 # builtin or something
-output=fluxes_${HOSTNAME%%.*}.log # store here
+name=$0
+dir=60lev # directories where data is stored
+output=$dir/fluxes_${HOSTNAME%%.*}.log # store here
 header="| nlat | size (version) | name | real (s) | user (s) | sys (s) |\n| --- | --- | --- | --- | --- | --- |\n"
 rm $output 2>/dev/null
 seconds() {
@@ -33,8 +35,6 @@ bench() {
 }
 
 # Loop over datasets with different resolutions
-dir=60lev # directories where data is stored
-name=$0
 datas=($dir/data*.nc)
 counter=0
 for data in ${datas[@]}; do
@@ -47,6 +47,9 @@ for data in ${datas[@]}; do
   echo; echo "Dataset: $data ($size)"
   printf "\n$header" >>$output # add header for each new file
 
+  # Julia
+  bench "Julia" julia ${name}.jl $data
+
   # Skip to big files
   # let counter+=1
   # [ $counter -le 2 ] && continue
@@ -55,13 +58,24 @@ for data in ${datas[@]}; do
 
   # Python with xarray and Dask chunking by 2D slice
   # bench "XArray + 100-timestep chunks" python ${name}.py $data 100 60
-  bench "XArray + 200 t chunks" python ${name}.py $data 200 60
-  bench "XArray + 50 t chunks"  python ${name}.py $data 50 60
-  bench "XArray + 20 t chunks"  python ${name}.py $data 20 60
-  bench "XArray + 10 t chunks"  python ${name}.py $data 10 60
-  bench "XArray + 5 t chunks"   python ${name}.py $data 5 60
-  bench "XArray + 2 t chunks"   python ${name}.py $data 2 60
-  bench "XArray + 1 t chunks"   python ${name}.py $data 1 60
+  if [ $dir == 1lev ]; then
+    bench "XArray + 1000 t chunks" python ${name}.py $data 1000 1
+    bench "XArray + 200 t chunks"  python ${name}.py $data 200 1
+    bench "XArray + 100 t chunks"  python ${name}.py $data 100 1
+    bench "XArray + 50 t chunks"   python ${name}.py $data 50 1
+    bench "XArray + 20 t chunks"   python ${name}.py $data 20 1
+  elif [ $dir == 60lev ]; then
+    bench "XArray + 200 t chunks" python ${name}.py $data 200 60
+    bench "XArray + 50 t chunks"  python ${name}.py $data 50 60
+    bench "XArray + 20 t chunks"  python ${name}.py $data 20 60
+    bench "XArray + 10 t chunks"  python ${name}.py $data 10 60
+    bench "XArray + 5 t chunks"   python ${name}.py $data 5 60
+    bench "XArray + 2 t chunks"   python ${name}.py $data 2 60
+    bench "XArray + 1 t chunks"   python ${name}.py $data 1 60
+  else
+    echo "Error: Unknown chunk combos for sample data in dir \"$dir\"."
+    exit 1
+  fi
   # bench "XArray + 200 t, 60 p chunks" python ${name}.py $data 1 10
   # bench "XArray + 200 t, 20 p chunks" python ${name}.py $data 10 1
   # bench "XArray + 200 t, 10 p chunks" python ${name}.py $data 5 1
