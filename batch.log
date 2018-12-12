@@ -1,0 +1,120 @@
+
+Dataset: 60lev/dataN0018T200_3.nc (178M)
+XArray + no dask
+real 0m1.173s user 0m2.356s sys 0m0.400s
+XArray + 200 t chunks
+real 0m0.951s user 0m3.400s sys 0m0.452s
+XArray + 20 t chunks
+real 0m1.055s user 0m10.080s sys 0m12.028s
+XArray + 2 t chunks
+real 0m1.091s user 0m1.112s sys 0m0.256s
+Julia
+real 0m8.667s user 0m8.020s sys 0m0.632s
+CDO
+real 0m2.942s user 0m5.916s sys 0m6.928s
+CDO + serial IO
+real 0m3.024s user 0m5.088s sys 0m4.484s
+NCL
+real 0m2.573s user 0m2.192s sys 0m0.364s
+NCO
+real 0m2.890s user 0m2.516s sys 0m0.308s
+
+Dataset: 60lev/dataN0024T200_3.nc (317M)
+XArray + no dask
+real 0m1.492s user 0m3.348s sys 0m0.712s
+XArray + 200 t chunks
+real 0m1.148s user 0m4.452s sys 0m0.784s
+XArray + 20 t chunks
+real 0m1.059s user 0m8.796s sys 0m12.480s
+XArray + 2 t chunks
+real 0m1.219s user 0m1.332s sys 0m0.364s
+Julia
+real 0m9.006s user 0m8.600s sys 0m0.740s
+CDO
+real 0m3.030s user 0m6.304s sys 0m7.180s
+CDO + serial IO
+real 0m3.551s user 0m6.040s sys 0m4.380s
+NCL
+real 0m4.436s user 0m3.868s sys 0m0.520s
+NCO
+real 0m5.265s user 0m4.444s sys 0m0.792s
+
+Dataset: 60lev/dataN0036T200_3.nc (712M)
+XArray + no dask
+real 0m4.679s user 0m5.348s sys 0m1.416s
+XArray + 200 t chunks
+real 0m1.463s user 0m5.676s sys 0m1.244s
+XArray + 20 t chunks
+real 0m1.344s user 0m10.848s sys 0m25.072s
+XArray + 2 t chunks
+real 0m1.639s user 0m21.664s sys 0m31.216s
+Julia
+real 0m10.784s user 0m10.152s sys 0m0.960s
+CDO
+real 0m3.216s user 0m8.772s sys 0m5.284s
+CDO + serial IO
+real 0m5.153s user 0m8.844s sys 0m4.220s
+NCL
+real 0m9.574s user 0m8.620s sys 0m0.928s
+NCO
+real 0m11.751s user 0m10.088s sys 0m1.580s
+
+Dataset: 60lev/dataN0060T200_3.nc (2.0G)
+XArray + no dask
+real 0m9.826s user 0m7.972s sys 0m3.472s
+XArray + 200 t chunks
+real 0m2.574s user 0m9.648s sys 0m3.192s
+XArray + 20 t chunks
+real 0m1.899s user 0m28.012s sys 0m31.980s
+XArray + 2 t chunks
+real 0m3.022s user 0m47.212s sys 1m40.940s
+Julia
+real 0m17.202s user 0m15.716s sys 0m1.816s
+CDO
+real 0m5.246s user 0m17.416s sys 0m4.232s
+CDO + serial IO
+real 0m10.366s user 0m17.528s sys 0m4.756s
+NCL
+real 0m26.122s user 0m23.488s sys 0m2.600s
+NCO
+real 0m31.881s user 0m27.896s sys 0m3.932s
+
+Dataset: 60lev/dataN0090T200_3.nc (4.4G)
+XArray + no dask
+real 0m18.705s user 0m11.156s sys 0m7.708s
+XArray + 200 t chunks
+real 0m4.813s user 0m12.172s sys 0m7.492s
+XArray + 20 t chunks
+real 0m2.762s user 0m29.908s sys 0m59.560s
+XArray + 2 t chunks
+real 0m3.737s user 1m8.036s sys 2m1.884s
+Julia
+real 0m31.706s user 0m26.472s sys 0m3.488s
+CDO
+real 0m9.824s user 0m34.300s sys 0m5.444s
+CDO + serial IO
+real 0m19.190s user 0m35.036s sys 0m6.372s
+NCL
+real 0m59.335s user 0m52.484s sys 0m5.860s
+NCO
+real 1m14.060s user 1m3.236s sys 0m8.096s
+
+Dataset: 60lev/dataN0120T200_3.nc (7.8G)
+XArray + no dask
+real 0m30.443s user 0m15.376s sys 0m13.232s
+XArray + 200 t chunks
+real 0m7.703s user 0m16.108s sys 0m12.044s
+XArray + 20 t chunks
+real 0m4.069s user 0m41.852s sys 1m21.632s
+XArray + 2 t chunks
+real 0m4.771s user 1m32.560s sys 2m32.648s
+Julia
+real 0m56.144s user 0m41.032s sys 0m5.976s
+CDO
+real 0m15.368s user 0m57.296s sys 0m6.508s
+CDO + serial IO
+real 0m31.701s user 0m57.076s sys 0m7.296s
+NCL
+real 1m51.396s user 1m33.536s sys 0m10.064s
+NCO
+real 2m18.385s user 1m52.500s sys 0m14.392s
