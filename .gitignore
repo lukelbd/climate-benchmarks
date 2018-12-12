@@ -2,6 +2,11 @@
 #####################
 *.nc
   # data
+*.o[0-9]*
+*.e[0-9]*
+  # qsub output
+*.tmp
+  # interactive NCO
 .vimsession
   # vim sessions
 __pycache__
