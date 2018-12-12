@@ -19,10 +19,12 @@ print(f'Resolution: {reso}')
 print('Initial stuff.')
 dtype = np.float32
 step = 2
-ntime = 1000
+# ntime = 1000
+ntime = 200
 time = np.arange(1/step, ntime, dtype=dtype)/step
-plev = np.array([500.0], dtype=dtype)
-# plev = np.linspace(0, 1013.25, 21)
+# plev = np.array([500.0], dtype=dtype)
+plev = np.linspace(0, 1013.25, 61)
+plev = (plev[1:] + plev[:-1])/2
 lat = np.arange(-90, 90 + reso/2, reso, dtype=dtype)
 lat = (lat[1:] + lat[:-1])/2
 lon = np.arange(-180, 180 - reso/2, reso, dtype=dtype)
@@ -58,7 +60,9 @@ for attrs in coords_attrs.values():
 print('Making variables.')
 scale = 50
 offset = 0.5
-chunks = (1, 1, *shape[2:]) # one chunk per horizontal slice, works pretty well
+# chunks = (1, 1, *shape[2:]) # one chunk per horizontal slice, works for bigger datasets
+# chunks = (1, shape[1], shape[2], shape[3]) # one chunk per timestep worked *way* better
+chunks = (1, shape[1]//4, shape[2], shape[3]) # compromise?
 params_map = {name: (coords, (scale*da.random.normal(0, 1, shape, chunks=chunks)).cumsum(axis=0).astype(dtype), params_attrs[name]) for name in params}
 coords_map = {name: ((name,), coords_values[name], coords_attrs[name]) for name in coords}
 print('Making dataset.')

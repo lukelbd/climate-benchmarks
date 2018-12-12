@@ -8,11 +8,12 @@ import sys
 import xarray as xr
 xr.DataArray.mean
 filename = sys.argv[1]
-n = int(sys.argv[2]) # number of chunks; 0 to disable chunking
-if n:
+nt = int(sys.argv[2]) # number of time chunks; 0 to disable chunking
+np = int(sys.argv[3])
+if nt or np: # will also apply 1 chunk per pressure level by default
     N = 100000 # max chunk size for lon/lat dimensions; want to chunk each 2D slice separately
     # N = 1000 # this made no difference
-    chunks = {'time':n, 'plev':n, 'lat':N, 'lon':N} # one chunk per horizontal slice, works pretty well
+    chunks = {'time':nt, 'plev':np, 'lat':N, 'lon':N} # one chunk per horizontal slice, works pretty well
     data = xr.open_dataset(filename, chunks=chunks, decode_times=False)
 else:
     data = xr.open_dataset(filename, decode_times=False)

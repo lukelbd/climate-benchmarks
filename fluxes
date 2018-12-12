@@ -8,8 +8,9 @@
 # Helper function
 # We require a subshell to redirect 'time' for some reason; because it's weird
 # builtin or something
+output=fluxes.log
 header="| size (version) | name | real (s) | user (s) | sys (s) |\n| --- | --- | --- | --- | --- |\n"
-rm fluxes.md 2>/dev/null
+rm $output 2>/dev/null
 seconds() {
   # Convert time command output to raw seconds
   m=${1%m*}
@@ -28,7 +29,7 @@ bench() {
   real=$(seconds ${array[1]})
   user=$(seconds ${array[3]})
   sys=$(seconds ${array[5]})
-  printf "| $size ($version) | $1 | **$real** | $user | $sys |\n" >>fluxes.md
+  printf "| $size ($version) | $1 | **$real** | $user | $sys |\n" >>$output
 }
 
 # Loop over datasets with different resolutions
@@ -41,18 +42,25 @@ for data in ${datas[@]}; do
   version=${data%.nc}
   version=${version##*_}
   echo; echo "Dataset: $data ($size)"
-  printf "\n$header" >>fluxes.md # add header for each new file
+  printf "\n$header" >>$output # add header for each new file
 
   # Skip to big files
   # let counter+=1
   # [ $counter -le 6 ] && continue
   # Python with xarray method
-  bench "XArray + no dask" python ${name}.py $data 0
+  bench "XArray + no dask" python ${name}.py $data 0 0
 
   # Python with xarray and Dask chunking by 2D slice
-  bench "XArray + 100-timestep chunks" python ${name}.py $data 100
-  bench "XArray + 10-timestep chunks" python ${name}.py $data 10
-  bench "XArray + 1-timestep chunks" python ${name}.py $data 1
+  # bench "XArray + 100-timestep chunks" python ${name}.py $data 100
+  bench "XArray + 10 t, 60 p chunks" python ${name}.py $data 10 60
+  bench "XArray + 5 t, 60 p chunks" python ${name}.py $data 5 60
+  bench "XArray + 1 t, 60 p chunks" python ${name}.py $data 1 60
+  bench "XArray + 10 t, 10 p chunks" python ${name}.py $data 10 10
+  bench "XArray + 5 t, 10 p chunks" python ${name}.py $data 5 10
+  bench "XArray + 1 t, 10 p chunks" python ${name}.py $data 1 10
+  bench "XArray + 10 t, 1 p chunks" python ${name}.py $data 10 1
+  bench "XArray + 5 t, 1 p chunks" python ${name}.py $data 5 1
+  bench "XArray + 1 t, 1 p chunks" python ${name}.py $data 1 1
 
   # CDO method
   export DYLD_LIBRARY_PATH=""
