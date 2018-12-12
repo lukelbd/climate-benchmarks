@@ -1,0 +1,104 @@
+### Macbook: 1 level, 1000 timesteps
+Data used was generated with the `datagen` script via the line:
+```
+for reso in 5 2 1 0.5; do ./datagen $reso; done
+```
+
+Results are summarized in the below table. Turns out **NCL is much faster than all other tools**, to my surprise. Dask chunking didn't work well for small files. Note that using the NCL feature `setfileoption("nc", "Format", "LargeFile")` made absolutely **neglibile** difference in final wall-clock time, to my surprise. Also note there are no options to improve large file handling, recommendation is to split up by level or time; see [this NCL talk post](https://www.ncl.ucar.edu/Support/talk_archives/2011/2636.html) and [this stackoverflow post](https://stackoverflow.com/questions/44474507/read-large-netcdf-data-by-ncl).
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 18 | 7.4M (3) | XArray + no dask | **2.544** | 1.216 | 0.679 |
+| 18 | 7.4M (3) | XArray + 1000 t chunks | **1.110** | 1.105 | 1.259 |
+| 18 | 7.4M (3) | XArray + 100 t chunks | **1.107** | 0.904 | 0.174 |
+| 18 | 7.4M (3) | XArray + 20 t chunks | **1.303** | 1.062 | 0.227 |
+| 18 | 7.4M (3) | Julia | **5.777** | 5.732 | 0.283 |
+| 18 | 7.4M (3) | CDO | **6.310** | 1.001 | 6.335 |
+| 18 | 7.4M (3) | CDO + serial IO | **2.962** | 0.677 | 3.154 |
+| 18 | 7.4M (3) | NCL | **0.634** | 0.319 | 0.102 |
+| 18 | 7.4M (3) | NCO | **0.264** | 0.194 | 0.036 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 36 | 30M (3) | XArray + no dask | **1.804** | 1.634 | 0.362 |
+| 36 | 30M (3) | XArray + 1000 t chunks | **1.089** | 1.184 | 1.037 |
+| 36 | 30M (3) | XArray + 100 t chunks | **1.084** | 0.940 | 0.176 |
+| 36 | 30M (3) | XArray + 20 t chunks | **1.307** | 1.113 | 0.239 |
+| 36 | 30M (3) | Julia | **6.650** | 5.985 | 0.392 |
+| 36 | 30M (3) | CDO | **6.239** | 1.108 | 6.365 |
+| 36 | 30M (3) | CDO + serial IO | **2.712** | 0.755 | 2.827 |
+| 36 | 30M (3) | NCL | **0.931** | 0.779 | 0.130 |
+| 36 | 30M (3) | NCO | **0.852** | 0.756 | 0.082 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 60 | 82M (3) | XArray + no dask | **2.033** | 1.909 | 0.488 |
+| 60 | 82M (3) | XArray + 1000 t chunks | **1.312** | 1.624 | 1.543 |
+| 60 | 82M (3) | XArray + 100 t chunks | **1.413** | 2.384 | 2.176 |
+| 60 | 82M (3) | XArray + 20 t chunks | **1.319** | 1.231 | 0.254 |
+| 60 | 82M (3) | Julia | **7.830** | 6.556 | 0.544 |
+| 60 | 82M (3) | CDO | **6.043** | 1.373 | 6.239 |
+| 60 | 82M (3) | CDO + serial IO | **2.619** | 0.994 | 2.568 |
+| 60 | 82M (3) | NCL | **2.188** | 1.873 | 0.284 |
+| 60 | 82M (3) | NCO | **2.340** | 2.099 | 0.220 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 90 | 185M (3) | XArray + no dask | **4.088** | 2.024 | 0.946 |
+| 90 | 185M (3) | XArray + 1000 t chunks | **2.568** | 2.691 | 1.589 |
+| 90 | 185M (3) | XArray + 100 t chunks | **1.857** | 2.216 | 3.628 |
+| 90 | 185M (3) | XArray + 20 t chunks | **1.559** | 1.637 | 0.308 |
+| 90 | 185M (3) | Julia | **10.510** | 7.720 | 0.849 |
+| 90 | 185M (3) | CDO | **7.220** | 2.327 | 7.343 |
+| 90 | 185M (3) | CDO + serial IO | **4.488** | 2.257 | 3.678 |
+| 90 | 185M (3) | NCL | **5.383** | 4.368 | 0.733 |
+| 90 | 185M (3) | NCO | **5.376** | 4.675 | 0.526 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 120 | 330M (3) | XArray + no dask | **2.995** | 2.618 | 1.045 |
+| 120 | 330M (3) | XArray + 1000 t chunks | **2.157** | 4.810 | 1.903 |
+| 120 | 330M (3) | XArray + 100 t chunks | **2.159** | 2.944 | 5.407 |
+| 120 | 330M (3) | XArray + 20 t chunks | **2.237** | 2.991 | 5.775 |
+| 120 | 330M (3) | Julia | **12.211** | 8.272 | 1.046 |
+| 120 | 330M (3) | CDO | **7.907** | 3.790 | 8.209 |
+| 120 | 330M (3) | CDO + serial IO | **5.228** | 3.332 | 3.857 |
+| 120 | 330M (3) | NCL | **9.583** | 8.049 | 1.297 |
+| 120 | 330M (3) | NCO | **9.200** | 8.290 | 0.870 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 180 | 742M (3) | XArray + no dask | **4.914** | 3.328 | 1.809 |
+| 180 | 742M (3) | XArray + 1000 t chunks | **3.399** | 6.015 | 3.833 |
+| 180 | 742M (3) | XArray + 100 t chunks | **3.109** | 5.884 | 6.267 |
+| 180 | 742M (3) | XArray + 20 t chunks | **3.591** | 5.726 | 7.023 |
+| 180 | 742M (3) | Julia | **17.755** | 11.294 | 2.012 |
+| 180 | 742M (3) | CDO | **7.725** | 6.317 | 6.374 |
+| 180 | 742M (3) | CDO + serial IO | **7.321** | 5.714 | 3.501 |
+| 180 | 742M (3) | NCL | **18.497** | 15.741 | 2.351 |
+| 180 | 742M (3) | NCO | **21.434** | 18.521 | 2.797 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 240 | 1.3G (3) | XArray + no dask | **6.412** | 3.851 | 2.281 |
+| 240 | 1.3G (3) | XArray + 1000 t chunks | **5.075** | 7.799 | 5.497 |
+| 240 | 1.3G (3) | XArray + 100 t chunks | **4.405** | 8.505 | 11.017 |
+| 240 | 1.3G (3) | XArray + 20 t chunks | **4.309** | 8.501 | 13.294 |
+| 240 | 1.3G (3) | Julia | **27.056** | 15.799 | 3.570 |
+| 240 | 1.3G (3) | CDO | **6.023** | 9.904 | 5.008 |
+| 240 | 1.3G (3) | CDO + serial IO | **7.731** | 7.938 | 2.989 |
+| 240 | 1.3G (3) | NCL | **34.025** | 27.370 | 4.687 |
+| 240 | 1.3G (3) | NCO | **38.321** | 32.955 | 4.922 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 360 | 2.9G (3) | XArray + no dask | **20.444** | 7.523 | 7.504 |
+| 360 | 2.9G (3) | XArray + 1000 t chunks | **18.417** | 13.535 | 11.109 |
+| 360 | 2.9G (3) | XArray + 100 t chunks | **8.398** | 19.395 | 18.011 |
+| 360 | 2.9G (3) | XArray + 20 t chunks | **8.481** | 18.571 | 27.829 |
+| 360 | 2.9G (3) | Julia | **47.591** | 28.088 | 8.230 |
+| 360 | 2.9G (3) | CDO | **8.505** | 22.760 | 4.508 |
+| 360 | 2.9G (3) | CDO + serial IO | **14.390** | 17.319 | 3.711 |
+| 360 | 2.9G (3) | NCL | **75.075** | 60.429 | 12.742 |
+| 360 | 2.9G (3) | NCO | **89.726** | 73.230 | 11.331 |
+
