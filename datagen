@@ -82,6 +82,7 @@ print('Saving dataset.')
 # format = 'NETCDF3_CLASSIC'
 format = 'NETCDF4' # may fail for some CDO versions, try to fix
 formats = {3:'NETCDF3_CLASSIC', 4:'NETCDF4'}
+formats = {3:'NETCDF3_CLASSIC'} # differences are minor and 'classic' is still everywhere, so let's just use this
 for num,format in formats.items():
     out = f'dataN{lat.size:04d}T{ntime}_{num}.nc'
     if os.path.exists(out):

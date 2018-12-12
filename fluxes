@@ -9,7 +9,8 @@
 # We require a subshell to redirect 'time' for some reason; because it's weird
 # builtin or something
 name=$0
-dir=1lev # directories where data is stored
+dir=$1 # directories where data is stored
+[ -z "$dir" ] && echo "Error: Please enter location of NetCDFs for globbing/testing." && exit 1
 output=$dir/fluxes_${HOSTNAME%%.*}.log # store here
 header="| nlat | size (version) | name | real (s) | user (s) | sys (s) |\n| --- | --- | --- | --- | --- | --- |\n"
 rm $output 2>/dev/null
@@ -48,8 +49,8 @@ for data in ${datas[@]}; do
   printf "\n$header" >>$output # add header for each new file
 
   # Skip to big files
-  let counter+=1
-  [ $counter -le 10 ] && continue
+  # let counter+=1
+  # [ $counter -le 10 ] && continue
   # Python with xarray method
   bench "XArray + no dask" python ${name}.py $data 0 0
 

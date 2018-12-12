@@ -22,7 +22,6 @@
 # there to year 1), so we use Dates to increment by 1 year. Cool!
 using NCDatasets # netcdf
 using Statistics # basic stats
-using Dates
 filename = ARGS[1]
 dir = split(filename, "/")[1]
 
