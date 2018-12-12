@@ -87,8 +87,11 @@ for data in ${datas[@]}; do
   bench "Julia" julia ${name}.jl $data
 
   # CDO method
+  # NOTE: On mac just run with serial IO
   export DYLD_LIBRARY_PATH=""
-  bench "CDO" ${name}.cdo $data
+  if [ ${HOSTNAME%%.*} != "uriah" ]; then
+    bench "CDO" ${name}.cdo $data
+  fi
   bench "CDO + serial IO" ${name}.cdo $data '-L'
 
   # NCL method
