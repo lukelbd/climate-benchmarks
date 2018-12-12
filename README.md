@@ -9,8 +9,7 @@ Setup is 4 times daily 100-day T42L40 resolution files, from dry dynamical core 
 * Time for interpolation with CDO: ***30s pre-processing*** (probably due to inefficiency of overwriting original ncfile with file that dleetes coordinates), ***94s for setting things up*** (because we have to write surface geopotential to same massive file, instead of declaring as separate variable in NCL), and ***122s actual interpolation*** (with bunch of warnings) so ***216 total***
 
 ## Eddy flux term tests
-### Macbook test 1
-### 1 level, 1000 timesteps
+### Macbook: 1 level, 1000 timesteps
 Data used was generated with the `datagen` script via the line:
 ```
 for reso in 5 2 1 0.5; do ./datagen $reso; done
@@ -194,8 +193,7 @@ Results are summarized in the below table. Turns out **NCL is much faster than a
 | 2.9G (4) | NCL | **72.196** | 58.627 | 11.331 |
 | 2.9G (4) | NCO | **85.414** | 74.449 | 10.379 |
 
-### Macbook test 2
-### 60 level, 200 timesteps
+### Macbook: 60 level, 200 timesteps
 This time data was generated using
 ```
 for reso in 10 7.5 5 3 2 1.5; do ./datagen $reso; done
