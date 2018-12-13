@@ -36,6 +36,7 @@ Turns out for small datasets **NCL is faster than other tools**, and for large d
 | nlat | size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
 | 9 | 22M (3) | Julia + PackageCompiler | **0.515** | 0.547 | 0.249 |
+| 9 | 22M (3) | Interactive Julia | **0.196**
 | 9 | 22M (3) | XArray + no dask | **1.016** | 1.446 | 0.212 |
 | 9 | 22M (3) | XArray + 200 t chunks | **1.124** | 1.246 | 0.829 |
 | 9 | 22M (3) | XArray + 20 t chunks | **1.095** | 0.974 | 0.189 |
@@ -47,6 +48,7 @@ Turns out for small datasets **NCL is faster than other tools**, and for large d
 | nlat | size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
 | 18 | 89M (3) | Julia + PackageCompiler | **1.144** | 1.061 | 0.345 |
+| 18 | 89M (3) | Interactive Julia | **1.972**
 | 18 | 89M (3) | XArray + no dask | **1.288** | 1.788 | 0.367 |
 | 18 | 89M (3) | XArray + 200 t chunks | **1.360** | 1.719 | 1.532 |
 | 18 | 89M (3) | XArray + 20 t chunks | **1.444** | 2.549 | 1.633 |
@@ -58,6 +60,7 @@ Turns out for small datasets **NCL is faster than other tools**, and for large d
 | nlat | size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
 | 24 | 158M (3) | Julia + PackageCompiler | **1.822** | 1.667 | 0.422 |
+| 24 | 158M (3) | Interactive Julia | **2.819**
 | 24 | 158M (3) | XArray + no dask | **1.644** | 2.118 | 0.549 |
 | 24 | 158M (3) | XArray + 200 t chunks | **1.671** | 2.705 | 1.823 |
 | 24 | 158M (3) | XArray + 20 t chunks | **1.442** | 1.712 | 2.850 |
@@ -69,6 +72,7 @@ Turns out for small datasets **NCL is faster than other tools**, and for large d
 | nlat | size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
 | 36 | 356M (3) | Julia + PackageCompiler | **3.520** | 3.118 | 0.664 |
+| 36 | 356M (3) | Interactive Julia | **5.546**
 | 36 | 356M (3) | XArray + no dask | **3.220** | 2.669 | 1.064 |
 | 36 | 356M (3) | XArray + 200 t chunks | **2.279** | 3.756 | 2.917 |
 | 36 | 356M (3) | XArray + 20 t chunks | **1.942** | 2.772 | 5.394 |
@@ -80,6 +84,7 @@ Turns out for small datasets **NCL is faster than other tools**, and for large d
 | nlat | size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
 | 60 | 989M (3) | Julia + PackageCompiler | **12.146** | 8.570 | 1.965 |
+| 60 | 989M (3) | Interactive Julia | **13.861**
 | 60 | 989M (3) | XArray + no dask | **8.961** | 3.738 | 3.038 |
 | 60 | 989M (3) | XArray + 200 t chunks | **4.340** | 7.284 | 4.456 |
 | 60 | 989M (3) | XArray + 20 t chunks | **3.649** | 8.183 | 10.169 |
@@ -91,6 +96,7 @@ Turns out for small datasets **NCL is faster than other tools**, and for large d
 | nlat | size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
 | 90 | 2.2G (3) | Julia + PackageCompiler | **25.994** | 18.185 | 5.383 |
+| 90 | 2.2G (3) | Interactive Julia | **39.636**
 | 90 | 2.2G (3) | XArray + no dask | **25.991** | 7.965 | 13.275 |
 | 90 | 2.2G (3) | XArray + 200 t chunks | **18.003** | 12.960 | 15.137 |
 | 90 | 2.2G (3) | XArray + 20 t chunks | **9.135** | 18.487 | 17.497 |
@@ -102,6 +108,7 @@ Turns out for small datasets **NCL is faster than other tools**, and for large d
 | nlat | size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
 | 120 | 3.9G (3) | Julia + PackageCompiler | **53.397** | 35.249 | 11.727 |
+| 129 | 3.9G (3) | Interactive Julia | **63.701**
 | 120 | 3.9G (3) | XArray + no dask | **38.976** | 11.378 | 18.792 |
 | 120 | 3.9G (3) | XArray + 200 t chunks | **48.395** | 21.554 | 39.484 |
 | 120 | 3.9G (3) | XArray + 20 t chunks | **15.120** | 26.239 | 29.483 |
