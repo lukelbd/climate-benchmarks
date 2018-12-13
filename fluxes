@@ -105,4 +105,7 @@ for data in ${datas[@]}; do
   # bench "NCO + no tmp file" ${name}.nco $data --no_tmp_fl
   # bench "NCO + open in RAM" ${name}.nco $data --open_ram --no_tmp_fl
   # bench "NCO + create in RAM" ${name}.nco $data --create_ram --no_tmp_fl
+
+  # Julia
+  bench "Julia" julia ${name}.jl $data
 done
