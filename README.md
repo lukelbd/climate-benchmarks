@@ -20,7 +20,7 @@ Alternative explanation is that, language tools like python and NCl more appropr
 
 ## Eddy flux term tests
 ### Puzzles
-With an older, verbose CDO algorithm for getting fluxes (see `fluxes.cdo`), CDO was **much much slower**, and the problem was exacerbated by adding levels.
+With an older, verbose CDO algorithm for getting fluxes (see `trash/fluxes_ineff.cdo`), CDO was **much much slower**, and the problem was exacerbated by adding levels.
 
 I also found CDO is much slower running in parallel on the compute cluster -- even just when getting simple zonal means. Maybe CDO is bad at parallel computations, the threads conflict or something? But they are separate background processes. Meanwhile NCL was blazingly fast.
 
