@@ -40,7 +40,11 @@ datas=($dir/data*.nc)
 counter=0
 for data in ${datas[@]}; do
   # Header
-  size=$(du -h $data | xargs | cut -d' ' -f1)
+  # NOTE: The 'disk usage' often very different from the 'apparent size'
+  # ls -l; former depends on internals of how data is stored, and on Cheyenne,
+  # ends up way bigger. See: https://unix.stackexchange.com/a/106278/112647
+  # Explanation of why this happens: https://serverfault.com/a/290091/427991
+  size=$(du --apparent-size -h $data | xargs | cut -d' ' -f1)
   version=${data%.nc}
   version=${version#*_}
   nlat=${data#*N}
