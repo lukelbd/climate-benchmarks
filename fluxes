@@ -48,6 +48,10 @@ for data in ${datas[@]}; do
   echo; echo "Dataset: $data ($size)"
   printf "\n$header" >>$output # add header for each new file
 
+  # Julia
+  bench "Julia + PackageCompiler" ./jl/${name} $data
+  # bench "Julia (naive)" julia -e 'push!(LOAD_PATH, "./"); using fluxes; fluxes.eddy_flux("'${name}'")' # will be ridiculously slow, don't bother
+
   # Skip to big files
   # let counter+=1
   # [ $counter -le 10 ] && continue
@@ -75,14 +79,6 @@ for data in ${datas[@]}; do
     echo "Error: Unknown chunk combos for sample data in dir \"$dir\"."
     exit 1
   fi
-  # bench "XArray + 200 t, 60 p chunks" python ${name}.py $data 1 10
-  # bench "XArray + 200 t, 20 p chunks" python ${name}.py $data 10 1
-  # bench "XArray + 200 t, 10 p chunks" python ${name}.py $data 5 1
-  # bench "XArray + 200 t, 5 p chunks" python ${name}.py $data 5 1
-  # bench "XArray + 200 t, 1 p chunks" python ${name}.py $data 1 1
-
-  # Break table
-  # printf "\n$header" >>$output # add header for each new file
 
   # CDO method
   # NOTE: On mac just run with serial IO
@@ -109,7 +105,4 @@ for data in ${datas[@]}; do
   # bench "NCO + no tmp file" ${name}.nco $data --no_tmp_fl
   # bench "NCO + open in RAM" ${name}.nco $data --open_ram --no_tmp_fl
   # bench "NCO + create in RAM" ${name}.nco $data --create_ram --no_tmp_fl
-
-  # Julia
-  bench "Julia" julia ${name}.jl $data
 done

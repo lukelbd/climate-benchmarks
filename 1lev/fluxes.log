@@ -1,3 +1,7 @@
+# NOTE: These were some old tests that I don't think are especially instructive anymore. Fixed
+# the CDO issue with multiple levels using 'expr'. Don't think the float type of pressure
+# levels was the issue
+
 ### Macbook: 1 level, 1000 timesteps
 Data used was generated with the `datagen` script via the line:
 ```

@@ -5,14 +5,13 @@
 *.o[0-9]*
 *.e[0-9]*
   # qsub output
+jl*
+  # directories containing compiled julia code
 *.tmp
   # interactive NCO
 .vimsession
   # vim sessions
 __pycache__
-old
-trash
-garbage
   # temp
 .DS_Store
 .DS_Store?
