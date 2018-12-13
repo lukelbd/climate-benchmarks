@@ -130,7 +130,6 @@ This time, the benchmarks were run on a Cheyenne HPC compute cluster interactive
 | 9 | 22M (3) | CDO | **0.406** | 0.300 | 0.028 |
 | 9 | 22M (3) | NCL | **0.785** | 0.668 | 0.100 |
 | 9 | 22M (3) | NCO | **0.752** | 0.620 | 0.112 |
-| 9 | 22M (3) | Julia | **1.294** | 1.180 | 0.108 |
 
 | nlat | size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
@@ -142,7 +141,6 @@ This time, the benchmarks were run on a Cheyenne HPC compute cluster interactive
 | 18 | 89M (3) | CDO | **0.763** | 0.604 | 0.048 |
 | 18 | 89M (3) | NCL | **2.938** | 2.256 | 0.408 |
 | 18 | 89M (3) | NCO | **2.906** | 2.540 | 0.348 |
-| 18 | 89M (3) | Julia | **1.332** | 1.220 | 0.104 |
 
 | nlat | size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
@@ -154,7 +152,6 @@ This time, the benchmarks were run on a Cheyenne HPC compute cluster interactive
 | 24 | 158M (3) | CDO | **1.071** | 0.908 | 0.088 |
 | 24 | 158M (3) | NCL | **4.639** | 3.912 | 0.588 |
 | 24 | 158M (3) | NCO | **5.331** | 4.496 | 0.812 |
-| 24 | 158M (3) | Julia | **1.306** | 1.180 | 0.120 |
 
 | nlat | size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
@@ -166,7 +163,6 @@ This time, the benchmarks were run on a Cheyenne HPC compute cluster interactive
 | 36 | 356M (3) | CDO | **2.033** | 1.804 | 0.092 |
 | 36 | 356M (3) | NCL | **10.113** | 8.448 | 1.172 |
 | 36 | 356M (3) | NCO | **11.879** | 10.056 | 1.748 |
-| 36 | 356M (3) | Julia | **1.280** | 1.168 | 0.108 |
 
 | nlat | size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
@@ -178,7 +174,6 @@ This time, the benchmarks were run on a Cheyenne HPC compute cluster interactive
 | 60 | 989M (3) | CDO | **6.431** | 4.820 | 1.400 |
 | 60 | 989M (3) | NCL | **27.460** | 23.348 | 2.728 |
 | 60 | 989M (3) | NCO | **32.960** | 27.948 | 3.936 |
-| 60 | 989M (3) | Julia | **1.220** | 1.124 | 0.092 |
 
 | nlat | size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
@@ -190,7 +185,6 @@ This time, the benchmarks were run on a Cheyenne HPC compute cluster interactive
 | 90 | 2.2G (3) | CDO | **13.838** | 10.540 | 3.112 |
 | 90 | 2.2G (3) | NCL | **58.623** | 52.544 | 5.876 |
 | 90 | 2.2G (3) | NCO | **71.893** | 63.256 | 8.060 |
-| 90 | 2.2G (3) | Julia | **1.493** | 1.076 | 0.212 |
 
 | nlat | size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
@@ -202,7 +196,6 @@ This time, the benchmarks were run on a Cheyenne HPC compute cluster interactive
 | 120 | 3.9G (3) | CDO | **25.413** | 19.008 | 6.244 |
 | 120 | 3.9G (3) | NCL | **109.181** | 93.100 | 10.664 |
 | 120 | 3.9G (3) | NCO | **139.396** | 112.788 | 13.928 |
-| 120 | 3.9G (3) | Julia | **1.342** | 1.124 | 0.156 |
 
 # Installation notes
 ## CDO for macOS
