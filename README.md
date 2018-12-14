@@ -19,10 +19,11 @@ Setup is 4 times daily 100-day T42L40 resolution files, from dry dynamical core 
 Alternative explanation is that, language tools like python and NCl more appropriate for parallel computation because **data is loaded into memory once**, then calculations can proceed quickly. Maybe issue was just the multiple (5) disk reads compared to 1 NCL disk read?
 
 ## Eddy flux term tests
-### Puzzles
-With an older, verbose CDO algorithm for getting fluxes (see `trash/fluxes_ineff.cdo`), CDO was **much much slower**, and the problem was exacerbated by adding levels.
+### Julia Notes
+For the Julia tests, I played with running the code in an interactive shell and using the [`PackageCompiler`](https://github.com/JuliaLang/PackageCompiler.jl) utility to compile Julia code into a machine executable. The Julia workflow is quite different -- you **cannot** simply make repeated calls to some script on the command line, because this means **the JIT compilation kicks in every time, and becomes a huge bottleneck**. Instead, you should run things from a persistent notebook or REPL, **or** compile to a machine executable to eliminate JIT compilation altogether. The latter is a bit faster.
 
-I also found CDO is much slower running in parallel on the compute cluster -- even just when getting simple zonal means. Maybe CDO is bad at parallel computations, the threads conflict or something? But they are separate background processes. Meanwhile NCL was blazingly fast.
+### CDO Notes
+With an older, verbose CDO algorithm for getting fluxes (see `trash/fluxes_ineff.cdo`), CDO was **much much slower**, and the problem was exacerbated by adding levels.
 
 ### Macbook: 60 level, 200 timesteps
 The sample data was generated using
