@@ -9,14 +9,60 @@ There were two major performance differences observed between the NetCDF3 and Ne
 
 Since most large general circulation models produce NetCDF3 files, only the results for these datasets were shown. But anyway, as explained above, the differences weren't that huge.
 
-## Interpolation tests
+## Hybrid-to-pressure interpolation tests
 Setup is 4 times daily 100-day T42L40 resolution files, from dry dynamical core model.
 
 * Time for NCL interpolation script with **automatic iteration**: ***70s exactly***
 * Time for interpolation script with **explicit iteration through variables**: ***71s almost identical***
-* Time for interpolation with CDO: ***30s pre-processing*** (probably due to inefficiency of overwriting original ncfile with file that dleetes coordinates), ***94s for setting things up*** (because we have to write surface geopotential to same massive file, instead of declaring as separate variable in NCL), and ***122s actual interpolation*** (with bunch of warnings) so ***216 total***
-    
+* Time for interpolation with CDO: ***30s pre-processing*** (probably due to inefficiency of overwriting original ncfile with file that deletes coordinates), ***94s for setting things up*** (because we have to write surface geopotential to same massive file, instead of declaring as separate variable in NCL), and ***122s actual interpolation*** (with bunch of warnings) so ***216 total***
+
 Alternative explanation is that, language tools like python and NCl more appropriate for parallel computation because **data is loaded into memory once**, then calculations can proceed quickly. Maybe issue was just the multiple (5) disk reads compared to 1 NCL disk read?
+
+## Pressure-to-theta interpolation tests
+There are only two obvious tools for interpolating between isobars and isentropes: NCL, and python using the MetPy package.
+
+### Macbook: 60 level, 200 timesteps
+The sample data was generated using
+```
+for reso in 20 10 7.5 5 3 2 1.5; do ./datagen $reso; done
+```
+where the numbers refer to the latitude/longitude grid spacing.
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 6 | 20M (3) | NCL | **0.666** | 0.320 | 0.124 |
+| 6 | 20M (3) | MetPy | **3.092** | 1.713 | 0.880 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 9 | 45M (3) | NCL | **0.666** | 0.497 | 0.119 |
+| 9 | 45M (3) | MetPy | **1.187** | 1.513 | 0.221 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 18 | 178M (3) | NCL | **2.153** | 1.494 | 0.297 |
+| 18 | 178M (3) | MetPy | **1.369** | 1.614 | 0.315 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 24 | 317M (3) | NCL | **3.254** | 2.465 | 0.384 |
+| 24 | 317M (3) | MetPy | **1.486** | 1.310 | 0.309 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 36 | 712M (3) | NCL | **6.839** | 5.347 | 0.715 |
+| 36 | 712M (3) | MetPy | **1.880** | 2.048 | 0.450 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 60 | 2.0G (3) | NCL | **18.539** | 15.068 | 2.079 |
+| 60 | 2.0G (3) | MetPy | **3.272** | 2.884 | 0.994 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 90 | 4.4G (3) | NCL | **42.873** | 33.757 | 6.598 |
+| 90 | 4.4G (3) | MetPy | **4.972** | 4.608 | 2.116 |
+
 
 ## Eddy flux term tests
 ### Julia Notes

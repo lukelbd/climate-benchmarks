@@ -30,16 +30,21 @@ elif dir=='60lev':
 else:
     raise ValueError('Unknown data dir {dir}.')
 time = np.arange(1/step, ntime, dtype=dtype)/step
-lat = np.arange(-90, 90 + reso/2, reso, dtype=dtype)
-lat = (lat[1:] + lat[:-1])/2
-lon = np.arange(-180, 180 - reso/2, reso, dtype=dtype)
-shape = (ntime, plev.size, lat.size, lon.size)
+lat = np.arange(-90 + reso/2, 90, reso, dtype=dtype)
+lon = np.arange(-180 + reso/2, 180, reso, dtype=dtype)
 # Variables
+shape = (time.size, plev.size, lat.size, lon.size)
 params = ('u', 'v', 't')
+offsets = {
+    'u': np.tile(0, (plev.size, lat.size, 1)),
+    'v': np.tile(0, (plev.size, lat.size, 1)),
+    't': (200 + 0.115*plev)[:,None,None] # max average of 200 + 115 = 315K
+        - (60*np.abs(lat)/90)[:,None]
+    } # average of 315 - 60 = 255K at pole
 params_attrs = {
     'u': {'long_name':'zonal wind', 'units':'m/s'},
     'v': {'long_name':'meridional wind', 'units':'m/s'},
-    't': {'long_name':'temperature', 'units':'degC'}
+    't': {'long_name':'temperature', 'units':'K'}
     }
 # Coordinates
 coords = ('time', 'plev', 'lat', 'lon')
@@ -62,13 +67,21 @@ for attrs in coords_attrs.values():
 # Numpy is extremely slow at making tons of random variables, so need to
 # use dask so generation is done in parallel and we don't get memory overload
 # NOTE: Random routines (including numpy ones) don't accept chunks.
+# NOTE: If get overlapping contours, seems NCL handles these fine but metpy
+# method has many issues. Just make zonally uniform fields.
 print('Making variables.')
-scale = 10
-offset = 0.5
 # chunks = (1, 1, *shape[2:]) # one chunk per horizontal slice, works for bigger datasets
 # chunks = (1, shape[1], shape[2], shape[3]) # one chunk per timestep worked *way* better
-chunks = (1, shape[1]//4, shape[2], shape[3]) # compromise?
-params_map = {name: (coords, (scale*da.random.normal(0, 1, shape, chunks=chunks)).cumsum(axis=0).astype(dtype), params_attrs[name]) for name in params}
+# chunks = (1, shape[1]//4, shape[2], shape[3]) # compromise?
+N = 100000
+scale = 1 # stdev for random time series (note cumsum will amplify the variability)
+chunks = (1, N, N, N) # chunk in time dimension
+random = da.zeros((time.size, 1, 1, lon.size), chunks=chunks) # empty array
+# random = da.random.normal(0, scale, (time.size, 1, 1, lon.size), chunks=chunks).astype(dtype) # remember 2/3 fall within +/-1stdev
+# random = random.cumsum(axis=3) # below is too complex for Dask arrays; just accept this weird discontinuity
+# random[...,:lon.size//2] = random[...,:lon.size//2].cumsum(axis=3)
+# random[...,lon.size//2:] = random[...,lon.size//2-1::-1]
+params_map = {name: (coords, offsets[name] + random, params_attrs[name]) for name in params}
 coords_map = {name: ((name,), coords_values[name], coords_attrs[name]) for name in coords}
 print('Making dataset.')
 data = xr.Dataset(params_map, coords_map)
