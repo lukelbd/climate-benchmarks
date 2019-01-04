@@ -53,16 +53,17 @@ ncl_parallel() {
   name2=${1%/*}/isentropes_ncl
   np=0
   pmax=1000
+  pmax=1 # NOTE: try without background parallelization!
   nsplit=10
   ts=$(command ncdump -h ${name1}.nc | grep 'UNLIMITED' | sed 's/[^0-9]//g') # number of timesteps
   # for t in $(seq 0 $((ts - 1))); do
+  # ncks -O -h --no-abc -d time,$t,$t ${name1}.nc ${name1}-${t}.nc
+  # ncl -Q -n "filename=\"${name1}-${t}.nc\"" "outname=\"${name2}-${t}.nc\"" ${name}.ncl
   for ni in $(seq 1 $nsplit); do
     let np+=1
     t1=$(((ni - 1)*ts/nsplit)) # e.g. nsplit=10, ts=200, goes 0, 20, 40, 60
     t2=$((ni*ts/nsplit - 1)) # e.g. nsplit=10, ts=200, goes 19, 39, 59
     {
-    # ncks -O -h --no-abc -d time,$t,$t ${name1}.nc ${name1}-${t}.nc
-    # ncl -Q -n "filename=\"${name1}-${t}.nc\"" "outname=\"${name2}-${t}.nc\"" ${name}.ncl
     ncks -O -h --no-abc -d time,$t1,$t2 ${name1}.nc ${name1}-${ni}.nc
     ncl -Q -n "filename=\"${name1}-${ni}.nc\"" "outname=\"${name2}-${ni}.nc\"" ${name}.ncl
     } &

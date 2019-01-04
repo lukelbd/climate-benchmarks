@@ -1,89 +1,62 @@
-# Benchmarks for climate data analysis
-Use this repo to benchmark data analysis techniques across CDO, NCL, NCO, python, and julia. Matlab and IDL are the past so I'm not bothering with them ;)
+<!--
+Installation
+------------
 
-## A Note on NetCDF3 vs. NetCDF4
+It was *exceedingly* difficult to get CDO compiled with threadsafe HDF5 like is the default case for Anaconda-downloaded versions on Linux. I used [this thread](https://code.mpimet.mpg.de/boards/2/topics/4630?r=5714#message-5714) for instructions. This required manually compiling HDF5 with custom `./configure` flags and custom prefix, then linking with homebrew using `brew link hdf5`.
+
+I got frequent errors following user instructions, which disappeared by disabling `--with-pthread=/usr/local --enable-unsupported`. See discussion [here](http://hdf-forum.184993.n3.nabble.com/HDF5-parallel-and-threadsafe-td1701166.html) and Github reference to that discussion [here](https://github.com/conda-forge/hdf5-feedstock/pull/57). I tried manually compiling the netcdf library but this seemed to make no difference -- the *provided* netcdf Homebrew library was the same.
+
+In the end *could never* get the CDO to do NetCDF4 I/O parallelization without at least sporadic errors. However looks like *performance with thread locking is often faster anyway*.
+-->
+
+# Benchmarks for atmospheric science data analysis
+This repo provides benchmarks for common 
+data analysis tasks in atmospheric science
+accomplished with several different, common tools:
+CDO, NCL, NCO, python, julia, Fortran, and MATLAB.
+
+# Notes
+## Julia
+The Julia workflow is quite different -- you **cannot** simply make repeated calls to some script on the command line, because this means **the JIT compilation kicks in every time, and becomes a huge bottleneck**. Instead, you should run things from a persistent notebook or REPL, **or** compile to a machine executable to eliminate JIT compilation altogether.
+
+To give Julia the best shot, each benchmark provides two times:
+
+1. Time from running a Julia script in an **interactive shell**, after running it with a test file so the JIT compilation has already kicked in. Obviously this was tedious to do systematically, with multiple files and multiple benchmarks, but I thought it was necessary.
+2. Time from running "pre-compiled" Julia code with the [`PackageCompiler`](https://github.com/JuliaLang/PackageCompiler.jl) utility. This has two extreme drawbacks, being that pre-compiling Julia code is excruciatingly slow even for very simple programs, and the resulting machine code takes up massive amounts of space relative to the complexity of the program (since all dependencies must be compiled to machine code too). But, it does result in slightly faster code.
+
+While I suspect Julia may be suitable for complex numerical algorithms, it turned out that
+for simple, common data analysis tasks, and especially when working with large arrays,
+Julia compares unfavorably to python and CDO.
+
+## Climate Data Operators (CDO)
+The newest versions of `cdo` add new zonal-statistics functions to the `expr` subcommand,
+which are used in `fluxes.cdo`. But these functions were not available in recent
+versions of `cdo`, and a workaround had to be used (see `misc/fluxes_ineff.cdo`). This
+workaround, it turned out, was **much** slower than calculating fluxes with
+`expr`, and this matches my experience in general: CDO is great for
+**simple** tasks, but for **complex**, highly chained commands, it can quickly grow
+less efficient than much older, but more powerful and expressive, tools.
+<!-- With an older, verbose CDO algorithm for getting fluxes (see `trash/fluxes_ineff.cdo`), CDO was **much much slower**, and the problem was exacerbated by adding levels. -->
+
+## NetCDF3 vs. NetCDF4
 There were two major performance differences observed between the NetCDF3 and NetCDF4 versions of the sample data:
 
-* It turned out that, **in general**, CDO with NetCDF3 (on a Macbook) responded **less favorably** to thread-safe disk IO locking (the `-L` flag) -- it tended to speed things up for smaller datasets (over-optimization?) then slow things down for larger datasets, but **more-so** for NetCDF3.
-* We also found that **non-dask** python datasets (i.e. XArray datasets loaded with `chunks=None`) were **somewhat slower** for NetCDF3 than NetCDF4. The effect was **more pronounced** with larger datasets. When chunking was used, the speed improvements for NetCDF4 were marginal, even toward 2GB datasets (around **7s** vs **9s**).
+* In general, CDO with NetCDF3 (on a Macbook) responded **less favorably** to thread-safe disk IO locking (the `-L` flag) -- it tended to speed things up for smaller datasets (over-optimization?) then slow things down for larger datasets, but **more-so** for NetCDF3.
+* Non-dask python datasets (i.e. XArray datasets loaded with `chunks=None`) were **somewhat slower** for NetCDF3 than NetCDF4. The effect was **more pronounced** with larger datasets. When chunking was used, the speed improvements for NetCDF4 were marginal, even toward 2GB datasets (around **7s** vs **9s**).
 
-Since most large general circulation models produce NetCDF3 files, only the results for these datasets were shown. But anyway, as explained above, the differences weren't that huge.
+Since most large general circulation models still produce the older-format NetCDF3
+files, only results for these datasets are shown.
+But anyway, as explained above, the differences weren't that huge.
 
-## Hybrid-to-pressure interpolation tests
-Setup is 4 times daily 100-day T42L40 resolution files, from dry dynamical core model.
-
-* Time for NCL interpolation script with **automatic iteration**: ***70s exactly***
-* Time for interpolation script with **explicit iteration through variables**: ***71s almost identical***
-* Time for interpolation with CDO: ***30s pre-processing*** (probably due to inefficiency of overwriting original ncfile with file that deletes coordinates), ***94s for setting things up*** (because we have to write surface geopotential to same massive file, instead of declaring as separate variable in NCL), and ***122s actual interpolation*** (with bunch of warnings) so ***216 total***
-
-Alternative explanation is that, language tools like python and NCl more appropriate for parallel computation because **data is loaded into memory once**, then calculations can proceed quickly. Maybe issue was just the multiple (5) disk reads compared to 1 NCL disk read?
-
-## Pressure-to-theta interpolation tests
-There are only two obvious tools for interpolating between isobars and isentropes: NCL, and python using the MetPy package.
-
-### Macbook: 60 level, 200 timesteps
-The sample data was generated using
-```
-for reso in 20 10 7.5 5 3 2 1.5; do ./datagen $reso; done
-```
-where the numbers refer to the latitude/longitude grid spacing.
-
-| nlat | size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- | --- |
-| 6 | 20M (3) | NCL | **0.497** | 0.393 | 0.097 |
-| 6 | 20M (3) | NCL Parallel | **0.638** | 3.281 | 0.846 |
-| 6 | 20M (3) | MetPy | **1.743** | 2.782 | 0.364 |
-| 6 | 20M (3) | MetPy + Dask | **1.813** | 2.899 | 0.364 |
-
-| nlat | size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- | --- |
-| 9 | 45M (3) | NCL | **0.965** | 0.775 | 0.170 |
-| 9 | 45M (3) | NCL Parallel | **0.777** | 3.818 | 1.013 |
-| 9 | 45M (3) | MetPy | **2.283** | 4.164 | 0.660 |
-| 9 | 45M (3) | MetPy + Dask | **2.364** | 4.220 | 0.640 |
-
-| nlat | size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- | --- |
-| 12 | 80M (3) | NCL | **1.415** | 1.158 | 0.237 |
-| 12 | 80M (3) | NCL Parallel | **0.955** | 4.450 | 1.101 |
-| 12 | 80M (3) | MetPy | **2.983** | 5.049 | 0.963 |
-| 12 | 80M (3) | MetPy + Dask | **2.947** | 3.891 | 2.847 |
-
-| nlat | size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- | --- |
-| 18 | 178M (3) | NCL | **2.804** | 2.394 | 0.369 |
-| 18 | 178M (3) | NCL Parallel | **1.406** | 6.304 | 1.478 |
-| 18 | 178M (3) | MetPy | **5.115** | 8.502 | 1.808 |
-| 18 | 178M (3) | MetPy + Dask | **5.248** | 7.462 | 4.314 |
-
-| nlat | size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- | --- |
-| 24 | 317M (3) | NCL | **4.767** | 4.187 | 0.524 |
-| 24 | 317M (3) | NCL Parallel | **2.076** | 8.895 | 1.889 |
-| 24 | 317M (3) | MetPy | **7.931** | 11.477 | 2.674 |
-| 24 | 317M (3) | MetPy + Dask | **8.056** | 10.524 | 6.244 |
-
-| nlat | size (version) | name | real (s) | user (s) | sys (s) |
-| --- | --- | --- | --- | --- | --- |
-| 36 | 712M (3) | NCL | **10.433** | 9.137 | 1.149 |
-| 36 | 712M (3) | NCL Parallel | **4.054** | 16.661 | 3.662 |
-| 36 | 712M (3) | MetPy | **17.076** | 19.808 | 6.269 |
-
-## Eddy flux term tests
-### Julia Notes
-For the Julia tests, I played with running the code in an interactive shell and using the [`PackageCompiler`](https://github.com/JuliaLang/PackageCompiler.jl) utility to compile Julia code into a machine executable. The Julia workflow is quite different -- you **cannot** simply make repeated calls to some script on the command line, because this means **the JIT compilation kicks in every time, and becomes a huge bottleneck**. Instead, you should run things from a persistent notebook or REPL, **or** compile to a machine executable to eliminate JIT compilation altogether. The latter is a bit faster.
-
-### CDO Notes
-With an older, verbose CDO algorithm for getting fluxes (see `trash/fluxes_ineff.cdo`), CDO was **much much slower**, and the problem was exacerbated by adding levels.
-
-### Macbook: 60 level, 200 timesteps
+# Eddy flux tests
+## Macbook: 60 level, 200 timesteps
 The sample data was generated using
 ```
 for reso in 20 10 7.5 5 3 2 1.5; do ./datagen $reso; done
 ```
 where the numbers refer to the latitude/longitude grid spacing
 
-Turns out for small datasets **NCL is faster than other tools**, and for large datasets, **CDO is faster**. Dask chunking didn't work well for small files. Note that using the NCL feature `setfileoption("nc", "Format", "LargeFile")` made **neglibile** difference in final wall-clock time. Also note there are no options to improve large file processing, recommendation is to split up by level or time; see [this NCL talk post](https://www.ncl.ucar.edu/Support/talk_archives/2011/2636.html) and [this stackoverflow post](https://stackoverflow.com/questions/44474507/read-large-netcdf-data-by-ncl).
+It turns out for small datasets **NCL is faster than other tools**, and for large datasets, **CDO is faster**. Dask chunking didn't work well for small files. Note that using the NCL feature `setfileoption("nc", "Format", "LargeFile")` made **neglibile** difference in final wall-clock time. Also note there are no options to improve large file processing, and the official recommendation is to split files up by level or time; see [this NCL talk post](https://www.ncl.ucar.edu/Support/talk_archives/2011/2636.html) and [this stackoverflow post](https://stackoverflow.com/questions/44474507/read-large-netcdf-data-by-ncl).
 
 | nlat | size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
@@ -169,7 +142,7 @@ Turns out for small datasets **NCL is faster than other tools**, and for large d
 | 120 | 3.9G (3) | NCL | **216.434** | 90.484 | 42.720 |
 | 120 | 3.9G (3) | NCO | **145.183** | 105.943 | 26.878 |
 
-### Cheyenne interactive node: 60 level, 200 timesteps
+## Cheyenne interactive node: 60 level, 200 timesteps
 This time, the benchmarks were run on a Cheyenne HPC compute cluster interactive node, which is a shared resource consisting of approximately 72 cores.
 
 | nlat | size (version) | name | real (s) | user (s) | sys (s) |
@@ -248,6 +221,67 @@ This time, the benchmarks were run on a Cheyenne HPC compute cluster interactive
 | 120 | 3.9G (3) | CDO | **25.413** | 19.008 | 6.244 |
 | 120 | 3.9G (3) | NCL | **109.181** | 93.100 | 10.664 |
 | 120 | 3.9G (3) | NCO | **139.396** | 112.788 | 13.928 |
+
+# Hybrid-to-pressure interpolation tests
+Setup is 4 times daily 100-day T42L40 resolution files, from dry dynamical core model.
+
+* Time for NCL interpolation script with **automatic iteration**: ***70s exactly***
+* Time for interpolation script with **explicit iteration through variables**: ***71s almost identical***
+* Time for interpolation with CDO: ***30s pre-processing*** (probably due to inefficiency of overwriting original ncfile with file that deletes coordinates), ***94s for setting things up*** (because we have to write surface geopotential to same massive file, instead of declaring as separate variable in NCL), and ***122s actual interpolation*** (with bunch of warnings) so ***216 total***
+
+Alternative explanation is that, language tools like python and NCl more appropriate for parallel computation because **data is loaded into memory once**, then calculations can proceed quickly. Maybe issue was just the multiple (5) disk reads compared to 1 NCL disk read?
+
+# Pressure-to-theta interpolation tests
+There are only two obvious tools for interpolating between isobars and isentropes: NCL, and python using the MetPy package.
+
+## Macbook: 60 level, 200 timesteps
+The sample data was generated using
+```
+for reso in 20 10 7.5 5 3 2 1.5; do ./datagen $reso; done
+```
+where the numbers refer to the latitude/longitude grid spacing.
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 6 | 20M (3) | NCL | **0.745** | 0.417 | 0.132 |
+| 6 | 20M (3) | NCL Parallel | **0.811** | 3.243 | 0.920 |
+| 6 | 20M (3) | MetPy | **2.825** | 2.819 | 0.636 |
+| 6 | 20M (3) | MetPy + Dask | **1.731** | 2.756 | 0.387 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 9 | 45M (3) | NCL | **0.990** | 0.765 | 0.170 |
+| 9 | 45M (3) | NCL Parallel | **0.861** | 3.913 | 1.035 |
+| 9 | 45M (3) | MetPy | **2.364** | 4.140 | 0.683 |
+| 9 | 45M (3) | MetPy + Dask | **2.223** | 4.022 | 0.618 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 12 | 80M (3) | NCL | **1.618** | 1.199 | 0.277 |
+| 12 | 80M (3) | NCL Parallel | **1.084** | 4.966 | 1.207 |
+| 12 | 80M (3) | MetPy | **3.080** | 5.032 | 0.920 |
+| 12 | 80M (3) | MetPy + Dask | **2.849** | 3.612 | 2.792 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 18 | 178M (3) | NCL | **3.400** | 2.435 | 0.438 |
+| 18 | 178M (3) | NCL Parallel | **1.554** | 7.015 | 1.523 |
+| 18 | 178M (3) | MetPy | **5.057** | 8.213 | 1.868 |
+| 18 | 178M (3) | MetPy + Dask | **5.211** | 6.587 | 4.888 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 24 | 317M (3) | NCL | **5.652** | 4.409 | 0.646 |
+| 24 | 317M (3) | NCL Parallel | **2.271** | 10.226 | 2.011 |
+| 24 | 317M (3) | MetPy | **8.629** | 10.519 | 3.121 |
+| 24 | 317M (3) | MetPy + Dask | **8.983** | 8.930 | 7.203 |
+
+| nlat | size (version) | name | real (s) | user (s) | sys (s) |
+| --- | --- | --- | --- | --- | --- |
+| 36 | 712M (3) | NCL | **12.459** | 9.842 | 1.321 |
+| 36 | 712M (3) | NCL Parallel | **5.028** | 19.334 | 3.810 |
+| 36 | 712M (3) | MetPy | **19.194** | 19.144 | 7.176 |
+| 36 | 712M (3) | MetPy + Dask | **18.281** | 15.292 | 11.703 |
 
 # Installation notes
 ## CDO for macOS

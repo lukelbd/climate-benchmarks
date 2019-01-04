@@ -12,7 +12,7 @@ name=$0
 dir=$1 # directories where data is stored
 [ -z "$dir" ] && echo "Error: Please enter location of NetCDFs for globbing/testing." && exit 1
 ! [ -d "$dir" ] && echo "Error: Directory \"$dir\" not found." && exit 1
-output=$dir/fluxes_${HOSTNAME%%.*}.log # store here
+output=logs/fluxes_${dir}_${HOSTNAME%%.*}.log # store here
 header="| nlat | size (version) | name | real (s) | user (s) | sys (s) |\n| --- | --- | --- | --- | --- | --- |\n"
 rm $output 2>/dev/null
 seconds() {
@@ -45,45 +45,48 @@ for data in ${datas[@]}; do
   # ls -l; former depends on internals of how data is stored, and on Cheyenne,
   # ends up way bigger. See: https://unix.stackexchange.com/a/106278/112647
   # Explanation of why this happens: https://serverfault.com/a/290091/427991
-  size=$(du --apparent-size -h $data | xargs | cut -d' ' -f1)
+  size=$(command du -h $data | xargs | cut -d' ' -f1)
   version=${data%.nc}
-  version=${version#*_}
+  version=${version##*_}
   nlat=${data#*N}
   nlat=$(printf '%.0f' ${nlat%T*})
-  echo; echo "Dataset: $data ($size)"
+  echo && echo "Dataset: $data ($size)"
   printf "\n$header" >>$output # add header for each new file
 
   # Julia
-  bench "Julia + PackageCompiler" ./jl_${HOSTNAME%%.*}/${name} $data
+  bench "Julia + PackageCompiler" ./precompyle/${name} $data
   # bench "Julia (naive)" julia -e 'push!(LOAD_PATH, "./"); using fluxes; fluxes.eddy_flux("'${name}'")' # will be ridiculously slow, don't bother
 
-  # Skip to big files
-  # let counter+=1
-  # [ $counter -le 10 ] && continue
+  # Python with NetCDF4
+  bench "NetCDF4" python ${name}_nc4.py $data 0
+
   # Python with xarray method
-  bench "XArray + no dask" python ${name}.py $data 0
+  bench "XArray + no dask" python ${name}_xarray.py $data 0
 
   # Python with xarray and Dask chunking by 2D slice
   # bench "XArray + 100-timestep chunks" python ${name}.py $data 100
   if [ $dir == 1lev ]; then
-    bench "XArray + 1000 t chunks" python ${name}.py $data 1000
-    # bench "XArray + 200 t chunks"  python ${name}.py $data 200
-    bench "XArray + 100 t chunks" python ${name}.py $data 100
-    # bench "XArray + 50 t chunks"   python ${name}.py $data 50
-    # bench "XArray + 20 t chunks"   python ${name}.py $data 20
-    bench "XArray + 10 t chunks" python ${name}.py $data 20
+    bench "XArray + 1000 t chunks" python ${name}_xarray.py $data 1000
+    # bench "XArray + 200 t chunks"  python ${name}_xarray.py $data 200
+    bench "XArray + 100 t chunks" python ${name}_xarray.py $data 100
+    # bench "XArray + 50 t chunks"   python ${name}_xarray.py $data 50
+    # bench "XArray + 20 t chunks"   python ${name}_xarray.py $data 20
+    bench "XArray + 10 t chunks" python ${name}_xarray.py $data 20
   elif [ $dir == 60lev ]; then
-    bench "XArray + 200 t chunks" python ${name}.py $data 200
-    # bench "XArray + 50 t chunks"  python ${name}.py $data 50
-    bench "XArray + 20 t chunks" python ${name}.py $data 20
-    # bench "XArray + 10 t chunks"  python ${name}.py $data 10
-    # bench "XArray + 5 t chunks"   python ${name}.py $data 5
-    bench "XArray + 2 t chunks" python ${name}.py $data 2
-    # bench "XArray + 1 t chunks"   python ${name}.py $data 1
+    bench "XArray + 200 t chunks" python ${name}_xarray.py $data 200
+    # bench "XArray + 50 t chunks"  python ${name}_xarray.py $data 50
+    bench "XArray + 20 t chunks" python ${name}_xarray.py $data 20
+    # bench "XArray + 10 t chunks"  python ${name}_xarray.py $data 10
+    # bench "XArray + 5 t chunks"   python ${name}_xarray.py $data 5
+    bench "XArray + 2 t chunks" python ${name}_xarray.py $data 2
+    # bench "XArray + 1 t chunks"   python ${name}_xarray.py $data 1
   else
     echo "Error: Unknown chunk combos for sample data in dir \"$dir\"."
     exit 1
   fi
+
+  # Fortran method
+  # Super-duper low level
 
   # CDO method
   # NOTE: On mac just run with serial IO

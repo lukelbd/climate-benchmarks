@@ -71,7 +71,7 @@ N = 100000
 chunks = (1, N, N, N) # chunk in time dimension
 # Temperature
 base = da.zeros((time.size, 1, 1, lon.size), chunks=chunks) # empty array
-offset = ((200 + 0.115*plev)[:,None,None] # max average of 200 + 115 = 315K
+offset = ((255 + 0.06*plev)[:,None,None] # max average of 255 + 60 = 315K
         - (60*np.abs(lat)/90)[:,None]) # average of 315 - 60 = 255K at pole
 # Other
 # NOTE: Got weird error when trying to use same Dask array for two variables,

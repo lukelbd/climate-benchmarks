@@ -98,9 +98,9 @@ module fluxes
     # Also note the 'dims' keyword argument *must be specified*; don't have fluid
     # differentiation between position args and kwargs like in python
     emf = stat.mean((u .- stat.mean(u, dims=1)) .*
-                     (v .- stat.mean(v, dims=1)), dims=1)
+                    (v .- stat.mean(v, dims=1)), dims=1)
     ehf = stat.mean((t .- stat.mean(t, dims=1)) .*
-                     (v .- stat.mean(v, dims=1)), dims=1)
+                    (v .- stat.mean(v, dims=1)), dims=1)
 
     # Create new file, and save
     # NOTE: The thing after the colon is a symbol; for more info see

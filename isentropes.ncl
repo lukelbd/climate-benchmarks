@@ -19,23 +19,29 @@ time = f->time
 plev = f->plev
 lat = f->lat
 lon = f->lon
+time@axis = "T"
+lat@axis = "Y"
+lon@axis = "X"
 
 ; Get potential temp
 ; p0 = 1013.25
 t = f->t
 p0 = 1000.0 ; more common to make this the reference pressure
 kappa = 0.286
-theta = t*conform(t, (plev/p0)^kappa, (/1/)) ; calculate potential temperature
+theta = t*conform(t, (p0/plev)^kappa, (/1/)) ; calculate potential temperature
 delete(t)
 
 ; The theta coordinates
 ; Should go in *same order* as pressure coordinates (pressure increasing,
 ; so theta decreasing)
-thlev = ispan(400,240,20)*1.0 ; specify desired isentropic levels
+; thlev = ispan(400,240,20)*1.0 ; specify desired isentropic levels
+thlev = (/265, 275, 285, 300, 315, 330, 350, 370, 395, 430, 475, 530, 600, 700, 850/)*1.0
+thlev = thlev(::-1)
 thlev!0 = "thlev"
 thlev&thlev = thlev ; this is apparently necessary
 thlev@long_name = "potential temperature"
 thlev@units = "K"
+thlev@axis = "Z"
 
 ; Output file
 ; Add coordinates so they appear first in order

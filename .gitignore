@@ -1,20 +1,24 @@
 # Ignore many files #
 #####################
+# Data
 *.nc
-  # data
+# Qsub output
 *.o[0-9]*
 *.e[0-9]*
-  # qsub output
-jl*
-  # directories containing compiled julia code
+# Compiled julia code
+*.dylib
+*.a
+# Interactive NCO
 *.tmp
-  # interactive NCO
+
+# Vim sessions
 .vimsession
-  # vim sessions
+
+# Temp
 __pycache__
-  # temp
+
+# OS-generated files
 .DS_Store
 .DS_Store?
 .Trashes
 ._*
-  # os-generated files

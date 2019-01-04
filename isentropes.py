@@ -34,7 +34,8 @@ eps = 1
 # thlev = np.array([*range(260, 360, 10), *range(360, 400, 20), *range(400, 800, 50), *range(800, 1600, 200)])
 # thlev = np.array([*range(260, 360, 10), *range(360, 400, 20), *range(400, 800, 50)])
 # thlev = np.array([*range(300, 360, 10), *range(360, 400, 20)])
-thlev = np.arange(240,400,20) # must be ascending!
+# thlev = np.arange(240,400,20) # must be ascending!
+thlev = np.array([265, 275, 285, 300, 315, 330, 350, 370, 395, 430, 475, 530, 600, 700, 850])
 # Coordinates
 time = data['time']
 plev = data['plev']

@@ -6,7 +6,6 @@
 import os
 import sys
 import xarray as xr
-xr.DataArray.mean
 filename = sys.argv[1]
 dir = filename.split('/')[0]
 nt = int(sys.argv[2]) # number of time chunks; 0 to disable chunking
