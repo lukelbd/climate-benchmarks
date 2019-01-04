@@ -35,12 +35,6 @@ lon = np.arange(-180 + reso/2, 180, reso, dtype=dtype)
 # Variables
 shape = (time.size, plev.size, lat.size, lon.size)
 params = ('u', 'v', 't')
-offsets = {
-    'u': np.tile(0, (plev.size, lat.size, 1)),
-    'v': np.tile(0, (plev.size, lat.size, 1)),
-    't': (200 + 0.115*plev)[:,None,None] # max average of 200 + 115 = 315K
-        - (60*np.abs(lat)/90)[:,None]
-    } # average of 315 - 60 = 255K at pole
 params_attrs = {
     'u': {'long_name':'zonal wind', 'units':'m/s'},
     'v': {'long_name':'meridional wind', 'units':'m/s'},
@@ -63,7 +57,7 @@ coords_attrs = {
 for attrs in coords_attrs.values():
     attrs['standard_name'] = attrs['long_name']
 
-# Variables
+# Variable data
 # Numpy is extremely slow at making tons of random variables, so need to
 # use dask so generation is done in parallel and we don't get memory overload
 # NOTE: Random routines (including numpy ones) don't accept chunks.
@@ -74,19 +68,29 @@ print('Making variables.')
 # chunks = (1, shape[1], shape[2], shape[3]) # one chunk per timestep worked *way* better
 # chunks = (1, shape[1]//4, shape[2], shape[3]) # compromise?
 N = 100000
-scale = 1 # stdev for random time series (note cumsum will amplify the variability)
 chunks = (1, N, N, N) # chunk in time dimension
-random = da.zeros((time.size, 1, 1, lon.size), chunks=chunks) # empty array
-# random = da.random.normal(0, scale, (time.size, 1, 1, lon.size), chunks=chunks).astype(dtype) # remember 2/3 fall within +/-1stdev
-# random = random.cumsum(axis=3) # below is too complex for Dask arrays; just accept this weird discontinuity
-# random[...,:lon.size//2] = random[...,:lon.size//2].cumsum(axis=3)
-# random[...,lon.size//2:] = random[...,lon.size//2-1::-1]
-params_map = {name: (coords, offsets[name] + random, params_attrs[name]) for name in params}
+# Temperature
+base = da.zeros((time.size, 1, 1, lon.size), chunks=chunks) # empty array
+offset = ((200 + 0.115*plev)[:,None,None] # max average of 200 + 115 = 315K
+        - (60*np.abs(lat)/90)[:,None]) # average of 315 - 60 = 255K at pole
+# Other
+# NOTE: Got weird error when trying to use same Dask array for two variables,
+# ended up with all NaNs
+random1 = da.random.normal(0, 1, (time.size, 1, 1, lon.size), chunks=chunks).astype(dtype) # remember 2/3 fall within +/-1stdev
+random1 = random1.cumsum(axis=0) + np.tile(0, (plev.size, lat.size, 1))
+random2 = da.random.normal(0, 1, (time.size, 1, 1, lon.size), chunks=chunks).astype(dtype) # remember 2/3 fall within +/-1stdev
+random2 = random2.cumsum(axis=0) + np.tile(0, (plev.size, lat.size, 1))
+# Write variables
+params_values = {'t':offset + base, 'u':random1, 'v':random2}
+params_map = {name: (coords, params_values[name], params_attrs[name]) for name in params}
 coords_map = {name: ((name,), coords_values[name], coords_attrs[name]) for name in coords}
 print('Making dataset.')
 data = xr.Dataset(params_map, coords_map)
 for param in data.variables.values():
     param.encoding.update({'_FillValue':None}) # disable default fill value
+# Below is too complex for Dask arrays; just accept this weird discontinuity
+# random[...,:lon.size//2] = random[...,:lon.size//2].cumsum(axis=3)
+# random[...,lon.size//2:] = random[...,lon.size//2-1::-1]
 
 # Save
 # NOTE: NaN encoding causes issues with NCO

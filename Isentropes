@@ -29,18 +29,17 @@ bench() {
   res="$( (time ${@:2}) 2>&1 )"
   [ $? -ne 0 ] && err=true
   echo "$res" | grep "^fatal:" &>/dev/null && err=true
-  # $err && echo "Error: Bad exit code." && echo "$res" | sed 's/[[:space:]]*real[[:space:]]*.*//g' && return 1
-  $err && echo "$1 Error: Bad exit code." && return 1
+  $err && echo "Error: Bad exit code." && echo "$res" | sed 's/[[:space:]]*real[[:space:]]*.*//g' && return 1
+  # $err && echo "$1 Error: Bad exit code." && return 1
   # Optionally print warnings or other messages
-  res="$(echo "$res" | grep -v Warning)" # ignore python warnings
+  # res="$(echo "$res" | grep -v Warning)" # ignore python warnings
   nline=$(wc -l <<< "$res")
   ts=($(tail -n 3 <<< "$res"))
   if [ $nline -gt 4 ]; then # empty line, plus sys, real, user time lines
     other="$(head -n $((nline - 4)) <<< "$res")"
-    echo "Lengh of warning messages: $(wc -l <<< "$other")"
+    # echo "Lengh of warning messages: $(wc -l <<< "$other")"
+    echo "Messages:" && echo "$other"
   fi
-  # echo "Messages:"
-  # echo "$other"
   # Get result, tabulate it, add it to markdown file
   real=$(seconds ${ts[1]})
   user=$(seconds ${ts[3]})
@@ -48,9 +47,37 @@ bench() {
   echo "$1 time: ${real}s"
   printf "| $nlat | $size ($version) | $1 | **$real** | $user | $sys |\n" >>$output
 }
+ncl_parallel() {
+  local name1 name2 glob1 glob2 ts t
+  name1=${1%.nc}
+  name2=${1%/*}/isentropes_ncl
+  np=0
+  pmax=1000
+  nsplit=10
+  ts=$(command ncdump -h ${name1}.nc | grep 'UNLIMITED' | sed 's/[^0-9]//g') # number of timesteps
+  # for t in $(seq 0 $((ts - 1))); do
+  for ni in $(seq 1 $nsplit); do
+    let np+=1
+    t1=$(((ni - 1)*ts/nsplit)) # e.g. nsplit=10, ts=200, goes 0, 20, 40, 60
+    t2=$((ni*ts/nsplit - 1)) # e.g. nsplit=10, ts=200, goes 19, 39, 59
+    {
+    # ncks -O -h --no-abc -d time,$t,$t ${name1}.nc ${name1}-${t}.nc
+    # ncl -Q -n "filename=\"${name1}-${t}.nc\"" "outname=\"${name2}-${t}.nc\"" ${name}.ncl
+    ncks -O -h --no-abc -d time,$t1,$t2 ${name1}.nc ${name1}-${ni}.nc
+    ncl -Q -n "filename=\"${name1}-${ni}.nc\"" "outname=\"${name2}-${ni}.nc\"" ${name}.ncl
+    } &
+    [ $((np % pmax)) -eq 0 ] && wait
+  done
+  wait
+  glob1=$name1'-*.nc'
+  glob2=$name2'-*.nc'
+  ncrcat -O $glob2 ${name2}_parallel.nc
+  rm $glob1 $glob2
+}
 
 # Loop over datasets with different resolutions
 type gdu &>/dev/null && cmd=gdu || cmd=du # need GNU utils version on mac
+rm $dir/*-*.nc 2>/dev/null # remove parallel-prodcued files
 datas=($dir/data*.nc)
 counter=0
 for data in ${datas[@]}; do
@@ -72,9 +99,15 @@ for data in ${datas[@]}; do
   # NOTE: NCL needs special dyld library path but so does brew, screws
   # up Homebrew if we set it, so set it locally
   export DYLD_LIBRARY_PATH="/usr/local/lib/gcc/4.9"
-  bench "NCL" ncl -Q -n "filename=\"$data\"" ${name}.ncl
+  bench "NCL" ncl -Q -n "filename=\"$data\"" "outname=\"${data%/*}/isentropes_ncl.nc\"" ${name}.ncl
+
+  # NCL in parallel by splitting timesteps with ncks
+  bench "NCL Parallel" ncl_parallel "$data"
   export DYLD_LIBRARY_PATH=""
 
   # Python with MetPy method
   bench "MetPy" python ${name}.py $data 0
+
+  # Python with MetPy method
+  bench "MetPy + Dask" python ${name}.py $data 10
 done
