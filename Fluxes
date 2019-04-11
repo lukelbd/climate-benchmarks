@@ -13,27 +13,40 @@ dir=$1 # directories where data is stored
 [ -z "$dir" ] && echo "Error: Please enter location of NetCDFs for globbing/testing." && exit 1
 ! [ -d "$dir" ] && echo "Error: Directory \"$dir\" not found." && exit 1
 output=logs/fluxes_${dir}_${HOSTNAME%%.*}.log # store here
-header="| nlat | size (version) | name | real (s) | user (s) | sys (s) |\n| --- | --- | --- | --- | --- | --- |\n"
+header="| nlat | size | name | real (s) | user (s) | sys (s) |\n| --- | --- | --- | --- | --- | --- |\n"
 rm $output 2>/dev/null
 seconds() {
   # Convert time command output to raw seconds
-  m=${1%m*}
-  s=${1#*m}
+  t=$1
+  m=${t%m*}
+  s=${t#*m}
   s=${s%.*}
-  t=${1#*.} # tail
-  echo $((m*60 + s)).${t%s} # converts e.g. 1m35.23s to 85.23s
+  d=${t#*.} # decimal
+  echo $((m*60 + s)).${d%s} # converts e.g. 1m35.23s to 85.23s
 }
 bench() {
   # Run time command
-  res=$( (time ${@:2}) 2>&1 )
-  echo $1
-  echo $res
-  array=($res)
+  # NOTE: Preserve stdout, because have Matlab print stuff after startup
+  # is complete so we can get better estimate
+  local real user sys
+  res=$( (time "${@:2}" 2>/dev/null) 2>&1 )
+  info="$(echo "${res%real*}" | xargs | tr -s ' ')"
+  time="real ${res##*real}"
+  array=($time)
   # Get result, tabulate it, add it to markdown file
-  real=$(seconds ${array[1]})
-  user=$(seconds ${array[3]})
-  sys=$(seconds ${array[5]})
-  printf "| $nlat | $size ($version) | $1 | **$real** | $user | $sys |\n" >>$output
+  if [ -n "$info" ]; then # try to find the number, in seconds
+    info="${info##*mathworks.com.}" # only way to remove startup....
+    info="$(echo "$info" | sed 's/[^.0-9]//g')"
+    real="$(seconds 0m${info%.1}s)" # weirdly, get extra '1' at end of string that is totally invisible before passing through sed
+    printf "| $nlat | $size | $1 | **$real** | | |\n" >>$output
+  else
+    real=$(seconds ${array[1]})
+    user=$(seconds ${array[3]})
+    sys=$(seconds ${array[5]})
+    printf "| $nlat | $size | $1 | **$real** | $user | $sys |\n" >>$output
+  fi
+  echo $1
+  echo ${real}s
 }
 
 # Loop over datasets with different resolutions
@@ -51,41 +64,51 @@ for data in ${datas[@]}; do
   nlat=${data#*N}
   nlat=$(printf '%.0f' ${nlat%T*})
   echo && echo "Dataset: $data ($size)"
+  echo "Logfile: $output"
   printf "\n$header" >>$output # add header for each new file
 
+  # Fortran method
+  # NOTE: Assumes fortran installed with MacPorts, port install netcdf and port install netcdf-fortran
+  gfortran -I/opt/local/include -L/opt/local/lib -lnetcdff -lnetcdf ${name}.f90 -o ${name}_f90
+  bench "Fortran" ${name}_f90 $data
+
   # Julia
-  bench "Julia + PackageCompiler" ./packagecompiler/${name} $data
+  bench "Compiled Julia" ./packagecompiler/${name} $data
   # bench "Julia (naive)" julia -e 'push!(LOAD_PATH, "./"); using fluxes; fluxes.eddy_flux("'${name}'")' # will be ridiculously slow, don't bother
 
+  # MATLAB
+  # NOTE: nojvm very important, eliminates initial startup time
+  # license="$(which matlab)"
+  # license="${license%bin*}/licenses/license.dat"
+  bench "MATLAB minus startup" matlab -nojvm -nodisplay -r \
+    "filename='${data}'; tic; fluxes; toc; disp(' '); exit"
+
   # Python with NetCDF4
-  bench "NetCDF4" python ${name}_nc4.py $data 0
+  bench "Python netCDF4" python ${name}_nc4.py $data 0
 
   # Python with xarray method
-  bench "XArray + no dask" python ${name}_xarray.py $data 0
+  bench "XArray without dask" python ${name}_xarray.py $data 0
 
   # Python with xarray and Dask chunking by 2D slice
   if [ $dir == 1lev ]; then
-    bench "XArray + 1000 step chunks" python ${name}_xarray.py $data 1000
-    # bench "XArray + 200 step chunks"  python ${name}_xarray.py $data 200
-    bench "XArray + 100 step chunks" python ${name}_xarray.py $data 100
-    # bench "XArray + 50 step chunks"   python ${name}_xarray.py $data 50
-    # bench "XArray + 20 step chunks"   python ${name}_xarray.py $data 20
-    bench "XArray + 10 step chunks" python ${name}_xarray.py $data 20
+    bench "XArray 1000 step chunks" python ${name}_xarray.py $data 1000
+    # bench "XArray 200 step chunks"  python ${name}_xarray.py $data 200
+    bench "XArray 100 step chunks" python ${name}_xarray.py $data 100
+    # bench "XArray 50 step chunks"   python ${name}_xarray.py $data 50
+    # bench "XArray 20 step chunks"   python ${name}_xarray.py $data 20
+    bench "XArray 10 step chunks" python ${name}_xarray.py $data 20
   elif [ $dir == 60lev ]; then
-    bench "XArray + 200 step chunks" python ${name}_xarray.py $data 200
-    # bench "XArray + 50 step chunks"  python ${name}_xarray.py $data 50
-    bench "XArray + 20 step chunks" python ${name}_xarray.py $data 20
-    # bench "XArray + 10 step chunks"  python ${name}_xarray.py $data 10
-    # bench "XArray + 5 step chunks"   python ${name}_xarray.py $data 5
-    bench "XArray + 2 step chunks" python ${name}_xarray.py $data 2
-    # bench "XArray + 1 step chunks"   python ${name}_xarray.py $data 1
+    bench "XArray 200 step chunks" python ${name}_xarray.py $data 200
+    # bench "XArray 50 step chunks"  python ${name}_xarray.py $data 50
+    bench "XArray 20 step chunks" python ${name}_xarray.py $data 20
+    # bench "XArray 10 step chunks"  python ${name}_xarray.py $data 10
+    # bench "XArray 5 step chunks"   python ${name}_xarray.py $data 5
+    bench "XArray 2 step chunks" python ${name}_xarray.py $data 2
+    # bench "XArray 1 step chunks"   python ${name}_xarray.py $data 1
   else
     echo "Error: Unknown chunk combos for sample data in dir \"$dir\"."
     exit 1
   fi
-
-  # Fortran method
-  # Super-duper low level
 
   # CDO method
   # NOTE: On mac just run with serial IO
