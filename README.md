@@ -43,8 +43,8 @@ Julia compares unfavorably to python and CDO.
 ## NetCDF versions
 There were two major performance differences observed between the NetCDF3 and NetCDF4 versions of the sample data:
 
-* In general, CDO with NetCDF3 (on a Macbook) responded **less favorably** to thread-safe disk IO locking (the `-L` flag) -- it tended to speed things up for smaller datasets (over-optimization?) then slow things down for larger datasets, but **more-so** for NetCDF3.
-* Non-dask python datasets (i.e. XArray datasets loaded with `chunks=None`) were **somewhat slower** for NetCDF3 than NetCDF4. The effect was **more pronounced** with larger datasets. When chunking was used, the speed improvements for NetCDF4 were marginal, even toward 2GB datasets (around **7s** vs **9s**).
+* In general, CDO with NetCDF3 files responds **less favorably** to thread-safe disk IO locking (the `-L` flag). It tended to speed things up for smaller datasets (over-optimization?) then slow things down for larger datasets, but **more-so** for NetCDF3 files.
+* Non-dask python datasets (i.e. XArray datasets loaded with `chunks=None`) were **somewhat slower** for NetCDF3 files than NetCDF4 files. The effect was **more pronounced** with larger datasets. However when chunking was used, the speed improvements for NetCDF4 were marginal, even approaching 2GB file sizes (**7s** vs **9s**).
 
 Since most large general circulation models still produce the older-format NetCDF3
 files, only results for these datasets are shown.
