@@ -9,12 +9,19 @@ I got frequent errors following user instructions, which disappeared by disablin
 In the end *could never* get the CDO to do NetCDF4 I/O parallelization without at least sporadic errors. However looks like *performance with thread locking is often faster anyway*.
 -->
 
-# Benchmarks for atmospheric science data analysis
+# Atmospheric science data analysis benchmarks
 This repo provides benchmarks for common 
 data analysis tasks in atmospheric science
-accomplished with several different, common tools:
-CDO, NCL, NCO, python, julia, Fortran, and MATLAB.
-Below are some general notes.
+accomplished with several different tools:
+
+* Fortran
+* Climate Data Operators (CDO)
+* NCAR Command Language (NCL)
+* NetCDF Operators (NCO)
+* Julia
+* MATLAB
+
+This repo is a work-in-progress. Below are some general notes.
 
 ## Climate Data Operators (CDO)
 The newest versions of `cdo` add zonal-statistics functions to the `expr` subcommand,
