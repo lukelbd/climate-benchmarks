@@ -61,7 +61,13 @@ for reso in 20 10 7.5 5 3 2 1.5; do ./datagen $reso; done
 ```
 where the numbers refer to the latitude/longitude grid spacing
 
-It turns out for small datasets **NCL is faster than other tools**, and for large datasets, **CDO is faster**. Dask chunking didn't work well for small files. Note that using the NCL feature `setfileoption("nc", "Format", "LargeFile")` made **neglibile** difference in final wall-clock time. Also note there are no options to improve large file processing, and the official recommendation is to split files up by level or time; see [this NCL talk post](https://www.ncl.ucar.edu/Support/talk_archives/2011/2636.html) and [this stackoverflow post](https://stackoverflow.com/questions/44474507/read-large-netcdf-data-by-ncl).
+CDO is the clear winner here, followed closely by python with XArray and Dask, or with
+NetCDF4. For files smaller than 100MB though, the differences are never that large, and
+even NCL and NCO appear to be acceptable choices. Perhaps tellingly, Julia is the clear
+winner for the smallest file sizes -- evidently when numerical computation is the
+bottleneck, rather than disk reading and writing, Julia shines.
+
+Note that using the NCL feature `setfileoption("nc", "Format", "LargeFile")` made **neglibile** difference in final wall-clock time. Also note there are no options to improve large file processing, and the official recommendation is to split files up by level or time; see [this NCL talk post](https://www.ncl.ucar.edu/Support/talk_archives/2011/2636.html) and [this stackoverflow post](https://stackoverflow.com/questions/44474507/read-large-netcdf-data-by-ncl).
 
 | nlat | size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
