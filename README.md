@@ -51,7 +51,8 @@ files, only results for these datasets are shown.
 But anyway, as explained above, the differences weren't that huge.
 
 # Eddy flux benchmarks
-For this tests
+For this benchmark, we use an assortment of languages to
+calculate and save eddy fluxes of heat and momentum to new NetCDF files.
 
 ## Macbook: 60 level, 200 timesteps
 The sample data was generated using
@@ -147,7 +148,7 @@ It turns out for small datasets **NCL is faster than other tools**, and for larg
 | 120 | 3.9G (3) | NCO | **145.183** | 105.943 | 26.878 |
 
 ## Cheyenne interactive node: 60 level, 200 timesteps
-This time, the benchmarks were run on a Cheyenne HPC compute cluster interactive node, which is a shared resource consisting of approximately 72 cores.
+This time, the benchmark was run on a Cheyenne HPC compute cluster interactive node, which is a shared resource consisting of approximately 72 cores.
 
 | nlat | size (version) | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
@@ -245,7 +246,7 @@ then the calculations can proceed quickly. Another issue could have been the nec
 disk reads (5) for the CDO script, compared to just 1 NCL disk read.
 
 # Pressure-to-theta interpolation benchmarks
-There are only two obvious tools for interpolating between isobars and isentropes: NCL, and python using the MetPy package.
+There are only two obvious tools for interpolating between isobars and isentropes: NCL, and python using the MetPy package. This benchmark compared them.
 
 ## Macbook: 60 level, 200 timesteps
 The sample data was generated using
