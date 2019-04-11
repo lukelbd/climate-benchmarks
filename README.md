@@ -16,18 +16,6 @@ accomplished with several different, common tools:
 CDO, NCL, NCO, python, julia, Fortran, and MATLAB.
 Below are some general notes.
 
-## Julia
-The Julia workflow is quite different -- you **cannot** simply make repeated calls to some script on the command line, because this means **the JIT compilation kicks in every time, and becomes a huge bottleneck**. Instead, you should run things from a persistent notebook or REPL, **or** compile to a machine executable to eliminate JIT compilation altogether.
-
-To give Julia the best shot, each benchmark provides two times:
-
-1. Time from running a Julia script in an **interactive shell**, after running it with a test file so the JIT compilation has already kicked in. Obviously this was tedious to do systematically, with multiple files and multiple benchmarks, but I thought it was necessary.
-2. Time from running "pre-compiled" Julia code with the [`PackageCompiler`](https://github.com/JuliaLang/PackageCompiler.jl) utility. This has two extreme drawbacks, being that pre-compiling Julia code is excruciatingly slow even for very simple programs, and the resulting machine code takes up massive amounts of space relative to the complexity of the program (since all dependencies must be compiled to machine code too). But, it does result in slightly faster code.
-
-While I suspect Julia may be suitable for complex numerical algorithms, it turned out that
-for simple, common data analysis tasks, and especially when working with large arrays,
-Julia compares unfavorably to python and CDO.
-
 ## Climate Data Operators (CDO)
 The newest versions of `cdo` add zonal-statistics functions to the `expr` subcommand,
 which are used in `fluxes.cdo`. But these functions were not available in recent
@@ -39,6 +27,18 @@ This matches my experience in general: CDO is great for
 **simple** tasks, but for **complex**, highly chained commands, it can quickly grow
 less efficient than much older, but more powerful and expressive, tools.
 <!-- With an older, verbose CDO algorithm for getting fluxes (see `trash/fluxes_ineff.cdo`), CDO was **much much slower**, and the problem was exacerbated by adding levels. -->
+
+## Julia
+The Julia workflow is quite different -- you **cannot** simply make repeated calls to some script on the command line, because this means **the JIT compilation kicks in every time, and becomes a huge bottleneck**. Instead, you should run things from a persistent notebook or REPL, **or** compile to a machine executable to eliminate JIT compilation altogether.
+
+To give Julia the best shot, each benchmark provides two times:
+
+1. Time from running a Julia script in an **interactive shell**, after running it with a test file so the JIT compilation has already kicked in. Obviously this was tedious to do systematically, with multiple files and multiple benchmarks, but I thought it was necessary.
+2. Time from running "pre-compiled" Julia code with the [`PackageCompiler`](https://github.com/JuliaLang/PackageCompiler.jl) utility. This has two extreme drawbacks, being that pre-compiling Julia code is excruciatingly slow even for very simple programs, and the resulting machine code takes up massive amounts of space relative to the complexity of the program (since all dependencies must be compiled to machine code too). But, it does result in slightly faster code.
+
+While I suspect Julia may be suitable for complex numerical algorithms, it turned out that
+for simple, common data analysis tasks, and especially when working with large arrays,
+Julia compares unfavorably to python and CDO.
 
 ## NetCDF versions
 There were two major performance differences observed between the NetCDF3 and NetCDF4 versions of the sample data:
