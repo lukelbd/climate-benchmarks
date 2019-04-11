@@ -14,8 +14,8 @@ This repo provides benchmarks for common
 data analysis tasks in atmospheric science
 accomplished with several different, common tools:
 CDO, NCL, NCO, python, julia, Fortran, and MATLAB.
+Below are some general notes.
 
-# Some notes
 ## Julia
 The Julia workflow is quite different -- you **cannot** simply make repeated calls to some script on the command line, because this means **the JIT compilation kicks in every time, and becomes a huge bottleneck**. Instead, you should run things from a persistent notebook or REPL, **or** compile to a machine executable to eliminate JIT compilation altogether.
 
