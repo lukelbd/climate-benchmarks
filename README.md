@@ -50,7 +50,9 @@ Since most large general circulation models still produce the older-format NetCD
 files, only results for these datasets are shown.
 But anyway, as explained above, the differences weren't that huge.
 
-# Eddy flux tests
+# Eddy flux benchmarks
+For this tests
+
 ## Macbook: 60 level, 200 timesteps
 The sample data was generated using
 ```
@@ -224,16 +226,25 @@ This time, the benchmarks were run on a Cheyenne HPC compute cluster interactive
 | 120 | 3.9G (3) | NCL | **109.181** | 93.100 | 10.664 |
 | 120 | 3.9G (3) | NCO | **139.396** | 112.788 | 13.928 |
 
-# Hybrid-to-pressure interpolation tests
-Setup is 4 times daily 100-day T42L40 resolution files, from dry dynamical core model.
+# Hybrid-to-pressure interpolation benchmarks
+I have yet to formalize this benchmark, but performed some tests for my research.
+I used 400-timestep T42L40 resolution files from a dry dynamical core model.
 
-* Time for NCL interpolation script with **automatic iteration**: ***70s exactly***
-* Time for interpolation script with **explicit iteration through variables**: ***71s almost identical***
-* Time for interpolation with CDO: ***30s pre-processing*** (probably due to inefficiency of overwriting original ncfile with file that deletes coordinates), ***94s for setting things up*** (because we have to write surface geopotential to same massive file, instead of declaring as separate variable in NCL), and ***122s actual interpolation*** (with bunch of warnings) so ***216 total***
+* NCL interpolation: **70s total**
+* CDO interpolation: **216s total**
+  - **30s pre-processing** (probably due to inefficiency of overwriting original ncfile with file that deletes coordinates)
+  - **94s for setting things up** (because we have to write surface geopotential to same massive file, instead of declaring as separate variable in NCL)
+  - **122s actual interpolation** (with lots of warnings)
 
-Alternative explanation is that, language tools like python and NCl more appropriate for parallel computation because **data is loaded into memory once**, then calculations can proceed quickly. Maybe issue was just the multiple (5) disk reads compared to 1 NCL disk read?
+This was a surprising result! And it supports my hypothesis that CDO is great
+for simple data analysis tasks, but unsuited for complex tasks.
+<!-- Alternative explanation is that, -->
+Perhaps formal, language-based tools like python and NCl
+are more appropriate for parallel computation because the data is loaded into memory once,
+then the calculations can proceed quickly. Another issue could have been the necessary
+disk reads (5) for the CDO script, compared to just 1 NCL disk read.
 
-# Pressure-to-theta interpolation tests
+# Pressure-to-theta interpolation benchmarks
 There are only two obvious tools for interpolating between isobars and isentropes: NCL, and python using the MetPy package.
 
 ## Macbook: 60 level, 200 timesteps
