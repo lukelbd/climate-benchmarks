@@ -15,8 +15,8 @@ data analysis tasks in atmospheric science
 accomplished with several different, common tools:
 CDO, NCL, NCO, python, julia, Fortran, and MATLAB.
 
-# Notes
-## Julia
+# Some notes
+## On Julia
 The Julia workflow is quite different -- you **cannot** simply make repeated calls to some script on the command line, because this means **the JIT compilation kicks in every time, and becomes a huge bottleneck**. Instead, you should run things from a persistent notebook or REPL, **or** compile to a machine executable to eliminate JIT compilation altogether.
 
 To give Julia the best shot, each benchmark provides two times:
@@ -28,7 +28,7 @@ While I suspect Julia may be suitable for complex numerical algorithms, it turne
 for simple, common data analysis tasks, and especially when working with large arrays,
 Julia compares unfavorably to python and CDO.
 
-## Climate Data Operators (CDO)
+## On Climate Data Operators (CDO)
 The newest versions of `cdo` add new zonal-statistics functions to the `expr` subcommand,
 which are used in `fluxes.cdo`. But these functions were not available in recent
 versions of `cdo`, and a workaround had to be used (see `misc/fluxes_ineff.cdo`). This
@@ -38,7 +38,7 @@ workaround, it turned out, was **much** slower than calculating fluxes with
 less efficient than much older, but more powerful and expressive, tools.
 <!-- With an older, verbose CDO algorithm for getting fluxes (see `trash/fluxes_ineff.cdo`), CDO was **much much slower**, and the problem was exacerbated by adding levels. -->
 
-## NetCDF3 vs. NetCDF4
+## On NetCDF versions
 There were two major performance differences observed between the NetCDF3 and NetCDF4 versions of the sample data:
 
 * In general, CDO with NetCDF3 (on a Macbook) responded **less favorably** to thread-safe disk IO locking (the `-L` flag) -- it tended to speed things up for smaller datasets (over-optimization?) then slow things down for larger datasets, but **more-so** for NetCDF3.
