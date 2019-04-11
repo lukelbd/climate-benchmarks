@@ -29,11 +29,13 @@ for simple, common data analysis tasks, and especially when working with large a
 Julia compares unfavorably to python and CDO.
 
 ## Climate Data Operators (CDO)
-The newest versions of `cdo` add new zonal-statistics functions to the `expr` subcommand,
+The newest versions of `cdo` add zonal-statistics functions to the `expr` subcommand,
 which are used in `fluxes.cdo`. But these functions were not available in recent
 versions of `cdo`, and a workaround had to be used (see `misc/fluxes_ineff.cdo`). This
 workaround, it turned out, was **much** slower than calculating fluxes with
-`expr`, and this matches my experience in general: CDO is great for
+`expr`.
+
+This matches my experience in general: CDO is great for
 **simple** tasks, but for **complex**, highly chained commands, it can quickly grow
 less efficient than much older, but more powerful and expressive, tools.
 <!-- With an older, verbose CDO algorithm for getting fluxes (see `trash/fluxes_ineff.cdo`), CDO was **much much slower**, and the problem was exacerbated by adding levels. -->
