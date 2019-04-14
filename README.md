@@ -83,7 +83,15 @@ Note that using the NCL feature `setfileoption("nc", "Format", "LargeFile")` mad
 ## Python
 Python is the high-level, expressive, programming language that is
 quickly becoming the favorite of academics and data scientists everywhere.
-The two primary tools offered by Python for reading NetCDF files is 
+The two primary tools offered by Python for reading NetCDF files are
+[netCDF4](http://unidata.github.io/netcdf4-python/netCDF4/index.html) (which confusingly,
+also works with version 3 of the file format), and [XArray](http://xarray.pydata.org/en/stable/). The former is rather low-level and fast, the latter is high-level, powerful,
+and very flexible. XArray is also closely integrated with [Dask](https://dask.org/),
+which supports extremely high-performance array computations with
+hidden parallelization and super fancy algorithms designed by some super smart people.
+Dask is truly a game-changer, and with the proper "[chunking](http://xarray.pydata.org/en/stable/dask.html)" it can result in code as fast as compiled, serially executed
+Fortran code.
+<!-- parallel multi-dimensional array computations. -->
 
 ## MATLAB
 MATLAB (MAtrix LABoratory) is a tried-and-tested, proprietary, high-level data
