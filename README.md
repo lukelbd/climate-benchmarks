@@ -23,8 +23,31 @@ accomplished with several different tools:
 
 This repo is a work-in-progress. Below are some general notes.
 
+## NetCDF versions
+All benchmarks described here
+involve reading and writing to the NetCDF file format, used for multi-dimensional
+scientific dataset storage. There are two major versions of this file
+format: version 3 and version 4.
+I observed were two major performance differences between
+sample data saved to versions 3 and 4 of the NetCDF format:
+<!-- the NetCDF3 and NetCDF4 versions of the sample data: -->
+
+* With NetCDF3 files, CDO responds **less favorably** to thread-safe disk IO locking (the `-L` flag). It tended to speed things up for smaller datasets (over-optimization?) then slow things down for larger datasets, but **more-so** for NetCDF3 files.
+* For NetCDF3 files, non-dask python datasets (i.e. XArray datasets loaded with `chunks=None`) has somewhat **worse** performance compared to NetCDF4 files, and the effect was more pronounced for large datasets. However with Dask chunking, the NetCDF4 speed improvements were marginal, even approaching 2GB file sizes (**7s** vs **9s** for the fluxes benchmark).
+
+Since most large general circulation models still produce the older-format NetCDF3
+files, only results for these datasets are shown.
+But anyway, as explained above, the differences weren't that huge.
+
 ## NetCDF Operators (NCO)
-For the NCO benchmarks, the primarily tool is `ncap2`. Though a variety of other tools
+The NetCDF operators are a group of command-line tools developed by Unidata for
+working with NetCDF files, released alongside the original file format.
+Since it was released by the creators,
+one might think it would be the efficient tool for manipulating
+NetCDF data. But it turns out most other, secondary tools are vastly more efficient.
+<!-- , since it was released by the creators. -->
+
+For the NCO benchmarks, the most-used tool was `ncap2`. Though a variety of other tools
 are available for various analysis tasks,
 like `ncks` (NetCDF kitchen sink), `ncbo` (NetCDF binary operator),
 `ncwa` (NetCDF weighted averager),
@@ -32,16 +55,17 @@ like `ncks` (NetCDF kitchen sink), `ncbo` (NetCDF binary operator),
 The documentation can be found [here](http://nco.sourceforge.net/).
 
 ## Climate Data Operators (CDO)
-The CDO subcommands have a generally similar functionality to the NetCDF operators,
-and place more strict requirements on file format, but offer **substantial** speed
-improvements over NCO.
+CDO has generally similar functionality to the NetCDF operators
+and places strict requirements on the dataset format (e.g. all variables must have 2 horizontal "spatial" dimensions, an optional height dimension, and an optional time dimension). CDO may, at first glance, seem redundant, 
+<!-- file format, -->
+but it offers an **enormous** speed
+improvement over NCO, and is more flexible and generally much easier to use.
+
 The newest versions of `cdo` add zonal-statistics functions to the `expr` subcommand,
 which are used in `fluxes.cdo`. But these functions were not available in recent
 versions of `cdo`, and a workaround had to be used (see `misc/fluxes_ineff.cdo`). This
 workaround, it turned out, was **much** slower than calculating fluxes with
-`expr`.
-
-This matches my experience in general: CDO is great for
+`expr`. This matches my experience in general: CDO is great for
 **simple** tasks, but for **complex**, highly chained commands, it can quickly grow
 less efficient than much older, but more powerful and expressive, tools.
 <!-- With an older, verbose CDO algorithm for getting fluxes (see `trash/fluxes_ineff.cdo`), CDO was **much much slower**, and the problem was exacerbated by adding levels. -->
@@ -57,6 +81,9 @@ may be advisable to move away from NCL over the coming years.
 Note that using the NCL feature `setfileoption("nc", "Format", "LargeFile")` made **neglibile** difference in final wall-clock time. Also note there are no options to improve large file processing, and the official recommendation is to split files up by level or time. See [this NCL talk post](https://www.ncl.ucar.edu/Support/talk_archives/2011/2636.html) and [this stackoverflow post](https://stackoverflow.com/questions/44474507/read-large-netcdf-data-by-ncl).
 
 ## Python
+Python is the high-level, expressive, programming language that is
+quickly becoming the favorite of academics and data scientists everywhere.
+The two primary tools offered by Python for reading NetCDF files is 
 
 ## MATLAB
 MATLAB (MAtrix LABoratory) is a tried-and-tested, proprietary, high-level data
@@ -84,6 +111,7 @@ To give MATLAB the best chance, the times shown in the benchmarks below omit
 the startup time.
 
 ## Julia
+Julia is the new kid on the block, and tries to combine the best-of-both world from MATLAB (e.g. the everything-is-an-array syntax) and Python.
 The Julia workflow is quite different -- you **cannot** simply make repeated calls to some script on the command line, because this means **the JIT compilation kicks in every time, and becomes a huge bottleneck**. Instead, you should run things from a persistent notebook or REPL, **or** compile to a machine executable to eliminate JIT compilation altogether.
 
 To give Julia the best shot, each benchmark provides two times:
@@ -93,17 +121,9 @@ To give Julia the best shot, each benchmark provides two times:
 
 While I suspect Julia may be suitable for complex numerical algorithms, it turned out that
 for simple, common data analysis tasks, and especially when working with large arrays,
-Julia compares unfavorably to python and CDO.
-
-## NetCDF versions
-There were two major performance differences observed between the NetCDF3 and NetCDF4 versions of the sample data:
-
-* In general, CDO with NetCDF3 files responds **less favorably** to thread-safe disk IO locking (the `-L` flag). It tended to speed things up for smaller datasets (over-optimization?) then slow things down for larger datasets, but **more-so** for NetCDF3 files.
-* Non-dask python datasets (i.e. XArray datasets loaded with `chunks=None`) were **somewhat slower** for NetCDF3 files than NetCDF4 files. The effect was **more pronounced** with larger datasets. However when chunking was used, the speed improvements for NetCDF4 were marginal, even approaching 2GB file sizes (**7s** vs **9s**).
-
-Since most large general circulation models still produce the older-format NetCDF3
-files, only results for these datasets are shown.
-But anyway, as explained above, the differences weren't that huge.
+Julia compares unfavorably to python and CDO. Perhaps it will fully
+replace MATLAB one day, but
+evidently there is a lot of work to do.
 
 # Eddy flux benchmarks
 For this benchmark, we use an assortment of languages to
