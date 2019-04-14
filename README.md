@@ -119,7 +119,7 @@ To give MATLAB the best chance, the times shown in the benchmarks below omit
 the startup time.
 
 ## Julia
-Julia is the new kid on the block, and tries to combine the best-of-both world from MATLAB (e.g. the everything-is-an-array syntax) and Python.
+Julia is the new kid on the block, and tries to combine the best-of-both worlds from MATLAB (e.g. the everything-is-an-array syntax) and Python.
 The Julia workflow is quite different -- you **cannot** simply make repeated calls to some script on the command line, because this means **the JIT compilation kicks in every time, and becomes a huge bottleneck**. Instead, you should run things from a persistent notebook or REPL, **or** compile to a machine executable to eliminate JIT compilation altogether.
 
 To give Julia the best shot, each benchmark provides two times:
