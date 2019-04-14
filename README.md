@@ -23,7 +23,18 @@ accomplished with several different tools:
 
 This repo is a work-in-progress. Below are some general notes.
 
+## NetCDF Operators (NCO)
+For the NCO benchmarks, the primarily tool is `ncap2`. Though a variety of other tools
+are available for various analysis tasks,
+like `ncks` (NetCDF kitchen sink), `ncbo` (NetCDF binary operator),
+`ncwa` (NetCDF weighted averager),
+`ncrcat` (NetCDF record concatenator), `ncecat` (NetCDF ensemble concatenator), `ncra` (NetCDF record averager), `nces` (NetCDF ensemble statistics), `ncremap` (NetCDF remaper), `ncflint` (NetCDF file interpolator), and `ncclimo` (NetCDF climatology generator). 
+The documentation can be found [here](http://nco.sourceforge.net/).
+
 ## Climate Data Operators (CDO)
+The CDO subcommands have a generally similar functionality to the NetCDF operators,
+and place more strict requirements on file format, but offer **substantial** speed
+improvements over NCO.
 The newest versions of `cdo` add zonal-statistics functions to the `expr` subcommand,
 which are used in `fluxes.cdo`. But these functions were not available in recent
 versions of `cdo`, and a workaround had to be used (see `misc/fluxes_ineff.cdo`). This
@@ -34,6 +45,9 @@ This matches my experience in general: CDO is great for
 **simple** tasks, but for **complex**, highly chained commands, it can quickly grow
 less efficient than much older, but more powerful and expressive, tools.
 <!-- With an older, verbose CDO algorithm for getting fluxes (see `trash/fluxes_ineff.cdo`), CDO was **much much slower**, and the problem was exacerbated by adding levels. -->
+
+## NCAR Command Language (NCL)
+Note that using the NCL feature `setfileoption("nc", "Format", "LargeFile")` made **neglibile** difference in final wall-clock time. Also note there are no options to improve large file processing, and the official recommendation is to split files up by level or time. See [this NCL talk post](https://www.ncl.ucar.edu/Support/talk_archives/2011/2636.html) and [this stackoverflow post](https://stackoverflow.com/questions/44474507/read-large-netcdf-data-by-ncl).
 
 ## Julia
 The Julia workflow is quite different -- you **cannot** simply make repeated calls to some script on the command line, because this means **the JIT compilation kicks in every time, and becomes a huge bottleneck**. Instead, you should run things from a persistent notebook or REPL, **or** compile to a machine executable to eliminate JIT compilation altogether.
@@ -86,8 +100,6 @@ NetCDF4. For files smaller than 100MB though, the differences are never that lar
 even NCL and NCO appear to be acceptable choices. Perhaps tellingly, Julia is the clear
 winner for the smallest file sizes -- evidently when numerical computation is the
 bottleneck, rather than disk reading and writing, Julia shines.
-
-Note that using the NCL feature `setfileoption("nc", "Format", "LargeFile")` made **neglibile** difference in final wall-clock time. Also note there are no options to improve large file processing, and the official recommendation is to split files up by level or time. See [this NCL talk post](https://www.ncl.ucar.edu/Support/talk_archives/2011/2636.html) and [this stackoverflow post](https://stackoverflow.com/questions/44474507/read-large-netcdf-data-by-ncl).
 
 
 <img src="fluxes.png" width="500">
