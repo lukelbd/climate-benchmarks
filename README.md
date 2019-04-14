@@ -56,6 +56,33 @@ may be advisable to move away from NCL over the coming years.
 
 Note that using the NCL feature `setfileoption("nc", "Format", "LargeFile")` made **neglibile** difference in final wall-clock time. Also note there are no options to improve large file processing, and the official recommendation is to split files up by level or time. See [this NCL talk post](https://www.ncl.ucar.edu/Support/talk_archives/2011/2636.html) and [this stackoverflow post](https://stackoverflow.com/questions/44474507/read-large-netcdf-data-by-ncl).
 
+## Python
+
+## MATLAB
+MATLAB (MAtrix LABoratory) is a tried-and-tested, proprietary, high-level data
+science language -- the language of choice for engineers and scientists over
+the last few decades. But with the emergence of the free, open-source
+programming language "Python" as a scientific computing
+workhorse, scientists have been slowly making the switch.
+And with the **massive** amount of collaborative work
+put into scientific computing Python
+packages, Python has become (for the most part) a superset
+of MATLAB, and seems to have
+overtaken MATLAB in terms of
+performance and speed.
+<!-- resource, and the massive amount of  -->
+
+I have access to MATLAB 2014a through a license from my university.
+Note that even without the Java Virtual Manager (`-nojvm`)
+and without the display (`-nodisplay`), MATLAB scripts run from the command line
+are delayed by up to several seconds!
+On my machine, it takes about 9 seconds to start MATLAB
+every time a MATLAB script is run from the command line.
+Thus running a series of MATLAB commands
+on small files for small tasks becomes quickly impractical.
+To give MATLAB the best chance, the times shown in the benchmarks below omit
+the startup time.
+
 ## Julia
 The Julia workflow is quite different -- you **cannot** simply make repeated calls to some script on the command line, because this means **the JIT compilation kicks in every time, and becomes a huge bottleneck**. Instead, you should run things from a persistent notebook or REPL, **or** compile to a machine executable to eliminate JIT compilation altogether.
 
@@ -67,19 +94,6 @@ To give Julia the best shot, each benchmark provides two times:
 While I suspect Julia may be suitable for complex numerical algorithms, it turned out that
 for simple, common data analysis tasks, and especially when working with large arrays,
 Julia compares unfavorably to python and CDO.
-
-## MATLAB
-Even without the Java Virtual Manager (`-nojvm`)
-and without the display (`-nodisplay`), and even when you provide the license explicitly
-with the `-c` flag, MATLAB scripts run from the command line are delayed by
-up to several seconds! On my machine, it takes about 9 seconds to start MATLAB
-every time a MATLAB script is run from the command line.
-Thus running a series of MATLAB commands
-on small files for small tasks becomes quickly impractical.
-
-To give MATLAB the best chance, the times shown in the benchmarks below omit
-the startup time.
-Note that I have access to MATLAB 2014a through a license from my university.
 
 ## NetCDF versions
 There were two major performance differences observed between the NetCDF3 and NetCDF4 versions of the sample data:
