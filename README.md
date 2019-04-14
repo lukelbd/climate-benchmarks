@@ -41,7 +41,7 @@ sample data was saved to version 3 of the NetCDF format instead of version 4:
 
 Since most large general circulation models still produce the older-format NetCDF3
 files, only results for these datasets are shown.
-But anyway, as explained above, the differences weren't that huge.
+But anyway, the differences weren't that huge.
 
 ## NetCDF Operators (NCO)
 The NetCDF operators are a group of command-line tools developed by Unidata for
