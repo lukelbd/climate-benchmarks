@@ -19,6 +19,7 @@ snoop.csv
 
 # Temp
 __pycache__
+.ipynb_checkpoints
 
 # OS-generated files
 .DS_Store

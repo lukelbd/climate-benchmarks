@@ -90,6 +90,8 @@ bottleneck, rather than disk reading and writing, Julia shines.
 Note that using the NCL feature `setfileoption("nc", "Format", "LargeFile")` made **neglibile** difference in final wall-clock time. Also note there are no options to improve large file processing, and the official recommendation is to split files up by level or time. See [this NCL talk post](https://www.ncl.ucar.edu/Support/talk_archives/2011/2636.html) and [this stackoverflow post](https://stackoverflow.com/questions/44474507/read-large-netcdf-data-by-ncl).
 
 
+![](fluxes.png)
+
 | nlat | size | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
 | 6 | 20M | Fortran | **0.066** | 0.035 | 0.022 |
