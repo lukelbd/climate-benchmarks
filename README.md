@@ -83,22 +83,10 @@ It is certainly not the fastest language -- in fact, it is usually the slowest a
 native NetCDF operators -- but it is relatively easy-to-use, concise, and provides specialized tools for atmospheric scientists. Just like everything in MATLAB is
 an array, and everything in Python is an "object", everything in NCL is a
 dataset with named dimensions. But with the recent [end-of-life announcement](https://www.ncl.ucar.edu/Document/Pivot_to_Python/NCL_Pivot_to_Python_Report_and_Roadmap.pdf), it
-may be advisable to move away from NCL over the coming years.
+may be advisable to move away from NCL over the coming years. The NCL documentation can
+be found [here](https://www.ncl.ucar.edu/Document/).
 
 Note that using the NCL feature `setfileoption("nc", "Format", "LargeFile")` made **neglibile** difference in final wall-clock time. Also note there are no options to improve large file processing, and the official recommendation is to split files up by level or time. See [this NCL talk post](https://www.ncl.ucar.edu/Support/talk_archives/2011/2636.html) and [this stackoverflow post](https://stackoverflow.com/questions/44474507/read-large-netcdf-data-by-ncl).
-
-## Python
-Python is the high-level, expressive, programming language that is
-quickly becoming the favorite of academics and data scientists everywhere.
-The two primary tools offered by Python for reading NetCDF files are
-[netCDF4](http://unidata.github.io/netcdf4-python/netCDF4/index.html) (which confusingly,
-also works with version 3 of the file format), and [XArray](http://xarray.pydata.org/en/stable/). The former is rather low-level and fast, the latter is high-level, powerful,
-and very flexible. XArray is also closely integrated with [Dask](https://dask.org/),
-which supports extremely high-performance array computations with
-hidden parallelization and super fancy algorithms designed by some super smart people.
-Dask is truly a game-changer, and with the proper "[chunking](http://xarray.pydata.org/en/stable/dask.html)" it can result in code as fast as compiled, serially executed
-Fortran code.
-<!-- parallel multi-dimensional array computations. -->
 
 ## MATLAB
 MATLAB (MATrix LABoratory) is a tried-and-tested, proprietary, high-level data
@@ -124,6 +112,21 @@ Thus running a series of MATLAB commands
 on small files for small tasks becomes quickly impractical.
 To give MATLAB the best chance, the times shown in the benchmarks below omit
 the startup time.
+
+## Python
+Python is the high-level, expressive, programming language that is
+quickly becoming the favorite of academics and data scientists everywhere.
+Almost all scientific computing Python tools are based around the 
+array manipulation package ["numpy"](http://www.numpy.org/).
+There are two of these tools (at least two well-known ones) for reading NetCDF files:
+[netCDF4](http://unidata.github.io/netcdf4-python/netCDF4/index.html) (which confusingly,
+also works with version 3 of the file format), and [XArray](http://xarray.pydata.org/en/stable/). The former is rather low-level and fast, the latter is high-level, powerful,
+and very flexible. XArray is also closely integrated with [Dask](https://dask.org/),
+which supports extremely high-performance array computations with
+hidden parallelization and super fancy algorithms designed by some super smart people.
+Dask is truly a game-changer, and with the proper "[chunking](http://xarray.pydata.org/en/stable/dask.html)" it can result in code as fast as compiled, serially executed
+Fortran code.
+<!-- parallel multi-dimensional array computations. -->
 
 ## Julia
 Julia is the new kid on the block, and tries to combine the best-of-both worlds from MATLAB (e.g. the everything-is-an-array syntax) and Python.
