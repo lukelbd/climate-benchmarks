@@ -48,7 +48,8 @@ The NetCDF operators are a group of command-line tools developed by Unidata for
 working with NetCDF files, released alongside the original file format.
 Since it was released by the creators,
 one might think it would be the efficient tool for manipulating
-NetCDF data. But it turns out most other, secondary tools are vastly more efficient.
+NetCDF data. But it turns out most other, secondary tools are generally
+more efficient.
 <!-- , since it was released by the creators. -->
 
 For the NCO benchmarks, the most-used tool was `ncap2`. Though a variety of other tools
