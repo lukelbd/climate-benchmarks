@@ -59,6 +59,12 @@ like `ncks` (NetCDF kitchen sink), `ncbo` (NetCDF binary operator),
 `ncrcat` (NetCDF record concatenator), `ncecat` (NetCDF ensemble concatenator), `ncra` (NetCDF record averager), `nces` (NetCDF ensemble statistics), `ncremap` (NetCDF remaper), `ncflint` (NetCDF file interpolator), and `ncclimo` (NetCDF climatology generator). 
 The documentation can be found [here](http://nco.sourceforge.net/).
 
+## Fortran
+Fortran is the only low-level, high-performance language tested in these benchmarks. It may
+seem like an anachronism to outsiders, but there are [perfectly valid](http://moreisdifferent.com/2015/07/16/why-physicsts-still-use-fortran/) reasons scientists still prefer it. The most important of these is that a very powerful parallelization tool, MPI, can be used only with C++ and Fortran. And of these two, although it is certainly not the right tool
+for software engineers and object-oriented programming,
+Fortran is the more array-friendly and easier-to-learn language (its name, after all, is an acronym for Formula Translator). Further, it is generally just as fast as C++.
+
 ## Climate Data Operators (CDO)
 CDO has generally similar functionality to the NetCDF operators
 and places strict requirements on the dataset format (e.g. all variables must have 2 horizontal "spatial" dimensions, an optional height dimension, and an optional time dimension). Although I'm sure these restrictions are necessary, they can sometimes be frustrating -- and anyway, CDO may, at first glance, seem redundant. 
