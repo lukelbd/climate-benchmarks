@@ -37,7 +37,7 @@ sample data was saved to version 3 of the NetCDF format instead of version 4:
 <!-- the NetCDF3 and NetCDF4 versions of the sample data: -->
 
 * With NetCDF3 files, CDO responds **less favorably** to thread-safe disk IO locking (the `-L` flag). It tended to speed things up for smaller datasets (over-optimization?) then slow things down for larger datasets, but **more-so** for NetCDF3 files.
-* For NetCDF3 files, non-dask python datasets (i.e. XArray datasets loaded with `chunks=None`) has somewhat **worse** performance compared to NetCDF4 files, and the effect was more pronounced for large datasets. However with Dask chunking, the NetCDF4 speed improvements were marginal, even approaching 2GB file sizes (**7s** vs **9s** for the fluxes benchmark).
+* For NetCDF3 files, non-dask XArray datasets (i.e. datasets loaded with `chunks=None`) performed somewhat **worse** compared to datasets loaded from NetCDF4 files, and the effect was more pronounced for large datasets. However with Dask chunking, the NetCDF4 speed improvements were marginal -- even approaching 2GB file sizes (**7s** vs **9s** for the fluxes benchmark).
 
 Since most large general circulation models still produce the older-format NetCDF3
 files, only results for these datasets are shown.
