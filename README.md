@@ -21,7 +21,11 @@ accomplished with several different tools:
 * Julia
 * MATLAB
 
-This repo is a work-in-progress. Below are some general notes.
+This repo is a work-in-progress. Below are some notes,
+an overview of the languages and tools tested, and some (possibly
+contentious) opinions on how the languages compare.
+<!-- languages. -->
+<!-- some general notes. -->
 
 ## NetCDF versions
 All benchmarks described here
