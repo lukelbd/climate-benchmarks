@@ -62,14 +62,16 @@ The documentation can be found [here](http://nco.sourceforge.net/).
 ## Climate Data Operators (CDO)
 CDO has generally similar functionality to the NetCDF operators
 and places strict requirements on the dataset format (e.g. all variables must have 2 horizontal "spatial" dimensions, an optional height dimension, and an optional time dimension). CDO may, at first glance, seem redundant, 
-<!-- file format, -->
 but it offers an **enormous** speed
-improvement over NCO, and is more flexible and generally much easier to use.
+improvement over NCO, is more flexible, and is generally much easier to use. "Operator chaining" is the most notable improvement over NCO. The documentation can be found [here](https://code.mpimet.mpg.de/projects/cdo/wiki/Cdo#Documentation).
 
-The newest versions of `cdo` add zonal-statistics functions to the `expr` subcommand,
-which are used in `fluxes.cdo`. But these functions were not available in recent
-versions of `cdo`, and a workaround had to be used (see `misc/fluxes_ineff.cdo`). This
-workaround, it turned out, was **much** slower than calculating fluxes with
+The newest versions of `cdo` have zonal-statistics functions available
+to the `expr` subcommand. These functions
+are used in `fluxes.cdo`, but
+the equivalent calculation in older versions of `cdo`
+requires an ugly workaround with lots of operator chaining (see
+`misc/fluxes_ineff.cdo`). It turned out this
+workaround was **much** slower than calculating fluxes with
 `expr`. This matches my experience in general: CDO is great for
 **simple** tasks, but for **complex**, highly chained commands, it can quickly grow
 less efficient than much older, but more powerful and expressive, tools.
