@@ -63,7 +63,10 @@ The documentation can be found [here](http://nco.sourceforge.net/).
 Fortran is the only low-level, high-performance language tested in these benchmarks. It may
 seem like an anachronism to outsiders, but there are [perfectly valid](http://moreisdifferent.com/2015/07/16/why-physicsts-still-use-fortran/) reasons scientists still prefer it. The most important of these is that a very powerful parallelization tool, MPI, can be used only with C++ and Fortran. And of these two, although it is certainly not the right tool
 for software engineers and object-oriented programming,
-Fortran is the more array-friendly and easier-to-learn language (its name, after all, is an acronym for Formula Translator). Further, it is generally just as fast as C++.
+Fortran is the more array-friendly and easier-to-learn language (its name, after all, is an acronym for Formula Translator). Also, it is generally just as fast as C++. Fortran 
+is used for high-performance numerical algorithms and geophysical models -- for example,
+the models used to help us understand future climate change hazards
+communicated by the Intergovernmental Panel on Climate Change (IPCC).
 
 ## Climate Data Operators (CDO)
 CDO has generally similar functionality to the NetCDF operators
