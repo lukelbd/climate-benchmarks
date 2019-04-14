@@ -33,7 +33,7 @@ involve reading and writing to the NetCDF file format, used for multi-dimensiona
 scientific dataset storage. There are two major versions of this file
 format: version 3 and version 4.
 I observed two notable performance differences when
-sample data was saved to version 3 of the NetCDF format instead of version 4:
+sample data saved to version 3 of the NetCDF format instead of version 4:
 <!-- the NetCDF3 and NetCDF4 versions of the sample data: -->
 
 * With NetCDF3 files, CDO responds **less favorably** to thread-safe disk IO locking (the `-L` flag). It tended to speed things up for smaller datasets (over-optimization?) then slow things down for larger datasets, but **more-so** for NetCDF3 files.
