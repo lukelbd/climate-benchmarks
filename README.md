@@ -94,7 +94,7 @@ Fortran code.
 <!-- parallel multi-dimensional array computations. -->
 
 ## MATLAB
-MATLAB (MAtrix LABoratory) is a tried-and-tested, proprietary, high-level data
+MATLAB (MATrix LABoratory) is a tried-and-tested, proprietary, high-level data
 science language -- the language of choice for engineers and scientists over
 the last few decades. But with the emergence of the free, open-source
 programming language "Python" as a scientific computing
