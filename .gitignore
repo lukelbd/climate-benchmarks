@@ -12,6 +12,7 @@ precompiled.jl
 julia_main.jl
 snoop.csv
 # Interactive NCO
+todo
 *.tmp
 
 # Vim sessions
