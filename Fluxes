@@ -71,6 +71,7 @@ for data in ${datas[@]}; do
   # NOTE: Assumes fortran installed with MacPorts, port install netcdf and port install netcdf-fortran
   gfortran -I/opt/local/include -L/opt/local/lib -lnetcdff -lnetcdf ${name}.f90 -o ${name}_f90
   bench "Fortran" ${name}_f90 $data
+  rm ${name}_f90
 
   # Julia
   bench "Compiled Julia" ./packagecompiler/${name} $data
