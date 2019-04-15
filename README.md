@@ -167,9 +167,7 @@ where the numbers refer to the latitude/longitude grid spacing
 
 CDO is the clear winner here, followed closely by python with XArray and Dask, or with
 NetCDF4. For files smaller than 100MB though, the differences are never that large, and
-even NCL and NCO appear to be acceptable choices. Perhaps tellingly, Julia is the clear
-winner for the smallest file sizes -- evidently when numerical computation is the
-bottleneck, rather than disk reading and writing, Julia shines.
+NCL and NCO appear to be acceptable choices.
 
 
 <img src="fluxes.png" width="500">
