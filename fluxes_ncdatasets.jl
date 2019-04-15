@@ -41,9 +41,7 @@ module fluxes
   # Dependencies
   export eddy_flux  # makes it *publicly* available
   import NCDatasets # netcdf
-  import Statistics # basic stats
   nc = NCDatasets   # syntastic 'import as' sugar not yet available
-  stat = Statistics
 
   # First the dummy function
   # To enable compiling, see: https://github.com/JuliaLang/PackageCompiler.jl
@@ -69,7 +67,8 @@ module fluxes
     data = nc.Dataset(filename, "r")
 
     # Dimensions and dimension attributes
-    dims = nc.dimnames(data["t"]) # list of anmes
+    # WARNING: Critical error, unknown broadcasting
+    dims = nc.dimnames(data["t"])[2:] # list of names, except longitude
     latt = Dict(data["lat"].attrib) # must convert to Dict before passing
     patt = Dict(data["plev"].attrib)
     tatt = Dict(data["time"].attrib)
@@ -79,9 +78,11 @@ module fluxes
     # NOTE: Cannot add DateTime directly as NetCDF variable, has to be
     # encoded as decimal time units, and could not figure out how to load
     # file without encoding into DateTime
+    lon  = nc.nomissing(data["lon"][:])
     lat  = nc.nomissing(data["lat"][:])
     plev = nc.nomissing(data["plev"][:])
     time = nc.timeencode(data["time"][:], tatt["units"], tatt["calendar"]) # this is seriously the best way to do it; can't avoid decoding in first place it seems
+    nlon = length(lon)
     t = data["t"][:] # row major means order switches to lon, lat, plev, time
     u = data["u"][:]
     v = data["v"][:]
@@ -97,25 +98,35 @@ module fluxes
     # This behavior is contested right now; see: https://github.com/JuliaLang/julia/issues/16606
     # Also note the 'dims' keyword argument *must be specified*; don't have fluid
     # differentiation between position args and kwargs like in python
-    emf = stat.mean((u .- stat.mean(u, dims=1)) .*
-                    (v .- stat.mean(v, dims=1)), dims=1)
-    ehf = stat.mean((t .- stat.mean(t, dims=1)) .*
-                    (v .- stat.mean(v, dims=1)), dims=1)
+    # import Statistics # basic stats
+    # stat = Statistics
+    # emf = stat.mean((u .- stat.mean(u, dims=1)) .*
+    #                 (v .- stat.mean(v, dims=1)), dims=1)
+    # ehf = stat.mean((t .- stat.mean(t, dims=1)) .*
+    #                 (v .- stat.mean(v, dims=1)), dims=1)
+    emf = sum((u .- sum(u, dims=1)/nlon) .*
+              (v .- sum(v, dims=1)/nlon), dims=1)/nlon
+    ehf = sum((t .- sum(t, dims=1)/nlon) .*
+              (v .- sum(v, dims=1)/nlon), dims=1)/nlon
+    emf = emf[1,:,:,:] # sum does not reduce dims
+    ehf = ehf[1,:,:,:]
 
     # Create new file, and save
-    # NOTE: The thing after the colon is a symbol; for more info see
-    # the stackoverflow post: https://stackoverflow.com/a/23482257/4970632
     # NOTE: Use * for string concatenation;
     # see: https://docs.julialang.org/en/v1/manual/strings/index.html
     # NOTE: Use ncgen(filename) to get the code necessary to generate
     # that same NetCDF file. Super handy!!!
+    # NOTE: The thing after the colon is a symbol; for more info see
+    # the stackoverflow post: https://stackoverflow.com/a/23482257/4970632
     # WARNING: Thought I found some undefined/unstable/strange behavior when we
     # define variables and declare them to have their own dimension in the same
     # breath; had mysterious failures below, can't reproduce anymore
-    out = nc.Dataset(dir * "/fluxes_jl.nc", "c", format=:netcdf4)
+    outname = dir * "/fluxes_jl.nc"
+    rm(outname)
+    nc.nccreate(outname, "emf", dims)
 
     # Define coordinates
-    nc.defVar(out, "lon",  Float32.([0]), ("lon",), attrib=["long_name" => "longitude"]) # note we apply Float32 as elementwise function there
+    # nc.defVar(out, "lon",  Float32.([0]), ("lon",), attrib=["long_name" => "longitude"]) # note we apply Float32 as elementwise function there
     nc.defVar(out, "lat",  lat,  ("lat",),  attrib=latt)
     nc.defVar(out, "plev", plev, ("plev",), attrib=patt)
     nc.defVar(out, "time", time, ("time",), attrib=tatt)

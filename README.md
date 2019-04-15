@@ -146,7 +146,7 @@ The Julia workflow is quite different -- you **cannot** simply make repeated cal
 To give Julia the best shot, each benchmark provides two times:
 
 1. Time from running a Julia script in an **interactive shell**, after running it with a test file so the JIT compilation has already kicked in. Obviously this was tedious to do systematically, with multiple files and multiple benchmarks, but I thought it was necessary.
-2. Time from running "pre-compiled" Julia code with the [`PackageCompiler`](https://github.com/JuliaLang/PackageCompiler.jl) utility. This has two extreme drawbacks, being that pre-compiling Julia code is excruciatingly slow even for very simple programs, and the resulting machine code takes up massive amounts of space relative to the complexity of the program (since all dependencies must be compiled to machine code too). But, it does result in slightly faster code.
+2. Time from running "pre-compiled" Julia code with the [`PackageCompiler`](https://github.com/JuliaLang/PackageCompiler.jl) utility. This has two drawbacks, being that pre-compiling Julia code is quite slow even for very simple programs, and the resulting machine code takes up massive amounts of space relative to the complexity of the program (since all dependencies must be compiled to machine code too). But, it does result in slightly faster code.
 
 While I suspect Julia may be suitable for complex numerical algorithms, it turned out that
 for simple, common data analysis tasks, and especially when working with large arrays,

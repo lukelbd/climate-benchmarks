@@ -10,7 +10,8 @@ program main
   real, allocatable, dimension(:,:,:) :: ehf, emf
   real, allocatable, dimension(:,:,:) :: ubar, vbar, tbar
   real, allocatable, dimension(:,:,:,:) :: u, v, t
-  character(len=100) :: dname, filename, outname
+  character(len=80) :: dname, filename, outname
+  character(len=80) :: lat_units, lat_name, plev_units, plev_name, time_units, time_name
   ! character(len=100) :: get_command_argument ! must declare return type of functions
 
   ! Read data
@@ -60,6 +61,13 @@ program main
   ret = nf90_get_var(ncid, uid, u)
   ret = nf90_get_var(ncid, vid, v)
   ret = nf90_get_var(ncid, tid, t)
+  ! Read attributes
+  ret = nf90_get_att(ncid, latid, 'units', lat_units)
+  ret = nf90_get_att(ncid, latid, 'latg_name', lat_name)
+  ret = nf90_get_att(ncid, plevid, 'units', plev_units)
+  ret = nf90_get_att(ncid, plevid, 'long_name', plev_name)
+  ret = nf90_get_att(ncid, timeid, 'units', time_units)
+  ret = nf90_get_att(ncid, timeid, 'long_name', time_name)
   ! Close
   ret = nf90_close(ncid)
 
@@ -90,9 +98,19 @@ program main
   ret = nf90_def_var(ncid, 'time', NF90_REAL, dtimeid, timeid)
   ret = nf90_def_var(ncid, 'emf', NF90_REAL, idxs, emfid)
   ret = nf90_def_var(ncid, 'ehf', NF90_REAL, idxs, ehfid)
+  ! Add attributes
+  ! WARNING: Must come before enddef command
+  ret = nf90_put_att(ncid, latid, 'units', lat_units)
+  ret = nf90_put_att(ncid, latid, 'long_name', lat_name)
+  ret = nf90_put_att(ncid, plevid, 'units', plev_units)
+  ret = nf90_put_att(ncid, plevid, 'long_name', plev_name)
+  ret = nf90_put_att(ncid, timeid, 'units', time_units)
+  ret = nf90_put_att(ncid, timeid, 'long_name', time_name)
+  ret = nf90_put_att(ncid, emfid, 'units', 'm**2/s**2')
+  ret = nf90_put_att(ncid, emfid, 'long_name', 'eddy momentum flux')
+  ret = nf90_put_att(ncid, ehfid, 'units', 'K*m/s')
+  ret = nf90_put_att(ncid, ehfid, 'long_name', 'eddy heat flux')
   ret = nf90_enddef(ncid)
-  ! nf90_put_att(ncid, lat_varid, UNITS, LAT_UNITS)
-  ! nf90_put_att(ncid, lon_varid, UNITS, LON_UNITS)
 
   ! Write the coordinate variable data. This will put the latitudes
   ! and longitudes of our data grid into the netCDF file.
@@ -101,6 +119,7 @@ program main
   ret = nf90_put_var(ncid, timeid, time)
   ret = nf90_put_var(ncid, emfid,  emf)
   ret = nf90_put_var(ncid, ehfid,  ehf)
+  ! Close
   ret = nf90_close(ncid)
 
 end program

@@ -74,14 +74,15 @@ for data in ${datas[@]}; do
   rm ${name}_f90
 
   # Julia
-  bench "Compiled Julia" ./packagecompiler/${name} $data
+  bench "Julia NCDatasets (compiled)" ./packagecompiler/${name} $data
+  bench "Julia NetCDF (compiled)" ./packagecompiler/${name} $data
   # bench "Julia (naive)" julia -e 'push!(LOAD_PATH, "./"); using fluxes; fluxes.eddy_flux("'${name}'")' # will be ridiculously slow, don't bother
 
   # MATLAB
   # NOTE: nojvm very important, eliminates initial startup time
   # license="$(which matlab)"
   # license="${license%bin*}/licenses/license.dat"
-  bench "MATLAB minus startup" matlab -nojvm -nodisplay -r \
+  bench "MATLAB (no startup)" matlab -nojvm -nodisplay -r \
     "filename='${data}'; tic; fluxes; toc; disp(' '); exit"
 
   # Python with NetCDF4
