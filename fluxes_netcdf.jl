@@ -3,26 +3,20 @@
 # Julia script for getting fluxes
 # See fluxes_ncdatasets for more notes
 ################################################################################
-module fluxes
+module fluxes_netcdf
   # Dependencies
-  export eddy_flux  # makes it *publicly* available
+  export fluxes  # makes it *publicly* available
   import NetCDF # netcdf
   nc = NetCDF   # syntastic 'import as' sugar not yet available
 
   # First the dummy function
   Base.@ccallable function julia_main(ARGS::Vector{String})::Cint # returns just 0 if success
-    eddy_flux(ARGS[1])
+    fluxes(ARGS[1])
     return 0
   end
 
   # The main function
-  function eddy_flux(filename::String)
-    # A Dataset is a special mapping that returns NCDataset::Variable types,
-    # iterates with "for (varname, variable) in data"; load data as in NetCDF4
-    # which we extract into arrays loaded on memory with colon index
-    dir = split(filename, "/")[1]
-    data = nc.Dataset(filename, "r")
-
+  function fluxes(filename::String)
     # Dimensions and dimension attributes
     # dims = nc.dimnames(data["t"]) # list of anmes
     lat_units = nc.ncgetatt(filename, "lat", "units")
@@ -44,6 +38,7 @@ module fluxes
     lat  = nc.ncread(filename, "lat")
     plev = nc.ncread(filename, "plev")
     time = nc.ncread(filename, "time")
+    nc.ncclose(filename)
     nlon = length(lon)
 
     # Calculate
@@ -55,14 +50,19 @@ module fluxes
     ehf = ehf[1,:,:,:]
 
     # Create new file, and save
+    dir = split(filename, "/")[1]
     outname = dir * "/fluxes_jl.nc"
-    rm(outname)
+    if isfile(outname)
+      rm(outname)
+    end
 
     # Define coordinates
-    dims = ["lat", "plev", "time"]
-    nc.nccreate(outname, "lat", ["lat"])
-    nc.nccreate(outname, "plev", ["plev"])
-    nc.nccreate(outname, "time", ["time"])
+    # dims = ["lat", "plev", "time"]
+    nc.nccreate(outname, "lat", "lat", length(lat)) # define dimension length for first time, otherwise get error when try to write to them
+    nc.nccreate(outname, "plev", "plev", length(plev))
+    nc.nccreate(outname, "time", "time", length(time))
+    nc.nccreate(outname, "emf", "lat", "plev", "time")
+    nc.nccreate(outname, "ehf", "lat", "plev", "time")
     # Write data
     nc.ncwrite(lat, outname, "lat")
     nc.ncwrite(plev, outname, "plev")

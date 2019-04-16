@@ -159,7 +159,7 @@ For this benchmark, we use an assortment of languages to
 calculate and save eddy fluxes of heat and momentum to new NetCDF files.
 
 ## Macbook: 60 level, 200 timesteps
-The sample data was generated using
+The sampe data was generated using
 ```
 for reso in 20 10 7.5 5 3 2 1.5; do ./datagen $reso; done
 ```

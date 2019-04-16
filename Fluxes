@@ -74,8 +74,8 @@ for data in ${datas[@]}; do
   rm ${name}_f90
 
   # Julia
-  bench "Julia NCDatasets (compiled)" ./packagecompiler/${name} $data
-  bench "Julia NetCDF (compiled)" ./packagecompiler/${name} $data
+  bench "Julia NCDatasets (compiled)" ./compiled/${name}_ncdatasets $data
+  bench "Julia NetCDF (compiled)" ./compiled/${name}_netcdf $data
   # bench "Julia (naive)" julia -e 'push!(LOAD_PATH, "./"); using fluxes; fluxes.eddy_flux("'${name}'")' # will be ridiculously slow, don't bother
 
   # MATLAB

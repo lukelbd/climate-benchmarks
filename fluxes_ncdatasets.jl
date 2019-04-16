@@ -13,6 +13,8 @@
 #   * In julia, function names ending in '!' modify their arguments,
 #     sort of like NCL commands vs. functions
 # More advanced notes:
+#   * To update modules, use 'using Revise' and only *import* local modules
+#     instead of calling 'using'. See: https://stackoverflow.com/a/50816280/4970632
 #   * To re-install packages after you change underlying OS libraries
 #     e.g. NetCDF, just use Pkg.build("name")
 #   * For scoping inside for/do loops inside a function, see this
@@ -36,10 +38,11 @@
 # NOTE: To re-install packages after you change underlying OS libraries
 # e.g. NetCDF, just use Pkg.build("name")
 ################################################################################
+# NOTE: Module name must be same as file name
 # __precompile__()
-module fluxes
+module fluxes_ncdatasets
   # Dependencies
-  export eddy_flux  # makes it *publicly* available
+  export fluxes  # makes it *publicly* available
   import NCDatasets # netcdf
   nc = NCDatasets   # syntastic 'import as' sugar not yet available
 
@@ -48,12 +51,12 @@ module fluxes
   # Recipe: Simply run build_executable("fluxes.jl", snoopfile="fluxes_snoop.jl")
   # The snoop file is ***critical***, otherwise no performance increases!
   Base.@ccallable function julia_main(ARGS::Vector{String})::Cint # returns just 0 if success
-    eddy_flux(ARGS[1])
+    fluxes(ARGS[1])
     return 0
   end
 
   # The main function
-  function eddy_flux(filename::String)
+  function fluxes(filename::String)
     # A Dataset is a special mapping that returns NCDataset::Variable types,
     # iterates with "for (varname, variable) in data"; load data as in NetCDF4
     # which we extract into arrays loaded on memory with colon index
@@ -68,7 +71,7 @@ module fluxes
 
     # Dimensions and dimension attributes
     # WARNING: Critical error, unknown broadcasting
-    dims = nc.dimnames(data["t"])[2:] # list of names, except longitude
+    dims = nc.dimnames(data["t"])[2:4] # list of names, except longitude
     latt = Dict(data["lat"].attrib) # must convert to Dict before passing
     patt = Dict(data["plev"].attrib)
     tatt = Dict(data["time"].attrib)
@@ -122,14 +125,16 @@ module fluxes
     # define variables and declare them to have their own dimension in the same
     # breath; had mysterious failures below, can't reproduce anymore
     outname = dir * "/fluxes_jl.nc"
-    rm(outname)
-    nc.nccreate(outname, "emf", dims)
+    if isfile(outname)
+      rm(outname)
+    end
 
     # Define coordinates
-    # nc.defVar(out, "lon",  Float32.([0]), ("lon",), attrib=["long_name" => "longitude"]) # note we apply Float32 as elementwise function there
+    out = nc.Dataset(outname, "c", format=:netcdf4)
     nc.defVar(out, "lat",  lat,  ("lat",),  attrib=latt)
     nc.defVar(out, "plev", plev, ("plev",), attrib=patt)
     nc.defVar(out, "time", time, ("time",), attrib=tatt)
+    # nc.defVar(out, "lon",  Float32.([0]), ("lon",), attrib=["long_name" => "longitude"]) # note we apply Float32 as elementwise function there
 
     # Define variables
     nc.defVar(out, "emf", emf, dims, attrib=["long_name" => "eddy momentum flux", "units" => "m**2/s**2"])
