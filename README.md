@@ -170,7 +170,7 @@ NetCDF4. For files smaller than 100MB though, the differences are never that lar
 NCL and NCO appear to be acceptable choices.
 
 
-<img src="fluxes.png" width="500">
+<img src="fluxes.png" width="800">
 
 | nlat | size | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
