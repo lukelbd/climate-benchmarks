@@ -65,9 +65,10 @@ Fortran is the only low-level, high-performance language tested in these benchma
 seem like an anachronism to outsiders, but there are [perfectly valid](http://moreisdifferent.com/2015/07/16/why-physicsts-still-use-fortran/) reasons scientists still prefer it. The most important of these is that a very powerful parallelization tool, MPI, can be used only with C++ and Fortran. And of these two, although it is certainly not the right tool
 for software engineers and object-oriented programming,
 Fortran is the more array-friendly and easier-to-learn language (its name, after all, is an acronym for Formula Translator). Also, it is generally just as fast as C++. Fortran 
-is used for high-performance numerical algorithms and geophysical models -- for example,
-models used to predict the weather
-on a day-to-day basis and help us understand future climate change hazards.
+is used for high-performance numerical algorithms and geophysical models.
+<!-- -- for example, -->
+<!-- models used to predict the weather -->
+<!-- on a day-to-day basis and help us understand future climate change hazards. -->
 <!-- the Coupled Model Intercomparison Project. -->
 <!-- communicated by the Intergovernmental Panel on Climate Change (IPCC). -->
 
