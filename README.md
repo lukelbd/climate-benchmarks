@@ -158,7 +158,7 @@ there will be one day.
 <!-- Perhaps it will fully replace MATLAB one day, but -->
 <!-- evidently there is a lot of work to do. -->
 
-# Eddy flux benchmarks
+# Eddy flux benchmark
 For this benchmark, we use an assortment of languages to
 calculate and save eddy fluxes of heat and momentum to new NetCDF files.
 
@@ -417,7 +417,7 @@ This time, the benchmark was run on a Cheyenne HPC compute cluster interactive n
 <!-- then the calculations can proceed quickly. Another issue could have been the necessary -->
 <!-- disk reads (5) for the CDO script, compared to just 1 NCL disk read. -->
 
-# Isobars-to-isentropes interpolation benchmarks
+# Isobars-to-isentropes interpolation benchmark
 There are only two obvious tools for interpolating between isobars and isentropes: NCL, and python using the MetPy package. This benchmark compares them.
 
 ## Macbook: 60 level, 200 timesteps
