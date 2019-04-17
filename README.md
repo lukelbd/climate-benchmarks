@@ -19,6 +19,7 @@ accomplished with several different tools:
 * NCAR Command Language (NCL)
 * NetCDF Operators (NCO)
 * Julia
+* Python
 * MATLAB
 
 This repo is a work-in-progress. Below are some notes,
