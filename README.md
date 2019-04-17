@@ -168,8 +168,8 @@ The sampe data was generated using
 for reso in 20 10 7.5 5 3 2 1.5; do ./datagen $reso; done
 ```
 where the numbers refer to the latitude, longitude grid spacing.
-Climate Data Operators (CDO) are the clear winner here, followed closely by python with XArray and Dask, or with
-NetCDF4. For files smaller than 100MB though, the differences are never that large, and
+Climate Data Operators (CDO) are the clear winner here, followed closely by MATLAB, Fortran, and python in the same pack, depending on the file size.
+For files smaller than 100MB though, the differences are never that large, and
 the NCAR Command Language (NCL) and NetCDF Operators (NCO) appear to be acceptable choices.
 
 
