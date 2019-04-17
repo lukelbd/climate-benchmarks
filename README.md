@@ -141,16 +141,19 @@ Fortran code.
 
 ## Julia
 Julia is the new kid on the block, and tries to combine the best-of-both worlds from MATLAB (e.g. the everything-is-an-array syntax) and Python.
-The Julia workflow is quite different -- you **cannot** simply make repeated calls to some script on the command line, because this means **the JIT compilation kicks in every time, and becomes a huge bottleneck**. Instead, you should run things from a persistent notebook or REPL, **or** compile to a machine executable to eliminate JIT compilation altogether.
+The Julia workflow is quite different -- you **cannot** simply make repeated calls to some script on the command line, because this means the JIT compilation kicks in every time, and becomes a huge bottleneck. Instead you have two options:
 
-To give Julia the best shot, each benchmark provides two times:
+1. Run things from a persistent notebook or REPL, making **repeated calls** to some function so that the JIT compilation can speed things up. For example, a simple julia script that iterates over 1000 NetCDF files and performs the same operation on them.
+2. Compile to machine executable with [`PackageCompiler`](https://github.com/JuliaLang/PackageCompiler.jl) and a "snoop" script, which lets you call a binary executable. This is perhaps how numerical models written in Julia can be used. Since it is faster, this is the approach used for benchmarks, unless stated otherwise.
+<!-- To give Julia the best shot -->
+<!-- , each benchmark provides two times: -->
+<!-- 1. Time from running a Julia script in an **interactive shell**, after running it with a test file so the JIT compilation has already kicked in. Obviously this was tedious to do systematically, with multiple files and multiple benchmarks, but I thought it was necessary. -->
+<!-- 2. Time from running "pre-compiled" Julia code with the [`PackageCompiler`](https://github.com/JuliaLang/PackageCompiler.jl) utility. This has two drawbacks, being that pre-compiling Julia code is quite slow even for very simple programs, and the resulting machine code takes up massive amounts of space relative to the complexity of the program (since all dependencies must be compiled to machine code too). But, it does result in slightly faster code. -->
 
-1. Time from running a Julia script in an **interactive shell**, after running it with a test file so the JIT compilation has already kicked in. Obviously this was tedious to do systematically, with multiple files and multiple benchmarks, but I thought it was necessary.
-2. Time from running "pre-compiled" Julia code with the [`PackageCompiler`](https://github.com/JuliaLang/PackageCompiler.jl) utility. This has two drawbacks, being that pre-compiling Julia code is quite slow even for very simple programs, and the resulting machine code takes up massive amounts of space relative to the complexity of the program (since all dependencies must be compiled to machine code too). But, it does result in slightly faster code.
-
-While I suspect Julia may be suitable for complex numerical algorithms, it turned out that
-for simple, common data analysis tasks, and especially when working with large arrays,
-Julia performs no better than MATLAB or python. With the `NetCDF.jl` package (which mimics MATLAB's NetCDF utilities), Julia is somewhat slower than MATLAB. With the `NCDatasets.jl` package (which mimics the Python xarray package), Julia is somewhat slower than Python with xarray.
+Julia is advertised for its raw speed in numerical computations.
+<!-- complex numerical algorithms, but it turned out that -->
+But for simple, common data analysis tasks, and especially when working with large arrays,
+Julia seems to perform no better than MATLAB or python. With the `NetCDF.jl` package (which mimics MATLAB's NetCDF utilities), Julia is somewhat slower than MATLAB. With the `NCDatasets.jl` package (which mimics the python xarray package), Julia is somewhat slower than python.
 For me, there doesn't seem to be a compelling reason to switch from either of these tools to Julia yet. Perhaps as these packages are updated and I/O performance is improved,
 there will be one day.
 <!-- Perhaps it will fully replace MATLAB one day, but -->
