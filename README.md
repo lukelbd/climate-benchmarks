@@ -30,8 +30,8 @@ contentious) opinions on how the languages compare.
 
 ## NetCDF versions
 All benchmarks described here
-involve reading and writing to the NetCDF file format, used for multi-dimensional
-scientific dataset storage. There are two major versions of this file
+involve reading and writing to the NetCDF file format, used for storage of multi-dimensional
+scientific datasets. There are two major versions of this file
 format: version 3 and version 4.
 I observed two notable performance differences when
 sample data was saved to version 3 of the NetCDF format instead of version 4:
