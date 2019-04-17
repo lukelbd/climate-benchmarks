@@ -150,9 +150,11 @@ To give Julia the best shot, each benchmark provides two times:
 
 While I suspect Julia may be suitable for complex numerical algorithms, it turned out that
 for simple, common data analysis tasks, and especially when working with large arrays,
-Julia compares unfavorably to python and CDO. Perhaps it will fully
-replace MATLAB one day, but
-evidently there is a lot of work to do.
+Julia performs no better than MATLAB or python. With the `NetCDF.jl` package (which mimics MATLAB's NetCDF utilities), Julia is somewhat slower than MATLAB. With the `NCDatasets.jl` package (which mimics the Python xarray package), Julia is somewhat slower than Python with xarray.
+For me, there doesn't seem to be a compelling reason to switch from either of these tools to Julia yet. Perhaps as these packages are updated and I/O performance is improved,
+there will be one day.
+<!-- Perhaps it will fully replace MATLAB one day, but -->
+<!-- evidently there is a lot of work to do. -->
 
 # Eddy flux benchmarks
 For this benchmark, we use an assortment of languages to
