@@ -426,7 +426,6 @@ The sample data was generated using
 for reso in 20 10 7.5 5 3 2 1.5; do ./datagen $reso; done
 ```
 where the numbers refer to the latitude/longitude grid spacing.
-
 This time, NCL was the clear winner! The MetPy script was also raising
 a bunch of strange errors when it ran. Evidently, the kinks in the MetPy
 algorithm haven't been ironed out yet.
