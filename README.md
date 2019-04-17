@@ -44,6 +44,18 @@ Since most large general circulation models still produce the older-format NetCD
 files, only results for these datasets are shown.
 But anyway, the differences weren't that huge.
 
+## Fortran
+Fortran is the only low-level, high-performance language tested in these benchmarks. It may
+seem like an anachronism to outsiders, but there are [perfectly valid](http://moreisdifferent.com/2015/07/16/why-physicsts-still-use-fortran/) reasons scientists still prefer it. The most important of these is that a very powerful parallelization tool, MPI, can be used only with C++ and Fortran. And of these two, although it is certainly not the right tool
+for software engineers and object-oriented programming,
+Fortran is the more array-friendly and easier-to-learn language (its name, after all, is an acronym for Formula Translator). Also, it is generally just as fast as C++. Fortran 
+is used for high-performance numerical algorithms and geophysical models.
+<!-- -- for example, -->
+<!-- models used to predict the weather -->
+<!-- on a day-to-day basis and help us understand future climate change hazards. -->
+<!-- the Coupled Model Intercomparison Project. -->
+<!-- communicated by the Intergovernmental Panel on Climate Change (IPCC). -->
+
 ## NetCDF Operators (NCO)
 The NetCDF operators are a group of command-line tools developed by Unidata for
 working with NetCDF files, released alongside the original file format.
@@ -59,18 +71,6 @@ like `ncks` (NetCDF kitchen sink), `ncbo` (NetCDF binary operator),
 `ncwa` (NetCDF weighted averager),
 `ncrcat` (NetCDF record concatenator), `ncecat` (NetCDF ensemble concatenator), `ncra` (NetCDF record averager), `nces` (NetCDF ensemble statistics), `ncremap` (NetCDF remaper), `ncflint` (NetCDF file interpolator), and `ncclimo` (NetCDF climatology generator). 
 The documentation can be found [here](http://nco.sourceforge.net/).
-
-## Fortran
-Fortran is the only low-level, high-performance language tested in these benchmarks. It may
-seem like an anachronism to outsiders, but there are [perfectly valid](http://moreisdifferent.com/2015/07/16/why-physicsts-still-use-fortran/) reasons scientists still prefer it. The most important of these is that a very powerful parallelization tool, MPI, can be used only with C++ and Fortran. And of these two, although it is certainly not the right tool
-for software engineers and object-oriented programming,
-Fortran is the more array-friendly and easier-to-learn language (its name, after all, is an acronym for Formula Translator). Also, it is generally just as fast as C++. Fortran 
-is used for high-performance numerical algorithms and geophysical models.
-<!-- -- for example, -->
-<!-- models used to predict the weather -->
-<!-- on a day-to-day basis and help us understand future climate change hazards. -->
-<!-- the Coupled Model Intercomparison Project. -->
-<!-- communicated by the Intergovernmental Panel on Climate Change (IPCC). -->
 
 ## Climate Data Operators (CDO)
 CDO has generally similar functionality to the NetCDF operators
