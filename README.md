@@ -180,138 +180,129 @@ the NCAR Command Language (NCL) and NetCDF Operators (NCO) appear to be acceptab
 
 | nlat | size | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
-| 6 | 20M | Fortran | **0.052** | 0.028 | 0.021 |
-| 6 | 20M | Julia NCDatasets (compiled) | **0.773** | 0.870 | 0.204 |
-| 6 | 20M | Julia NetCDF (compiled) | **0.704** | 0.793 | 0.208 |
-| 6 | 20M | MATLAB (no startup) | **0.798574** | | |
-| 6 | 20M | Python netCDF4 | **0.746** | 0.433 | 0.172 |
-| 6 | 20M | XArray without dask | **1.484** | 1.328 | 0.308 |
-| 6 | 20M | XArray 200 step chunks | **0.925** | 1.201 | 0.925 |
-| 6 | 20M | XArray 20 step chunks | **0.916** | 0.769 | 0.177 |
-| 6 | 20M | XArray 2 step chunks | **1.451** | 1.214 | 0.319 |
-| 6 | 20M | CDO | **0.250** | 0.213 | 0.025 |
-| 6 | 20M | NCL | **0.701** | 0.388 | 0.129 |
-| 6 | 20M | NCO | **0.317** | 0.251 | 0.049 |
+| 6 | 20M | Fortran | **0.412** | 0.032 | 0.093 |
+| 6 | 20M | Julia NCDatasets (compiled) | **2.222** | 0.957 | 0.388 |
+| 6 | 20M | Julia NetCDF (compiled) | **1.709** | 0.857 | 0.342 |
+| 6 | 20M | MATLAB (no startup) | **0.874589** | | |
+| 6 | 20M | Python netCDF4 | **0.684** | 0.514 | 0.174 |
+| 6 | 20M | XArray without dask | **1.581** | 1.440 | 0.364 |
+| 6 | 20M | XArray 20 step chunks | **1.043** | 0.895 | 0.212 |
+| 6 | 20M | XArray 2 step chunks | **1.681** | 1.380 | 0.386 |
+| 6 | 20M | CDO | **0.359** | 0.223 | 0.077 |
+| 6 | 20M | NCL | **1.027** | 0.536 | 0.182 |
+| 6 | 20M | NCO | **0.414** | 0.291 | 0.096 |
 
 | nlat | size | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
-| 9 | 44M | Fortran | **0.571** | 0.055 | 0.086 |
-| 9 | 44M | Julia NCDatasets (compiled) | **0.940** | 1.002 | 0.243 |
-| 9 | 44M | Julia NetCDF (compiled) | **0.707** | 0.788 | 0.220 |
-| 9 | 44M | MATLAB (no startup) | **0.877921** | | |
-| 9 | 44M | Python netCDF4 | **0.377** | 0.458 | 0.107 |
-| 9 | 44M | XArray without dask | **0.972** | 1.448 | 0.250 |
-| 9 | 44M | XArray 200 step chunks | **1.010** | 1.496 | 1.173 |
-| 9 | 44M | XArray 20 step chunks | **0.893** | 0.814 | 0.183 |
-| 9 | 44M | XArray 2 step chunks | **1.448** | 1.260 | 0.321 |
-| 9 | 44M | CDO | **0.260** | 0.227 | 0.028 |
-| 9 | 44M | NCL | **0.797** | 0.660 | 0.131 |
-| 9 | 44M | NCO | **0.701** | 0.587 | 0.107 |
+| 9 | 44M | Fortran | **0.648** | 0.067 | 0.131 |
+| 9 | 44M | Julia NCDatasets (compiled) | **3.996** | 1.410 | 0.536 |
+| 9 | 44M | Julia NetCDF (compiled) | **2.146** | 1.117 | 0.482 |
+| 9 | 44M | MATLAB (no startup) | **0.844445** | | |
+| 9 | 44M | Python netCDF4 | **0.519** | 0.462 | 0.148 |
+| 9 | 44M | XArray without dask | **1.462** | 1.619 | 0.380 |
+| 9 | 44M | XArray 20 step chunks | **1.011** | 0.908 | 0.211 |
+| 9 | 44M | XArray 2 step chunks | **1.686** | 1.459 | 0.394 |
+| 9 | 44M | CDO | **0.348** | 0.255 | 0.042 |
+| 9 | 44M | NCL | **0.984** | 0.668 | 0.156 |
+| 9 | 44M | NCO | **0.708** | 0.584 | 0.103 |
 
 | nlat | size | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
-| 12 | 79M | Fortran | **0.843** | 0.090 | 0.139 |
-| 12 | 79M | Julia NCDatasets (compiled) | **1.214** | 1.225 | 0.292 |
-| 12 | 79M | Julia NetCDF (compiled) | **1.033** | 1.014 | 0.303 |
-| 12 | 79M | MATLAB (no startup) | **0.940958** | | |
-| 12 | 79M | Python netCDF4 | **0.532** | 0.561 | 0.175 |
-| 12 | 79M | XArray without dask | **1.188** | 1.543 | 0.335 |
-| 12 | 79M | XArray 200 step chunks | **1.174** | 1.959 | 1.307 |
-| 12 | 79M | XArray 20 step chunks | **1.065** | 1.458 | 1.782 |
-| 12 | 79M | XArray 2 step chunks | **1.456** | 1.340 | 0.334 |
-| 12 | 79M | CDO | **0.323** | 0.267 | 0.043 |
-| 12 | 79M | NCL | **1.162** | 0.964 | 0.177 |
-| 12 | 79M | NCO | **1.181** | 0.992 | 0.174 |
+| 12 | 79M | Fortran | **0.900** | 0.095 | 0.147 |
+| 12 | 79M | Julia NCDatasets (compiled) | **1.240** | 1.229 | 0.294 |
+| 12 | 79M | Julia NetCDF (compiled) | **1.124** | 1.014 | 0.301 |
+| 12 | 79M | MATLAB (no startup) | **0.832950** | | |
+| 12 | 79M | Python netCDF4 | **0.487** | 0.593 | 0.163 |
+| 12 | 79M | XArray without dask | **1.237** | 1.836 | 0.371 |
+| 12 | 79M | XArray 20 step chunks | **1.394** | 2.951 | 1.476 |
+| 12 | 79M | XArray 2 step chunks | **1.891** | 1.723 | 0.460 |
+| 12 | 79M | CDO | **0.463** | 0.380 | 0.060 |
+| 12 | 79M | NCL | **1.584** | 1.318 | 0.237 |
+| 12 | 79M | NCO | **1.457** | 1.235 | 0.205 |
 
 | nlat | size | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
-| 18 | 178M | Fortran | **1.714** | 0.208 | 0.293 |
-| 18 | 178M | Julia NCDatasets (compiled) | **1.733** | 1.632 | 0.398 |
-| 18 | 178M | Julia NetCDF (compiled) | **1.188** | 1.060 | 0.386 |
-| 18 | 178M | MATLAB (no startup) | **1.136818** | | |
-| 18 | 178M | Python netCDF4 | **0.854** | 0.941 | 0.308 |
-| 18 | 178M | XArray without dask | **1.575** | 2.968 | 0.637 |
-| 18 | 178M | XArray 200 step chunks | **1.550** | 3.288 | 1.641 |
-| 18 | 178M | XArray 20 step chunks | **1.264** | 2.152 | 2.571 |
-| 18 | 178M | XArray 2 step chunks | **1.448** | 1.512 | 0.362 |
-| 18 | 178M | CDO | **0.411** | 0.330 | 0.071 |
-| 18 | 178M | NCL | **2.268** | 1.967 | 0.275 |
-| 18 | 178M | NCO | **2.664** | 2.251 | 0.395 |
+| 18 | 178M | Fortran | **1.680** | 0.210 | 0.292 |
+| 18 | 178M | Julia NCDatasets (compiled) | **1.906** | 1.754 | 0.430 |
+| 18 | 178M | Julia NetCDF (compiled) | **1.275** | 1.160 | 0.412 |
+| 18 | 178M | MATLAB (no startup) | **1.035359** | | |
+| 18 | 178M | Python netCDF4 | **0.897** | 1.075 | 0.311 |
+| 18 | 178M | XArray without dask | **1.773** | 3.441 | 0.749 |
+| 18 | 178M | XArray 20 step chunks | **1.856** | 3.238 | 1.997 |
+| 18 | 178M | XArray 2 step chunks | **2.162** | 2.216 | 0.539 |
+| 18 | 178M | CDO | **0.546** | 0.455 | 0.081 |
+| 18 | 178M | NCL | **2.885** | 2.520 | 0.340 |
+| 18 | 178M | NCO | **3.135** | 2.648 | 0.436 |
 
 | nlat | size | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
-| 24 | 316M | Fortran | **2.373** | 0.364 | 0.492 |
-| 24 | 316M | Julia NCDatasets (compiled) | **2.383** | 2.107 | 0.561 |
-| 24 | 316M | Julia NetCDF (compiled) | **2.531** | 1.288 | 0.659 |
-| 24 | 316M | MATLAB (no startup) | **1.600454** | | |
-| 24 | 316M | Python netCDF4 | **1.695** | 1.552 | 0.557 |
-| 24 | 316M | XArray without dask | **2.741** | 3.473 | 0.947 |
-| 24 | 316M | XArray 200 step chunks | **1.881** | 4.219 | 1.962 |
-| 24 | 316M | XArray 20 step chunks | **1.731** | 3.983 | 3.640 |
-| 24 | 316M | XArray 2 step chunks | **1.539** | 1.775 | 0.391 |
-| 24 | 316M | CDO | **0.596** | 0.423 | 0.113 |
-| 24 | 316M | NCL | **3.961** | 3.348 | 0.440 |
-| 24 | 316M | NCO | **4.597** | 3.905 | 0.668 |
+| 24 | 316M | Fortran | **2.308** | 0.392 | 0.478 |
+| 24 | 316M | Julia NCDatasets (compiled) | **3.704** | 2.974 | 0.860 |
+| 24 | 316M | Julia NetCDF (compiled) | **2.278** | 1.723 | 0.767 |
+| 24 | 316M | MATLAB (no startup) | **1.481880** | | |
+| 24 | 316M | Python netCDF4 | **1.453** | 1.662 | 0.546 |
+| 24 | 316M | XArray without dask | **2.795** | 3.996 | 1.078 |
+| 24 | 316M | XArray 20 step chunks | **2.145** | 3.698 | 4.149 |
+| 24 | 316M | XArray 2 step chunks | **2.251** | 2.567 | 0.556 |
+| 24 | 316M | CDO | **0.747** | 0.611 | 0.123 |
+| 24 | 316M | NCL | **4.817** | 4.270 | 0.508 |
+| 24 | 316M | NCO | **9.181** | 7.648 | 1.102 |
 
 | nlat | size | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
-| 36 | 712M | Fortran | **4.550** | 0.906 | 1.127 |
-| 36 | 712M | Julia NCDatasets (compiled) | **6.464** | 3.826 | 1.545 |
-| 36 | 712M | Julia NetCDF (compiled) | **3.395** | 1.658 | 1.109 |
-| 36 | 712M | MATLAB (no startup) | **2.415747** | | |
-| 36 | 712M | Python netCDF4 | **3.018** | 2.642 | 1.121 |
-| 36 | 712M | XArray without dask | **4.929** | 5.465 | 2.213 |
-| 36 | 712M | XArray 200 step chunks | **3.391** | 6.847 | 2.803 |
-| 36 | 712M | XArray 20 step chunks | **2.504** | 6.418 | 6.759 |
-| 36 | 712M | XArray 2 step chunks | **2.746** | 6.672 | 8.917 |
-| 36 | 712M | CDO | **1.007** | 0.735 | 0.214 |
-| 36 | 712M | NCL | **8.589** | 7.487 | 0.909 |
-| 36 | 712M | NCO | **12.735** | 9.840 | 2.841 |
+| 36 | 712M | Fortran | **4.450** | 0.938 | 1.083 |
+| 36 | 712M | Julia NCDatasets (compiled) | **6.172** | 4.936 | 1.492 |
+| 36 | 712M | Julia NetCDF (compiled) | **2.794** | 1.967 | 1.100 |
+| 36 | 712M | MATLAB (no startup) | **2.326823** | | |
+| 36 | 712M | Python netCDF4 | **3.113** | 3.147 | 1.219 |
+| 36 | 712M | XArray without dask | **5.456** | 6.207 | 2.593 |
+| 36 | 712M | XArray 20 step chunks | **3.666** | 8.665 | 8.227 |
+| 36 | 712M | XArray 2 step chunks | **4.483** | 10.800 | 12.163 |
+| 36 | 712M | CDO | **1.664** | 1.314 | 0.328 |
+| 36 | 712M | NCL | **10.999** | 9.785 | 1.158 |
+| 36 | 712M | NCO | **18.269** | 14.321 | 3.833 |
 
 | nlat | size | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
-| 55 | 1.6G | Fortran | **7.991** | 2.024 | 2.084 |
-| 55 | 1.6G | Julia NCDatasets (compiled) | **11.619** | 7.642 | 2.930 |
-| 55 | 1.6G | Julia NetCDF (compiled) | **5.652** | 2.780 | 2.168 |
-| 55 | 1.6G | MATLAB (no startup) | **4.995612** | | |
-| 55 | 1.6G | Python netCDF4 | **6.096** | 4.880 | 2.333 |
-| 55 | 1.6G | XArray without dask | **8.867** | 10.576 | 4.843 |
-| 55 | 1.6G | XArray 200 step chunks | **6.884** | 12.348 | 6.547 |
-| 55 | 1.6G | XArray 20 step chunks | **4.864** | 16.305 | 12.120 |
-| 55 | 1.6G | XArray 2 step chunks | **5.104** | 14.122 | 18.866 |
-| 55 | 1.6G | CDO | **2.083** | 1.518 | 0.462 |
-| 55 | 1.6G | NCL | **19.604** | 17.504 | 1.903 |
-| 55 | 1.6G | NCO | **29.284** | 22.851 | 6.389 |
+| 55 | 1.6G | Fortran | **8.071** | 2.425 | 2.314 |
+| 55 | 1.6G | Julia NCDatasets (compiled) | **20.073** | 14.212 | 4.716 |
+| 55 | 1.6G | Julia NetCDF (compiled) | **8.240** | 4.287 | 3.375 |
+| 55 | 1.6G | MATLAB (no startup) | **7.455892** | | |
+| 55 | 1.6G | Python netCDF4 | **10.642** | 7.812 | 4.192 |
+| 55 | 1.6G | XArray without dask | **17.062** | 17.028 | 9.560 |
+| 55 | 1.6G | XArray 20 step chunks | **9.965** | 26.998 | 14.036 |
+| 55 | 1.6G | XArray 2 step chunks | **10.427** | 26.158 | 22.686 |
+| 55 | 1.6G | CDO | **4.665** | 3.608 | 0.966 |
+| 55 | 1.6G | NCL | **32.438** | 28.809 | 3.240 |
+| 55 | 1.6G | NCO | **54.133** | 42.519 | 11.281 |
 
 | nlat | size | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
-| 72 | 2.8G | Fortran | **10.861** | 3.419 | 3.334 |
-| 72 | 2.8G | Julia NCDatasets (compiled) | **20.561** | 12.610 | 6.450 |
-| 72 | 2.8G | Julia NetCDF (compiled) | **9.376** | 3.835 | 3.439 |
-| 72 | 2.8G | MATLAB (no startup) | **9.420160** | | |
-| 72 | 2.8G | Python netCDF4 | **11.120** | 6.944 | 4.375 |
-| 72 | 2.8G | XArray without dask | **17.716** | 13.518 | 9.076 |
-| 72 | 2.8G | XArray 200 step chunks | **15.166** | 17.175 | 13.552 |
-| 72 | 2.8G | XArray 20 step chunks | **7.994** | 29.616 | 13.656 |
-| 72 | 2.8G | XArray 2 step chunks | **7.726** | 22.211 | 30.767 |
-| 72 | 2.8G | CDO | **4.481** | 3.626 | 0.774 |
-| 72 | 2.8G | NCL | **32.229** | 29.156 | 2.865 |
-| 72 | 2.8G | NCO | **49.357** | 39.183 | 10.009 |
+| 72 | 2.8G | Fortran | **14.963** | 6.026 | 5.135 |
+| 72 | 2.8G | Julia NCDatasets (compiled) | **37.576** | 25.329 | 10.248 |
+| 72 | 2.8G | Julia NetCDF (compiled) | **12.322** | 6.231 | 5.258 |
+| 72 | 2.8G | MATLAB (no startup) | **13.746387** | | |
+| 72 | 2.8G | Python netCDF4 | **17.333** | 11.324 | 6.656 |
+| 72 | 2.8G | XArray without dask | **30.254** | 22.150 | 15.532 |
+| 72 | 2.8G | XArray 20 step chunks | **14.922** | 37.465 | 18.101 |
+| 72 | 2.8G | XArray 2 step chunks | **16.600** | 39.978 | 35.207 |
+| 72 | 2.8G | CDO | **10.453** | 8.520 | 1.730 |
+| 72 | 2.8G | NCL | **57.910** | 51.708 | 5.616 |
+| 72 | 2.8G | NCO | **92.308** | 72.226 | 19.400 |
 
 | nlat | size | name | real (s) | user (s) | sys (s) |
 | --- | --- | --- | --- | --- | --- |
-| 90 | 4.3G | Fortran | **13.358** | 5.135 | 4.673 |
-| 90 | 4.3G | Julia NCDatasets (compiled) | **29.075** | 18.812 | 8.780 |
-| 90 | 4.3G | Julia NetCDF (compiled) | **12.007** | 5.381 | 4.854 |
-| 90 | 4.3G | MATLAB (no startup) | **15.277648** | | |
-| 90 | 4.3G | Python netCDF4 | **19.550** | 10.905 | 9.102 |
-| 90 | 4.3G | XArray without dask | **28.737** | 23.408 | 19.687 |
-| 90 | 4.3G | XArray 200 step chunks | **29.941** | 26.370 | 35.013 |
-| 90 | 4.3G | XArray 20 step chunks | **14.713** | 46.250 | 26.859 |
-| 90 | 4.3G | XArray 2 step chunks | **10.823** | 31.804 | 43.389 |
-| 90 | 4.3G | CDO | **6.743** | 5.416 | 1.237 |
-| 90 | 4.3G | NCL | **54.620** | 47.379 | 6.811 |
-| 90 | 4.3G | NCO | **79.057** | 61.756 | 16.419 |
+| 90 | 4.3G | Fortran | **20.076** | 9.240 | 7.763 |
+| 90 | 4.3G | Julia NCDatasets (compiled) | **64.605** | 39.012 | 20.661 |
+| 90 | 4.3G | Julia NetCDF (compiled) | **20.591** | 9.386 | 8.761 |
+| 90 | 4.3G | MATLAB (no startup) | **28.569324** | | |
+| 90 | 4.3G | Python netCDF4 | **52.359** | 24.858 | 26.405 |
+| 90 | 4.3G | XArray without dask | **82.653** | 46.488 | 70.870 |
+| 90 | 4.3G | XArray 20 step chunks | **28.300** | 58.946 | 43.493 |
+| 90 | 4.3G | XArray 2 step chunks | **23.411** | 63.666 | 60.116 |
+| 90 | 4.3G | CDO | **13.967** | 11.346 | 2.411 |
+| 90 | 4.3G | NCL | **90.036** | 71.161 | 14.306 |
+| 90 | 4.3G | NCO | **121.905** | 94.340 | 25.913 |
 
 <!-- | 9 | 22M (3) | Interactive Julia | **0.196** -->
 <!-- | 18 | 89M (3) | Interactive Julia | **1.972** -->

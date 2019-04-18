@@ -93,14 +93,14 @@ for data in ${datas[@]}; do
 
   # Python with xarray and Dask chunking by 2D slice
   if [ $dir == 1lev ]; then
-    bench "XArray 1000 step chunks" python ${name}_xarray.py $data 1000
+    # bench "XArray 1000 step chunks" python ${name}_xarray.py $data 1000
     # bench "XArray 200 step chunks"  python ${name}_xarray.py $data 200
     bench "XArray 100 step chunks" python ${name}_xarray.py $data 100
     # bench "XArray 50 step chunks"   python ${name}_xarray.py $data 50
     # bench "XArray 20 step chunks"   python ${name}_xarray.py $data 20
     bench "XArray 10 step chunks" python ${name}_xarray.py $data 20
   elif [ $dir == 60lev ]; then
-    bench "XArray 200 step chunks" python ${name}_xarray.py $data 200
+    # bench "XArray 200 step chunks" python ${name}_xarray.py $data 200
     # bench "XArray 50 step chunks"  python ${name}_xarray.py $data 50
     bench "XArray 20 step chunks" python ${name}_xarray.py $data 20
     # bench "XArray 10 step chunks"  python ${name}_xarray.py $data 10
