@@ -10,6 +10,7 @@ dir = filename.split('/')[0]
 # Get slice of all variables
 data = xr.open_dataset(filename, decode_times=False)
 out = data.isel(lat=slice(None,4))
+# out = data.isel(time=slice(None,20))
 # Save sliced data
 outname = f'{dir}/slice_xr.nc'
 if os.path.exists(outname):

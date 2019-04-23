@@ -9,3 +9,4 @@ filename=$1
 dir=${filename%/*}
 flags=${@:2} # optionally pass flags; e.g. --no_tmp_fl for no tmp files; see http://nco.sourceforge.net/nco.html#Temporary-Output-Files
 ncks -O -h --no-abc -d lat,0,3 $filename $dir/slice_nco.nc
+# ncks -O -h --no-abc -d time,0,19 $filename $dir/slice_nco.nc

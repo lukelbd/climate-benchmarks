@@ -10,14 +10,16 @@ import sys
 
 # Check
 try:
-    reso = float(sys.argv[-1])
+    dir = sys.argv[1]
+    reso = float(sys.argv[2])
 except ValueError:
-    raise ValueError('Must pass grid resolution convertible to float.')
-print(f'Resolution: {reso}')
+    raise ValueError('Usage is ./DataGenerator <directory> <resolution>.')
+if not os.path.isdir(dir):
+    os.mkdir(dir)
+print(f'Directory: {dir} Resolution: {reso}')
 
 # Dimensions
 print('Initial stuff.')
-dir = '60lev'
 dtype = np.float32
 step = 2
 if dir=='1lev':
@@ -28,7 +30,7 @@ elif dir=='60lev':
     plev = np.linspace(0, 1013.25, 61, dtype=dtype)
     plev = (plev[1:] + plev[:-1])/2
 else:
-    raise ValueError('Unknown data dir {dir}.')
+    raise ValueError('Unknown configuration for data generator "{dir}". Add to this script.')
 time = np.arange(1/step, ntime, dtype=dtype)/step
 lat = np.arange(-90 + reso/2, 90, reso, dtype=dtype)
 lon = np.arange(-180 + reso/2, 180, reso, dtype=dtype)

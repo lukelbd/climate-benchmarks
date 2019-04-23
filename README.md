@@ -167,7 +167,7 @@ calculate and save eddy fluxes of heat and momentum to new NetCDF files.
 ## Macbook: 60 level, 200 timesteps
 The sampe data was generated using
 ```
-for reso in 20 10 7.5 5 3 2 1.5; do ./datagen $reso; done
+for reso in 20 10 7.5 5 3 2 1.5; do ./DataGenerator 60lev $reso; done
 ```
 where the numbers refer to the latitude, longitude grid spacing.
 Climate Data Operators (CDO) are the clear winner here, followed closely by MATLAB, Fortran, and python in the same pack, depending on the file size.
@@ -416,7 +416,7 @@ There are only two obvious tools for interpolating between isobars and isentrope
 ## Macbook: 60 level, 200 timesteps
 The sample data was generated using
 ```
-for reso in 20 10 7.5 5 3 2 1.5; do ./datagen $reso; done
+for reso in 20 10 7.5 5 3 2 1.5; do ./DataGenerator 60lev $reso; done
 ```
 where the numbers refer to the latitude/longitude grid spacing.
 This time, NCL was the clear winner! The MetPy script was also raising
