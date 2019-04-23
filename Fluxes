@@ -5,67 +5,11 @@
 # them, so we can compare their output. Consider automatically appending
 # results to a markdown table or something
 ################################################################################
-# Helper function
-# We require a subshell to redirect 'time' for some reason; because it's weird
-# builtin or something
-name=$0
-dir=$1 # directories where data is stored
-[ -z "$dir" ] && echo "Error: Please enter location of NetCDFs for globbing/testing." && exit 1
-! [ -d "$dir" ] && echo "Error: Directory \"$dir\" not found." && exit 1
-output=logs/fluxes_${dir}_${HOSTNAME%%.*}.log # store here
-header="| nlat | size | name | real (s) | user (s) | sys (s) |\n| --- | --- | --- | --- | --- | --- |\n"
-rm $output 2>/dev/null
-seconds() {
-  # Convert time command output to raw seconds
-  t=$1
-  m=${t%m*}
-  s=${t#*m}
-  s=${s%.*}
-  d=${t#*.} # decimal
-  echo $((m*60 + s)).${d%s} # converts e.g. 1m35.23s to 85.23s
-}
-bench() {
-  # Run time command
-  # NOTE: Preserve stdout, because have Matlab print stuff after startup
-  # is complete so we can get better estimate
-  local real user sys
-  res=$( (time "${@:2}" 2>/dev/null) 2>&1 )
-  info="$(echo "${res%real*}" | xargs | tr -s ' ')"
-  time="real ${res##*real}"
-  array=($time)
-  # Get result, tabulate it, add it to markdown file
-  if [ -n "$info" ]; then # try to find the number, in seconds
-    info="${info##*mathworks.com.}" # only way to remove startup....
-    info="$(echo "$info" | sed 's/[^.0-9]//g')"
-    real="$(seconds 0m${info%.1}s)" # weirdly, get extra '1' at end of string that is totally invisible before passing through sed
-    printf "| $nlat | $size | $1 | **$real** | | |\n" >>$output
-  else
-    real=$(seconds ${array[1]})
-    user=$(seconds ${array[3]})
-    sys=$(seconds ${array[5]})
-    printf "| $nlat | $size | $1 | **$real** | $user | $sys |\n" >>$output
-  fi
-  echo $1
-  echo ${real}s
-}
-
 # Loop over datasets with different resolutions
-datas=($dir/data*.nc)
-counter=0
+source header.sh
 for data in ${datas[@]}; do
   # Header
-  # NOTE: The 'disk usage' often very different from the 'apparent size'
-  # ls -l; former depends on internals of how data is stored, and on Cheyenne,
-  # ends up way bigger. See: https://unix.stackexchange.com/a/106278/112647
-  # Explanation of why this happens: https://serverfault.com/a/290091/427991
-  size=$(command du -h $data | xargs | cut -d' ' -f1)
-  version=${data%.nc}
-  version=${version##*_}
-  nlat=${data#*N}
-  nlat=$(printf '%.0f' ${nlat%T*})
-  echo && echo "Dataset: $data ($size)"
-  echo "Logfile: $output"
-  printf "\n$header" >>$output # add header for each new file
+  printhead $data
 
   # Fortran method
   # NOTE: Assumes fortran installed with MacPorts, port install netcdf and port install netcdf-fortran

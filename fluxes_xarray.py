@@ -27,7 +27,7 @@ ehf.attrs = {'long_name':'eddy heat flux', 'units':'K*m/s'}
 
 # Save file
 out = xr.Dataset({'emf':emf, 'ehf':ehf})
-outname = f'{dir}/fluxes_py{nt}.nc'
+outname = f'{dir}/fluxes_xr{nt}.nc'
 if os.path.exists(outname):
     os.remove(outname)
 out.to_netcdf(outname, mode='w') # specify whether we did chunking
