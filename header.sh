@@ -11,7 +11,7 @@
 # Global variables
 name=$0
 dir=$1 # directories where data is stored
-[ -z "$dir" ] && echo "Error: Please enter location of NetCDFs for globbing/testing." && exit 1
+[ -z "$dir" ] && echo "Error: Usage is ./Benchmark <dir> where <dir> is the location of NetCDFs for globbing/testing." && exit 1
 ! [ -d "$dir" ] && echo "Error: Directory \"$dir\" not found." && exit 1
 header="| nlat | size | name | real (s) | user (s) | sys (s) |\n| --- | --- | --- | --- | --- | --- |\n"
 output=logs/$(echo $name | tr [A-Z] [a-z])_${dir}_${HOSTNAME%%.*}.log # store here
@@ -23,7 +23,30 @@ rm $dir/*-*.nc 2>/dev/null # remove parallel-produced files
 #------------------------------------------------------------------------------#
 # Functions
 #------------------------------------------------------------------------------#
-# Converts time command output to raw seconds
+# Spit out a header onto logfile
+# NOTE: Critical that 'size' and 'nlat' are global variables here
+# NOTE: The 'disk usage' often very different from the 'apparent size'
+# ls -l; former depends on internals of how data is stored, and on Cheyenne,
+# ends up way bigger. See: https://unix.stackexchange.com/a/106278/112647
+# Explanation of why this happens: https://serverfault.com/a/290091/427991
+[[ "$OSTYPE" == "darwin"* ]] && _macos=true || _macos=false
+if $_macos && ! type gdu &>/dev/null; then
+  echo "Warning: gdu unavailable. Recommend installing it with brew install coreutils."
+  cdu='du -h'
+elif $_macos; 
+  cdu='gdu --apparent-size -h'
+else
+  cdu='du --apparent-size -h'
+fi
+printhead() {
+  size=$(command $cdu $1 | xargs | cut -d' ' -f1)
+  nlat=${1#*N}
+  nlat=$(printf '%.0f' ${nlat%T*})
+  echo && echo "Dataset: $1 ($size)"
+  echo "Logfile: $output"
+  printf "\n$header" >>$output # add header for each new file
+}
+# Convert time command output to raw seconds
 seconds() {
   t=$1
   m=${t%m*}
@@ -97,19 +120,4 @@ nclparallel() {
   glob2=$name2'-*.nc'
   ncrcat -O $glob2 ${name2}_parallel.nc
   rm $glob1 $glob2
-}
-# Spit out a header onto logfile
-# NOTE: The 'disk usage' often very different from the 'apparent size'
-# ls -l; former depends on internals of how data is stored, and on Cheyenne,
-# ends up way bigger. See: https://unix.stackexchange.com/a/106278/112647
-# Explanation of why this happens: https://serverfault.com/a/290091/427991
-type gdu &>/dev/null && cdu=gdu || cdu=du # need GNU utils version on mac
-printhead() {
-  local nlat size
-  size=$(command $cdu --apparent-size -h $1 | xargs | cut -d' ' -f1)
-  nlat=${1#*N}
-  nlat=$(printf '%.0f' ${nlat%T*})
-  echo && echo "Dataset: $1 ($size)"
-  echo "Logfile: $output"
-  printf "\n$header" >>$output # add header for each new file
 }

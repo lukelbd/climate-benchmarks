@@ -15,7 +15,7 @@ program main
   ! character(len=100) :: get_command_argument ! must declare return type of functions
 
   ! Read data
-  ! NOTE: Unitdata recommend wrapping in check, so exit happes if non-zero
+  ! NOTE: Unidata recommend wrapping in check, so exit happens if non-zero
   ! exit code is returned, but requires 2003 standard
   ! filename = trim(get_command_argument(1))
   call getarg(1, filename)
