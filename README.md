@@ -179,7 +179,7 @@ The benchmark was run on my macbook (first plot), and on the
 Cheyenne HPC compute cluster interactive node (second plot),
 which is a shared resource consisting of approximately 72 cores.
 
-<img src="fluxes.png" width="700">
+<img src="fluxes_macbook.png" width="700">
 <img src="fluxes_cheyenne.png" width="700">
 
 
