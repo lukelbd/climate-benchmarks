@@ -161,7 +161,7 @@ there will be one day.
 <!-- Perhaps it will fully replace MATLAB one day, but -->
 <!-- evidently there is a lot of work to do. -->
 
-# Generating sample data
+# Sample data
 The sample data was generated using
 ```
 for reso in 20 10 7.5 5 3 2 1.5; do ./DataGenerator 60lev $reso; done
