@@ -179,8 +179,8 @@ The benchmark was run on my macbook (first plot), and on the
 Cheyenne HPC compute cluster interactive node (second plot),
 which is a shared resource consisting of approximately 72 cores.
 
-<img src="fluxes.png" width="800">
-<img src="fluxes_cheyenne.png" width="800">
+<img src="fluxes.png" width="600">
+<img src="fluxes_cheyenne.png" width="600">
 
 
 <!-- # Hybrid-to-pressure interpolation benchmarks
@@ -211,7 +211,7 @@ algorithm haven't been ironed out yet.
 
 The benchmark was run on my macbook.
 
-<img src="isentropes.png" width="800">
+<img src="isentropes.png" width="600">
 
 # Slicing latitudes
 This was a simple test of slicing data across the longitude dimensions, compared
@@ -219,4 +219,4 @@ between xarray and NCO. This test is a work-in-progress.
 
 The benchmark was run on my macbook.
 
-<img src="slice.png" width="800">
+<img src="slice.png" width="600">
