@@ -28,6 +28,7 @@ contentious) opinions on how the languages compare.
 <!-- languages. -->
 <!-- some general notes. -->
 
+# Background
 ## NetCDF versions
 All benchmarks described here
 involve reading and writing to the NetCDF file format, used for storage of multi-dimensional
