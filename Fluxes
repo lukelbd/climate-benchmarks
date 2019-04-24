@@ -37,20 +37,11 @@ for data in ${datas[@]}; do
 
   # Python with xarray and Dask chunking by 2D slice
   if [ $dir == 1lev ]; then
-    # bench "XArray 1000 step chunks" python ${name}_xarray.py $data 1000
-    # bench "XArray 200 step chunks"  python ${name}_xarray.py $data 200
     bench "XArray 100 step chunks" python ${name}_xarray.py $data 100
-    # bench "XArray 50 step chunks"   python ${name}_xarray.py $data 50
-    # bench "XArray 20 step chunks"   python ${name}_xarray.py $data 20
     bench "XArray 10 step chunks" python ${name}_xarray.py $data 20
   elif [ $dir == 60lev ]; then
-    # bench "XArray 200 step chunks" python ${name}_xarray.py $data 200
-    # bench "XArray 50 step chunks"  python ${name}_xarray.py $data 50
     bench "XArray 20 step chunks" python ${name}_xarray.py $data 20
-    # bench "XArray 10 step chunks"  python ${name}_xarray.py $data 10
-    # bench "XArray 5 step chunks"   python ${name}_xarray.py $data 5
     bench "XArray 2 step chunks" python ${name}_xarray.py $data 2
-    # bench "XArray 1 step chunks"   python ${name}_xarray.py $data 1
   else
     echo "Error: Unknown chunk combos for sample data in dir \"$dir\"."
     exit 1
@@ -60,23 +51,20 @@ for data in ${datas[@]}; do
   # NOTE: On mac just run with serial IO
   # NOTE: Serial IO turned out to be really small difference
   bench "CDO" ${name}.cdo $data
-  # bench "CDO no expr" ${name}_stupid.cdo $data
-  # bench "CDO + serial IO" ${name}_stupid.cdo $data '-L'
 
   # NCL method
   # NOTE: NCL needs special dyld library path but so does brew, screws up
   # Homebrew if we set it, so set it locally
   export DYLD_LIBRARY_PATH="/usr/local/lib/gcc/4.9"
   bench "NCL" ncl -Q -n "filename=\"$data\"" "large=\"0\"" ${name}.ncl
-  # bench "NCL + LargeFile" ncl -Q -n "filename=\"$data\"" "large=\"1\"" ${name}.ncl
   export DYLD_LIBRARY_PATH=""
 
   # NCO method with NCAP
   # Add options for handling large files; see: http://nco.sourceforge.net/nco.html#Temporary-Output-Files
-  # No need to do both; we just need to 'open' or 'create' in RAM to prevent
-  # issues with overwrites (2nd example). In this case we aren't writing to the
-  # same file so we don't need to worry about those options.
   # NOTE: Turned out no tmp file made pretty much zero difference
+  # NOTE: We can 'open' or 'create' in RAM to prevent issues with overwrites
+  # (2nd example). In this case we aren't writing to the same file so we don't
+  # need to worry about those options. And makes no time diference.
   bench "NCO" ${name}.nco $data
   # bench "NCO + no tmp file" ${name}.nco $data --no_tmp_fl
   # bench "NCO + open in RAM" ${name}.nco $data --open_ram --no_tmp_fl
