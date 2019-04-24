@@ -33,7 +33,7 @@ rm $dir/*-*.nc 2>/dev/null # remove parallel-produced files
 if $_macos && ! type gdu &>/dev/null; then
   echo "Warning: gdu unavailable. Recommend installing it with brew install coreutils."
   cdu='du -h'
-elif $_macos; 
+elif $_macos; then
   cdu='gdu --apparent-size -h'
 else
   cdu='du --apparent-size -h'
