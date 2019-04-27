@@ -202,16 +202,6 @@ which is a shared resource consisting of approximately 72 cores.
    - then the calculations can proceed quickly. Another issue could have been the necessary
    - disk reads (5) for the CDO script, compared to just 1 NCL disk read. -->
 
-# Interpolation
-There are only two obvious tools for interpolating between isobars and isentropes: NCL, and python using the MetPy package.
-This benchmark compares them.
-
-This time, NCL was the clear winner! The MetPy script was also raising
-a bunch of strange errors when it ran. Evidently, the kinks in the MetPy
-algorithm haven't been ironed out yet.
-
-<img src="isentropes.png" width="700">
-
 # Dimension slicing
 In this benchmark, the first quarter of timesteps
 were selected using various tools and saved to a new file.
@@ -228,3 +218,14 @@ is negligible. XArray is the slowest across all file sizes.
    - between xarray and NCO. This test is a work-in-progress. -->
 
 <img src="slice.png" width="700">
+
+# Interpolation
+There are only two obvious tools for interpolating between isobars and isentropes: NCL, and python using the MetPy package.
+This benchmark compares them.
+
+This time, NCL was the clear winner! The MetPy script was also raising
+a bunch of strange errors when it ran. Evidently, the kinks in the MetPy
+algorithm haven't been ironed out yet.
+
+<img src="isentropes.png" width="700">
+
