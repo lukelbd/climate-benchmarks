@@ -168,7 +168,7 @@ for reso in 20 10 7.5 5 3 2 1.5; do ./DataGenerator 60lev $reso; done
 ```
 where the numbers refer to the latitude/longitude grid spacing.
 
-# Eddy flux benchmark
+# Eddy fluxes
 For this benchmark, we use an assortment of languages to
 calculate and save eddy fluxes of heat and momentum to new NetCDF files.
 
