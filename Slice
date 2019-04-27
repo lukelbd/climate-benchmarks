@@ -9,13 +9,18 @@
 # nmax=100
 nmax=50
 debug=false
-source header.sh
+source ./header.sh
 for data in ${datas[@]}; do
   # Header
   printhead $data
 
   # Python
   bench "XArray" python ${name}_xarray.py $data $nmax
+
+  # NCL
+  export DYLD_LIBRARY_PATH="/opt/local/lib/libgcc"
+  bench "NCL" ncl -Q -n "filename=\"${data}\"" "nmax=$nmax" ${name}.ncl
+  export DYLD_LIBRARY_PATH=""
 
   # NCO
   bench "NCO" ${name}.nco $data $nmax

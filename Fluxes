@@ -6,7 +6,7 @@
 # results to a markdown table or something
 ################################################################################
 # Loop over datasets with different resolutions
-source header.sh
+source ./header.sh
 for data in ${datas[@]}; do
   # Header
   printhead $data

@@ -2,7 +2,7 @@
 ################################################################################
 # Isentropic surface interpolation as function of file size
 ################################################################################
-source header.sh
+source ./header.sh
 for data in ${datas[@]}; do
   # Header
   printhead $data
@@ -16,7 +16,7 @@ for data in ${datas[@]}; do
   # NCL method
   # NOTE: NCL needs special dyld library path but so does brew, screws
   # up Homebrew if we set it, so set it locally
-  export DYLD_LIBRARY_PATH="/usr/local/lib/gcc/4.9"
+  export DYLD_LIBRARY_PATH="/opt/local/lib/libgcc"
   bench "NCL" ncl -Q -n "filename=\"$data\"" "outname=\"${data%/*}/isentropes_ncl.nc\"" ${name}.ncl
   export DYLD_LIBRARY_PATH=""
 
