@@ -202,7 +202,7 @@ which is a shared resource consisting of approximately 72 cores.
    - then the calculations can proceed quickly. Another issue could have been the necessary
    - disk reads (5) for the CDO script, compared to just 1 NCL disk read. -->
 
-# Interpolating from pressure levels to isentropes
+# Interpolation
 There are only two obvious tools for interpolating between isobars and isentropes: NCL, and python using the MetPy package.
 This benchmark compares them.
 
@@ -214,9 +214,19 @@ The benchmark was run on my macbook.
 
 <img src="isentropes.png" width="700">
 
-# Slicing latitudes
-This was a simple test of slicing data across the longitude dimensions, compared
-between xarray and NCO. This test is a work-in-progress.
+# Dimension slicing
+In this benchmark, the first quarter of timesteps
+were selected using various tools and saved to a new file.
+The results here were particularly interesting -- NCO
+is the winner for small files, but CDO beats it for
+large files, at which point the time required
+for overhead operations
+is negligible. XArray is the slowest across all file sizes.
+<!-- This was a simple test comparing the performance
+   - of various tools for selecting the first one quarter
+   - timesteps and saving the result  -->
+<!-- slicing data across the longitude dimensions, compared
+   - between xarray and NCO. This test is a work-in-progress. -->
 
 The benchmark was run on my macbook.
 
