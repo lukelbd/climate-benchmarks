@@ -210,8 +210,6 @@ This time, NCL was the clear winner! The MetPy script was also raising
 a bunch of strange errors when it ran. Evidently, the kinks in the MetPy
 algorithm haven't been ironed out yet.
 
-The benchmark was run on my macbook.
-
 <img src="isentropes.png" width="700">
 
 # Dimension slicing
@@ -228,7 +226,5 @@ is negligible. XArray is the slowest across all file sizes.
    - timesteps and saving the result  -->
 <!-- slicing data across the longitude dimensions, compared
    - between xarray and NCO. This test is a work-in-progress. -->
-
-The benchmark was run on my macbook.
 
 <img src="slice.png" width="700">
