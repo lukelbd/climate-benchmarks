@@ -21,7 +21,7 @@ for data in ${datas[@]}; do
   export DYLD_LIBRARY_PATH=""
 
   # NCL in parallel by splitting timesteps with ncks
-  export DYLD_LIBRARY_PATH="/usr/local/lib/gcc/4.9"
-  bench "NCL Parallel" nclparallel "$data"
-  export DYLD_LIBRARY_PATH=""
+  # export DYLD_LIBRARY_PATH="/usr/local/lib/gcc/4.9"
+  # bench "NCL Parallel" nclparallel "$data"
+  # export DYLD_LIBRARY_PATH=""
 done

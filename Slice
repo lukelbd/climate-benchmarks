@@ -6,6 +6,8 @@
 # results to a markdown table or something
 ################################################################################
 # Loop over datasets with different resolutions
+# nmax=100
+nmax=50
 debug=false
 source header.sh
 for data in ${datas[@]}; do
@@ -13,8 +15,11 @@ for data in ${datas[@]}; do
   printhead $data
 
   # Python
-  bench "XArray" python ${name}_xarray.py $data
+  bench "XArray" python ${name}_xarray.py $data $nmax
 
   # NCO
-  bench "NCO" ${name}.nco $data
+  bench "NCO" ${name}.nco $data $nmax
+
+  # CDO
+  bench "CDO" ${name}.cdo $data $nmax
 done

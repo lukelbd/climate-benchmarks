@@ -52,15 +52,18 @@ with nc4.Dataset(outname, 'w') as f:
     lat_var  = f.createVariable("lat", "f8", ("lat",))
     ehf_var  = f.createVariable("ehf", "f8", ("time", "plev", "lat",))
     emf_var  = f.createVariable("emf", "f8", ("time", "plev", "lat",))
+    # Add attributes
+    # WARNING: Updating __dict__ silently fails for some reason!
+    for var,dict_ in ((time_var,time_att), (plev_var,plev_att), (lat_var,lat_att)) :
+        for key,value in dict_.items():
+            setattr(var, key, value)
+    for var,dict_ in ((emf_var, {'long_name':'eddy momentum flux', 'units':'m**2/s**2'}),
+                      (ehf_var, {'long_name':'eddy heat flux', 'units':'K*m/s'})):
+        for key,value in dict_.items():
+            setattr(var, key, value)
     # Write to vars
     time_var[:] = time
     plev_var[:] = plev
     lat_var[:]  = lat
     ehf_var[:]  = ehf
     emf_var[:]  = emf
-    # Add attributes
-    time_var.__dict__.update(time_att)
-    plev_var.__dict__.update(plev_att)
-    lat_var.__dict__.update(lat_att)
-    emf_var.__dict__.update({'long_name':'eddy momentum flux', 'units':'m**2/s**2'})
-    ehf_var.__dict__.update({'long_name':'eddy heat flux', 'units':'K*m/s'})
