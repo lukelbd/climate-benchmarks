@@ -165,7 +165,7 @@ there will be one day.
 
 # Usage
 ## Generating sample data
-Sample data can be generated with the `DataGenerator.py` script. For the below results, data was generated with
+Sample data can be generated with the `DataGenerator.py` script. For the below results, data was generated with:
 ```
 for reso in 20 10 7.5 5 3 2 1.5; do ./DataGenerator.py 60lev $reso; done
 ```
