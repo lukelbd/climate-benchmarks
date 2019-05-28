@@ -49,8 +49,8 @@ But anyway, the differences weren't that huge.
 Fortran is the only low-level, high-performance language tested in these benchmarks. It may
 seem like an anachronism to outsiders, but there are [perfectly valid](http://moreisdifferent.com/2015/07/16/why-physicsts-still-use-fortran/) reasons scientists still prefer it. The most important of these is that a very powerful parallelization tool, MPI, can be used only with C++ and Fortran. And of these two, although it is certainly not the right tool
 for software engineers and object-oriented programming,
-Fortran is the more array-friendly and easier-to-learn language (its name, after all, is an acronym for Formula Translator). Also, it is generally just as fast as C++. Fortran 
-is used for high-performance numerical algorithms and geophysical models.
+Fortran is the more array-friendly, easier-to-learn language. It is also generally as fast as C++. Fortran 
+is used for high-performance numerical algorithms and geophysical modeling.
 <!-- -- for example, -->
 <!-- models used to predict the weather -->
 <!-- on a day-to-day basis and help us understand future climate change hazards. -->
@@ -61,9 +61,9 @@ is used for high-performance numerical algorithms and geophysical models.
 The NetCDF operators are a group of command-line tools developed by Unidata for
 working with NetCDF files, released alongside the original file format.
 Since it was released by the creators,
-one might think it would be the efficient tool for manipulating
-NetCDF data. But it turns out most other, secondary tools are generally
-more efficient.
+one might think it would always be the best tool for manipulating
+NetCDF data. But it turns out most other, secondary tools are often
+faster.
 <!-- , since it was released by the creators. -->
 
 For the NCO benchmarks, the most-used tool was `ncap2`. Though a variety of other tools
