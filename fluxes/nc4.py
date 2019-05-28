@@ -36,7 +36,7 @@ emf = ((u - u.mean(axis=-1, keepdims=True)) * (v - v.mean(axis=-1, keepdims=True
 ehf = ((t - t.mean(axis=-1, keepdims=True)) * (v - v.mean(axis=-1, keepdims=True))).mean(axis=-1)
 
 # Save file
-outname = 'out/fluxes_nc4.nc'
+outname = 'out/netcdf4.nc'
 if os.path.exists(outname):
     os.remove(outname)
 with nc4.Dataset(outname, 'w') as f:

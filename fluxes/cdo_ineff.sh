@@ -5,7 +5,7 @@
 filename=$1
 flags=${@:2}
 [ -z "$filename" ] && echo "Error: Must provide filename." && exit 1
-out=out/fluxes_cdo.nc
+out=out/cdo.nc
 
 # Calculate
 flags="$flags -O -s" # quiet, and overwrite

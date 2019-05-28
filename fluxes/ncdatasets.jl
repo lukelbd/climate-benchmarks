@@ -122,8 +122,8 @@ module ncdatasets
     # WARNING: Thought I found some undefined/unstable/strange behavior when we
     # define variables and declare them to have their own dimension in the same
     # breath; had mysterious failures below, can't reproduce anymore
-    # outname = dir * "/fluxes_jl.nc"
-    outname = "out/fluxes_jl.nc"
+    # outname = dir * "/ncdatasets.nc"
+    outname = "out/ncdatasets.nc"
     if isfile(outname)
       rm(outname)
     end

@@ -3,8 +3,15 @@
 # Get fluxes with python
 ################################################################################
 # First load file
+# def import_global(name, custom_name=None):
+#     custom_name = custom_name or name
+#     f, pathname, desc = imp.find_module(name, sys.path[1:])
+#     module = imp.load_module(custom_name, f, pathname, desc)
+#     f.close()
+#     return module
 import os
 import sys
+import imp
 import xarray as xr
 filename = sys.argv[1]
 nt = int(sys.argv[2]) # number of time chunks; 0 to disable chunking
@@ -26,7 +33,7 @@ ehf.attrs = {'long_name':'eddy heat flux', 'units':'K*m/s'}
 
 # Save file
 out = xr.Dataset({'emf':emf, 'ehf':ehf})
-outname = f'out/fluxes_xr{nt}.nc'
+outname = f'out/xarray_{nt}.nc'
 if os.path.exists(outname):
     os.remove(outname)
 out.to_netcdf(outname, mode='w') # specify whether we did chunking

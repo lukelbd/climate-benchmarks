@@ -16,16 +16,17 @@ for data in ${datas[@]}; do
   printhead $data
 
   # Python
-  bench "XArray" python ${name}_xarray.py $data $nmax
+  # WARNING: File name must differ from module name
+  bench "XArray" python xr.py $data $nmax
 
   # NCL
   export DYLD_LIBRARY_PATH="/opt/local/lib/libgcc"
-  bench "NCL" ncl -Q -n "filename=\"${data}\"" "nmax=$nmax" ${name}.ncl
+  bench "NCL" ncl -Q -n "filename=\"${data}\"" "nmax=$nmax" ncl.ncl
   export DYLD_LIBRARY_PATH=""
 
   # NCO
-  bench "NCO" ${name}.nco $data $nmax
+  bench "NCO" ./nco.sh $data $nmax
 
   # CDO
-  bench "CDO" ${name}.cdo $data $nmax
+  bench "CDO" ./cdo.sh $data $nmax
 done

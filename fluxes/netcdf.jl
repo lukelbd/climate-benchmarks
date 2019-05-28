@@ -1,7 +1,7 @@
 #!/usr/bin/env julia
 ################################################################################
 # Julia script for getting fluxes
-# See fluxes_ncdatasets for more notes
+# See ncdatasets for more notes
 ################################################################################
 module netcdf
   # Dependencies
@@ -51,8 +51,8 @@ module netcdf
 
     # Create new file, and save
     # dir = split(filename, "/")[1]
-    #= outname = dir * "/fluxes_jl.nc" =#
-    outname = "out/fluxes_jl.nc"
+    #= outname = dir * "/netcdf.nc" =#
+    outname = "out/netcdf.nc"
     if isfile(outname)
       rm(outname)
     end

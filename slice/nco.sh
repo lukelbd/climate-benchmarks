@@ -7,7 +7,6 @@
 # t2=$((ni*ts/nsplit - 1)) # e.g. nsplit=10, ts=200, goes 1
 filename=$1
 nmax=$(($2-1)) # zero-based indexing, endpoint inclusive
-dir=${filename%/*}
 flags=${@:3} # optionally pass flags; e.g. --no_tmp_fl for no tmp files; see http://nco.sourceforge.net/nco.html#Temporary-Output-Files
-ncks -O -h --no-abc -d time,0,$nmax $filename $dir/slice_nco.nc
-# ncks -O -h --no-abc -d lat,0,3 $filename $dir/slice_nco.nc
+ncks -O -h --no-abc -d time,0,$nmax $filename out/slice_nco.nc
+# ncks -O -h --no-abc -d lat,0,3 $filename out/slice_nco.nc

@@ -39,8 +39,8 @@ emf = squeeze(emf);
 ehf = squeeze(ehf);
 
 % Save file
-%{ outname = [dir_ 'fluxes_m.nc']; %}
-outname = 'out/fluxes_m.nc';
+%{ outname = [dir_ 'matlab.nc']; %}
+outname = 'out/matlab.nc';
 if exist(outname, 'file')==2
   delete(outname);
 end

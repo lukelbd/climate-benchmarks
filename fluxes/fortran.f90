@@ -19,9 +19,9 @@ program main
   ! exit code is returned, but requires 2003 standard
   ! filename = trim(get_command_argument(1))
   ! idx = scan(filename, '/')
-  ! outname = filename(:idx) // 'fluxes_f90.nc'
+  ! outname = filename(:idx) // 'fortran.nc'
   call getarg(1, filename)
-  outname = 'out/fluxes_f90.nc'
+  outname = 'out/fortran.nc'
   ! Load
   ret = nf90_open(trim(filename), NF90_NOWRITE, ncid )
   ! Get ids

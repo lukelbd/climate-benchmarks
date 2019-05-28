@@ -15,10 +15,12 @@ end if
 f = addfile(filename, "r") ; just read data from here
 
 ; Optionally turn on large file mode
-dir = str_split(filename, "/")
-dir := dir(0)
-system("rm " + dir + "/slice_ncl.nc 2>/dev/null") ; remove file
-o = addfile(dir + "/slice_ncl.nc", "c") ; create new file; don't want to read old values or anything
+; dir = str_split(filename, "/")
+; dir := dir(0)
+; out = dir + "/slice_ncl.nc"
+out = "out/slice_ncl.nc"
+system("rm " + out + " 2>/dev/null") ; remove file
+o = addfile(out, "c") ; create new file; don't want to read old values or anything
 o->t = f->t(0:nmax-1,:,:,:)
 o->u = f->u(0:nmax-1,:,:,:)
 o->v = f->v(0:nmax-1,:,:,:)

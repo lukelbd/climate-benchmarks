@@ -8,16 +8,16 @@ for data in ${datas[@]}; do
   printhead $data
 
   # Python with MetPy method
-  bench "MetPy" python ${name}.py $data 0
+  bench "MetPy" python met.py $data 0
 
   # Python with MetPy method
-  bench "MetPy + Dask" python ${name}.py $data 10
+  bench "MetPy + Dask" python met.py $data 10
 
   # NCL method
   # NOTE: NCL needs special dyld library path but so does brew, screws
   # up Homebrew if we set it, so set it locally
   export DYLD_LIBRARY_PATH="/opt/local/lib/libgcc"
-  bench "NCL" ncl -Q -n "filename=\"$data\"" "outname=\"${data%/*}/isentropes_ncl.nc\"" ${name}.ncl
+  bench "NCL" ncl -Q -n "filename=\"$data\"" "outname=\"${name}/out/ncl.nc\"" ncl.ncl
   export DYLD_LIBRARY_PATH=""
 
   # NCL in parallel by splitting timesteps with ncks

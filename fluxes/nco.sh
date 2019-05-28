@@ -27,4 +27,4 @@ flags=${@:2} # optionally pass flags; e.g. --no_tmp_fl for no tmp files; see htt
 ncap2 -O -v -s '
   emf = ((u - u.avg($lon)) * (v - v.avg($lon))).avg($lon);
   ehf = ((t - t.avg($lon)) * (v - v.avg($lon))).avg($lon);
-  ' $filename out/fluxes_nco.nc
+  ' $filename out/nco.nc

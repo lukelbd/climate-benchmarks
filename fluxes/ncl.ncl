@@ -23,8 +23,8 @@ if (toint(large) .eq. 1) then
 end if
 ; dir = str_split(filename, "/")
 ; dir := dir(0)
-; out = dir + "/fluxes_ncl.nc"
-out = "out/fluxes_ncl.nc"
+; out = dir + "/ncl.nc"
+out = "out/ncl.nc"
 system("rm " + out + " 2>/dev/null") ; remove file
 o = addfile(out, "c") ; create new file; don't want to read old values or anything
 

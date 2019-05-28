@@ -7,5 +7,4 @@
 # t2=$((ni*ts/nsplit - 1)) # e.g. nsplit=10, ts=200, goes 1
 filename=$1
 nmax=$2 # 1-based indexing, endpoint inclusive
-dir=${filename%/*}
-cdo -O -s -seltimestep,1/$nmax $filename $dir/slice_cdo.nc
+cdo -O -s -seltimestep,1/$nmax $filename out/slice_cdo.nc
