@@ -33,17 +33,19 @@ contentious) opinions on how the languages compare.
 All benchmarks described here
 involve reading and writing to the NetCDF file format, used for storage of multi-dimensional
 scientific datasets. There are two major versions of this file
-format: version 3 and version 4.
-I observed two notable performance differences when
-sample data was saved to version 3 of the NetCDF format instead of version 4:
-<!-- the NetCDF3 and NetCDF4 versions of the sample data: -->
+format: version 3 and version 4. Performance differences were generally
+minor, and since most large general circulation models still use
+the older-format NetCDF3 files, this type is used for all tests.
 
-* With NetCDF3 files, CDO responds **less favorably** to thread-safe disk IO locking (the `-L` flag). It tended to speed things up for smaller datasets (over-optimization?) then slow things down for larger datasets, but **more-so** for NetCDF3 files.
-* For NetCDF3 files, non-dask XArray datasets (i.e. datasets loaded with `chunks=None`) performed somewhat **worse** compared to datasets loaded from NetCDF4 files, and the effect was more pronounced for large datasets. However with Dask chunking, the NetCDF4 speed improvements were marginal -- even approaching 2GB file sizes (**7s** vs **9s** for the fluxes benchmark).
-
-Since most large general circulation models still produce the older-format NetCDF3
-files, only results for these datasets are shown.
-But anyway, the differences weren't that huge.
+<!-- I observed two notable performance differences when
+   - sample data was saved to version 3 of the NetCDF format instead of version 4:
+   -
+   - * With NetCDF3 files, CDO responds **less favorably** to thread-safe disk IO locking (the `-L` flag). It tended to speed things up for smaller datasets (over-optimization?) then slow things down for larger datasets, but **more-so** for NetCDF3 files.
+   - * For NetCDF3 files, non-dask XArray datasets (i.e. datasets loaded with `chunks=None`) performed somewhat **worse** compared to datasets loaded from NetCDF4 files, and the effect was more pronounced for large datasets. However with Dask chunking, the NetCDF4 speed improvements were marginal -- even approaching 2GB file sizes (**7s** vs **9s** for the fluxes benchmark).
+   -
+   - Since most large general circulation models still produce the older-format NetCDF3
+   - files, only results for these datasets are shown.
+   - But anyway, the differences weren't that huge. -->
 
 ## Fortran
 Fortran is the only low-level, high-performance language tested in these benchmarks. It may
