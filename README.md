@@ -161,14 +161,15 @@ there will be one day.
 <!-- Perhaps it will fully replace MATLAB one day, but -->
 <!-- evidently there is a lot of work to do. -->
 
-# Sample data
+# Usage
+## Generating sample data
 Sample data can be generated with the `DataGenerator.py` script. For the tests discussed below, the data was generated with
 ```
 for reso in 20 10 7.5 5 3 2 1.5; do ./DataGenerator.py 60lev $reso; done
 ```
 where the numbers refer to the latitude/longitude grid spacing.
 
-# Benchmark scripts
+## Running benchmarks
 Benchmarks are calculated by running shell scripts in the top-level directory. Example usage:
 ```
 ./TestName.sh 60lev
@@ -181,7 +182,8 @@ where `60lev` is the directory containing the sample NetCDF files.
 
 Results from the shell scripts are discussed below.
 
-# Eddy fluxes
+# Results
+## Eddy fluxes
 For this benchmark, we use an assortment of languages to
 calculate and save eddy fluxes of heat and momentum to new NetCDF files.
 
@@ -215,7 +217,7 @@ which is a shared resource consisting of approximately 72 cores.
    - then the calculations can proceed quickly. Another issue could have been the necessary
    - disk reads (5) for the CDO script, compared to just 1 NCL disk read. -->
 
-# Dimension slicing
+## Dimension slicing
 In this benchmark, the first quarter of timesteps
 were selected using various tools and saved to a new file.
 
@@ -232,7 +234,7 @@ is negligible. XArray is the slowest across all file sizes.
 
 <img src="slice.png" width="700">
 
-# Interpolation
+## Interpolation
 There are only two obvious tools for interpolating between isobars and isentropes: NCL, and python using the MetPy package.
 This benchmark compares them.
 
