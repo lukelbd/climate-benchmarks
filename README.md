@@ -83,15 +83,14 @@ improvements over NCO, is more flexible, and is generally easier and more intuit
 
 The newest versions of `cdo` have zonal-statistics functions available
 to the `expr` subcommand. These functions
-are used in `fluxes.cdo`, but
+are used in `fluxes/cdo.sh`, but
 the equivalent calculation in older versions of `cdo`
 requires an ugly workaround with lots of operator chaining (see
-`fluxes/fluxes_ineff.cdo`). It turned out this
+`fluxes/cdo_ineff.sh`). It turned out this
 workaround was **much** slower than calculating fluxes with
 `expr`. This matches my experience in general: CDO is great for
 **simple** tasks, but for **complex**, highly chained commands, it can quickly grow
 less efficient than much older, but more powerful and expressive, tools.
-<!-- With an older, verbose CDO algorithm for getting fluxes (see `trash/fluxes_ineff.cdo`), CDO was **much much slower**, and the problem was exacerbated by adding levels. -->
 
 ## NCAR Command Language (NCL)
 NCAR command language is a favorite among many atmospheric scientists, myself included.
