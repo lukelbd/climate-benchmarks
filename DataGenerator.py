@@ -63,12 +63,9 @@ for attrs in coords_attrs.values():
 # Numpy is extremely slow at making tons of random variables, so need to
 # use dask so generation is done in parallel and we don't get memory overload
 # NOTE: Random routines (including numpy ones) don't accept chunks.
-# NOTE: If get overlapping contours, seems NCL handles these fine but metpy
-# method has many issues. Just make zonally uniform fields.
+# NOTE: For isentropic interpolation, with overlapping contours, NCL handles
+# these fine but metpy method has many issues. Just make zonally uniform fields.
 print('Making variables.')
-# chunks = (1, 1, *shape[2:]) # one chunk per horizontal slice, works for bigger datasets
-# chunks = (1, shape[1], shape[2], shape[3]) # one chunk per timestep worked *way* better
-# chunks = (1, shape[1]//4, shape[2], shape[3]) # compromise?
 N = 100000
 chunks = (1, N, N, N) # chunk in time dimension
 # Temperature
@@ -76,36 +73,27 @@ base = da.zeros((time.size, 1, 1, lon.size), chunks=chunks) # empty array
 offset = ((255 + 0.06*plev)[:,None,None] # max average of 255 + 60 = 315K
         - (60*np.abs(lat)/90)[:,None]) # average of 315 - 60 = 255K at pole
 # Other
-# NOTE: Got weird error when trying to use same Dask array for two variables,
-# ended up with all NaNs
+# Smooth in longitude dimension? No, too complex for dask arrays
+# random[...,:lon.size//2] = random[...,:lon.size//2].cumsum(axis=3)
+# random[...,lon.size//2:] = random[...,lon.size//2-1::-1]
 random1 = da.random.normal(0, 1, (time.size, 1, 1, lon.size), chunks=chunks).astype(dtype) # remember 2/3 fall within +/-1stdev
 random1 = random1.cumsum(axis=0) + np.tile(0, (plev.size, lat.size, 1))
 random2 = da.random.normal(0, 1, (time.size, 1, 1, lon.size), chunks=chunks).astype(dtype) # remember 2/3 fall within +/-1stdev
 random2 = random2.cumsum(axis=0) + np.tile(0, (plev.size, lat.size, 1))
 # Write variables
+# NOTE: NaN encoding causes issues with NCO, so use better fill value
+print('Making dataset.')
 params_values = {'t':offset + base, 'u':random1, 'v':random2}
 params_map = {name: (coords, params_values[name], params_attrs[name]) for name in params}
 coords_map = {name: ((name,), coords_values[name], coords_attrs[name]) for name in coords}
-print('Making dataset.')
 data = xr.Dataset(params_map, coords_map)
 for param in data.variables.values():
     param.encoding.update({'_FillValue':None}) # disable default fill value
-# Below is too complex for Dask arrays; just accept this weird discontinuity
-# random[...,:lon.size//2] = random[...,:lon.size//2].cumsum(axis=3)
-# random[...,lon.size//2:] = random[...,lon.size//2-1::-1]
 
 # Save
-# NOTE: NaN encoding causes issues with NCO
 # Diabled follwoing instructions here: http://xarray.pydata.org/en/stable/io.html
-# NOTE: Can reorder variables following directions here: https://github.com/pydata/xarray/issues/479
-# For some reason coordinates not first by default
-# NOTE: Try both NetCDF3 classic and NetCDF4. Xarray has good guide
-# on difference, found here: http://xarray.pydata.org/en/stable/generated/xarray.Dataset.to_netcdf.html
-# Hunch is that some tools may do much better with full NetCDF4.
-# format = 'NETCDF3_CLASSIC'
-format = 'NETCDF4' # may fail for some CDO versions, try to fix
-formats = {3:'NETCDF3_CLASSIC', 4:'NETCDF4'}
-formats = {3:'NETCDF3_CLASSIC'} # differences are minor and 'classic' is still everywhere, so let's just use this
+# formats = {3:'NETCDF3_CLASSIC', 4:'NETCDF4'}
+formats = {3:'NETCDF3_CLASSIC'} # differences are minor and 'classic' is everywhere, so just use this
 for num,format in formats.items():
     out = f'{dir}/dataN{lat.size:04d}T{ntime}_{num}.nc'
     if os.path.exists(out):
