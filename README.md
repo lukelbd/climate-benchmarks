@@ -169,7 +169,7 @@ Sample data can be generated with the `DataGenerator.py` script. For the below r
 ```
 for reso in 20 10 7.5 5 3 2 1.5; do ./DataGenerator.py 60lev $reso; done
 ```
-where the numbers refer to the latitude/longitude grid spacing.
+where `reso` is the latitude, longitude grid spacing in degrees.
 
 ## Running benchmarks
 Benchmarks are calculated by running shell scripts in the top-level directory. Example usage:
