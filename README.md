@@ -131,7 +131,7 @@ the startup time.
 Python is the high-level, expressive, programming language that is
 quickly becoming the favorite of academics and data scientists everywhere.
 Almost all scientific computing Python tools are based around the 
-array manipulation package ["numpy"](http://www.numpy.org/).
+array manipulation package "[numpy](http://www.numpy.org/)".
 There are two of these tools (at least two well-known ones) for reading NetCDF files:
 [netCDF4](http://unidata.github.io/netcdf4-python/netCDF4/index.html) (which confusingly,
 also works with version 3 of the file format), and [XArray](http://xarray.pydata.org/en/stable/). The former is rather low-level and fast, the latter is high-level, powerful,
