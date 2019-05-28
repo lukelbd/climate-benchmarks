@@ -169,13 +169,13 @@ for reso in 20 10 7.5 5 3 2 1.5; do ./DataGenerator.py 60lev $reso; done
 where the numbers refer to the latitude/longitude grid spacing.
 
 # Benchmark scripts
-Benchmark scripts named `TestName.sh` are found in the top-level directory. To calculate benchmarks, use e.g. `./TestName.sh 60lev`, where `60lev` is the directory containing the sample NetCDF files.
+Benchmarks are calculated by running shell scripts in the top-level directory. To calculate benchmarks, use e.g. `./TestName.sh 60lev`, where `60lev` is the directory containing the sample NetCDF files.
 
-`TestName.sh` first sources the header file `header.sh`. This file declares some Bash functions and `cd`s into the `TestName` directory, where the language-specific test scripts must be stored.
+`TestName.sh` first sources the helper script `header.sh`. This script declares some bash functions and `cd`s into the `testname` directory, where the language-specific test scripts must be stored.
 
-`TestName.sh` then iterates through the NetCDF files in `60lev`. It calls the `header` function at the top of the loop, then calls the `benchmark` function for each language-specific test script, with the command-line call signature as an argument. For example, to run `python test.py file.nc`, you would write `benchmark python test.py file.nc`. Note that `header.sh` also declares a `python` wrapper function, which lets you name your python files the same name as existing python packages (for example, `xarray.py`).
+`TestName.sh` then iterates through the NetCDF files in `60lev`. It first calls the `header` function at the top of the loop. Then it calls the `benchmark` function for each test script, with the command-line call signature as the argument. For example, to run `python test.py file.nc`, you would use `benchmark python test.py file.nc`. Note that `header.sh` also creates a special `python` function that lets you name your python files the same name as existing python packages (e.g. `xarray.py`).
 
-Results from the benchmark scripts are discussed below.
+Results from the shell scripts are discussed below.
 
 # Eddy fluxes
 For this benchmark, we use an assortment of languages to
