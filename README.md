@@ -177,7 +177,7 @@ where `60lev` is the directory containing the sample NetCDF files.
 
 `TestName.sh` first sources the helper script `header.sh`. This script declares some bash functions and `cd`s into the `testname` directory, where the language-specific test scripts must be stored.
 
-`TestName.sh` then iterates through the NetCDF files in `60lev`. It first calls the `header` function at the top of the loop. Then it calls the `benchmark` function for each test script, with the command-line call signature as the argument. For example, to run `python test.py file.nc`, you would use `benchmark python test.py file.nc`. Note that `header.sh` also creates a special `python` function that lets you name your python files the same name as existing python packages (e.g. `xarray.py`).
+`TestName.sh` then iterates through the NetCDF files in `60lev`. It calls the `header` function at the top of the loop. Then it calls the `benchmark` function for each test script, with the command-line call signature as the argument (e.g. for `python test.py file.nc`, use `benchmark python test.py file.nc`). Note that `header.sh` also creates a special `python` function that lets you name your python files the same name as existing python packages (e.g. `xarray.py`).
 
 Results from the shell scripts are discussed below.
 
