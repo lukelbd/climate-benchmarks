@@ -40,15 +40,13 @@
 ################################################################################
 # NOTE: Module name must be same as file name
 # __precompile__()
-module fluxes_ncdatasets
+module ncdatasets
   # Dependencies
   export fluxes  # makes it *publicly* available
   import NCDatasets # netcdf
   nc = NCDatasets   # syntastic 'import as' sugar not yet available
 
   # First the dummy function
-  # To enable compiling, see: https://github.com/JuliaLang/PackageCompiler.jl
-  # Recipe: Simply run build_executable("fluxes.jl", snoopfile="fluxes_snoop.jl")
   # The snoop file is ***critical***, otherwise no performance increases!
   Base.@ccallable function julia_main(ARGS::Vector{String})::Cint # returns just 0 if success
     fluxes(ARGS[1])
@@ -66,7 +64,7 @@ module fluxes_ncdatasets
     #   * See discussion here: https://github.com/JuliaLang/julia/issues/29693
     #   * To convert these, use nomissing(da, value) or nomissing(da).
     #   * See documentation here: https://alexander-barth.github.io/NCDatasets.jl/stable/#Utility-functions-1
-    dir = split(filename, "/")[1]
+    # dir = split(filename, "/")[1]
     data = nc.Dataset(filename, "r")
 
     # Dimensions and dimension attributes
@@ -124,7 +122,8 @@ module fluxes_ncdatasets
     # WARNING: Thought I found some undefined/unstable/strange behavior when we
     # define variables and declare them to have their own dimension in the same
     # breath; had mysterious failures below, can't reproduce anymore
-    outname = dir * "/fluxes_jl.nc"
+    # outname = dir * "/fluxes_jl.nc"
+    outname = "out/fluxes_jl.nc"
     if isfile(outname)
       rm(outname)
     end

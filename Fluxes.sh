@@ -6,20 +6,21 @@
 # results to a markdown table or something
 ################################################################################
 # Loop over datasets with different resolutions
+debug=true
 source ./header.sh
 for data in ${datas[@]}; do
   # Header
   printhead $data
 
-  # Fortran method
-  # NOTE: Assumes fortran installed with MacPorts, port install netcdf and port install netcdf-fortran
-  gfortran -I/opt/local/include -L/opt/local/lib -lnetcdff -lnetcdf ${name}.f90 -o ${name}_f90
-  bench "Fortran" ${name}_f90 $data
-  rm ${name}_f90
+  # # Fortran method
+  # # NOTE: Assumes fortran installed with MacPorts, port install netcdf and port install netcdf-fortran
+  # gfortran -I/opt/local/include -L/opt/local/lib -lnetcdff -lnetcdf ${name}.f90 -o ${name}_f90
+  # bench "Fortran" ${name}_f90 $data
+  # rm ${name}_f90 2>/dev/null
 
   # Julia
-  bench "Julia NCDatasets (compiled)" ./compiled/${name}_ncdatasets $data
-  bench "Julia NetCDF (compiled)" ./compiled/${name}_netcdf $data
+  bench "Julia NCDatasets (compiled)" compiled/${name}_ncdatasets $data
+  bench "Julia NetCDF (compiled)" compiled/${name}_netcdf $data
   # bench "Julia (naive)" julia -e 'push!(LOAD_PATH, "./"); using fluxes; fluxes.eddy_flux("'${name}'")' # will be ridiculously slow, don't bother
 
   # MATLAB
@@ -36,10 +37,10 @@ for data in ${datas[@]}; do
   bench "XArray without dask" python ${name}_xarray.py $data 0
 
   # Python with xarray and Dask chunking by 2D slice
-  if [ $dir == 1lev ]; then
+  if [ ${dir##*/} == 1lev ]; then
     bench "XArray 100 step chunks" python ${name}_xarray.py $data 100
     bench "XArray 10 step chunks" python ${name}_xarray.py $data 20
-  elif [ $dir == 60lev ]; then
+  elif [ ${dir##*/} == 60lev ]; then
     bench "XArray 20 step chunks" python ${name}_xarray.py $data 20
     bench "XArray 2 step chunks" python ${name}_xarray.py $data 2
   else
@@ -55,7 +56,7 @@ for data in ${datas[@]}; do
   # NCL method
   # NOTE: NCL needs special dyld library path but so does brew, screws up
   # Homebrew if we set it, so set it locally
-  export DYLD_LIBRARY_PATH="/usr/local/lib/gcc/4.9"
+  export DYLD_LIBRARY_PATH="/opt/local/lib/libgcc"
   bench "NCL" ncl -Q -n "filename=\"$data\"" "large=\"0\"" ${name}.ncl
   export DYLD_LIBRARY_PATH=""
 

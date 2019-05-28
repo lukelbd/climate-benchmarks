@@ -84,7 +84,7 @@ to the `expr` subcommand. These functions
 are used in `fluxes.cdo`, but
 the equivalent calculation in older versions of `cdo`
 requires an ugly workaround with lots of operator chaining (see
-`misc/fluxes_ineff.cdo`). It turned out this
+`fluxes/fluxes_ineff.cdo`). It turned out this
 workaround was **much** slower than calculating fluxes with
 `expr`. This matches my experience in general: CDO is great for
 **simple** tasks, but for **complex**, highly chained commands, it can quickly grow

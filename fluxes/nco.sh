@@ -22,10 +22,9 @@
 ################################################################################
 # Entire thing just takes one line
 filename=$1
-dir=${filename%/*}
 flags=${@:2} # optionally pass flags; e.g. --no_tmp_fl for no tmp files; see http://nco.sourceforge.net/nco.html#Temporary-Output-Files
 [ -z "$filename" ] && echo "Error: Must provide filename." && exit 1
 ncap2 -O -v -s '
   emf = ((u - u.avg($lon)) * (v - v.avg($lon))).avg($lon);
   ehf = ((t - t.avg($lon)) * (v - v.avg($lon))).avg($lon);
-  ' $filename $dir/fluxes_nco.nc
+  ' $filename out/fluxes_nco.nc

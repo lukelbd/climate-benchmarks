@@ -1,5 +1,9 @@
 # Ignore many files #
-#####################
+#####################*
+# Executables
+*
+!*.*
+!*/
 # Data
 *.nc
 # Qsub output

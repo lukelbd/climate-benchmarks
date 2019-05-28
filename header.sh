@@ -9,16 +9,30 @@
 # Initial stuff
 #------------------------------------------------------------------------------#
 # Global variables
-name=$0
-dir=$1 # directories where data is stored
-[ -z "$dir" ] && echo "Error: Usage is ./Benchmark <dir> where <dir> is the location of NetCDFs for globbing/testing." && exit 1
-! [ -d "$dir" ] && echo "Error: Directory \"$dir\" not found." && exit 1
+shopt -s nullglob
+cwd="$(pwd)"
+name="$0"
+name="${name%.sh}"
+dir="$1" # directories where data is stored
+dir="${dir##*/}"
 header="| nlat | size | name | real (s) | user (s) | sys (s) |\n| --- | --- | --- | --- | --- | --- |\n"
-output=logs/$(echo $name | tr [A-Z] [a-z])_${dir}_${HOSTNAME%%.*}.log # store here
-datas=($dir/data*.nc)
+output="$cwd/logs/"$(echo "$name" | tr A-Z a-z)"_${dir}_${HOSTNAME%%.*}.log" # store here
+
+# Check input directory
+[ -z "$dir" ] && echo "Error: Usage is ./Benchmark <dir> where <dir> is the location of NetCDFs for globbing/testing." && exit 1
+dir="$cwd/$dir"
+! [ -d "$dir" ] && echo "Error: Directory \"$dir\" not found." && exit 1
+# Check output directory
+! [ -d "$name" ] && echo "Error: Directory \"$name\" not found." && exit 1
+cd "$name" # into directory with all the files
+! [ -d out ] && mkdir out # in same folder as project
+# Get data list
+datas=("$dir"/data*.nc)
+[ ${#datas[@]} -eq 0 ] && echo "Error: Data directory \"$dir\" is empty." && exit 1
+
 # Remove old stuff
-rm $output 2>/dev/null
-rm $dir/*-*.nc 2>/dev/null # remove parallel-produced files
+rm "$output" 2>/dev/null
+rm "$dir"/*-*.nc 2>/dev/null # remove parallel-produced files
 
 #------------------------------------------------------------------------------#
 # Functions
@@ -66,10 +80,11 @@ bench() {
   [ -z "$debug" ] && debug=false
   if $debug; then
     # Debug mode
+    # res=$("${@:2}" 2>&1)
     echo "Debug mode: ${@:2}"
-    res=$("${@:2}" 2>&1)
+    echo "Result:"
+    "${@:2}"
     echo "Exit: $?"
-    echo "Result: $res"
   else
     # Normal mode, time command
     res=$( (time "${@:2}" 2>/dev/null) 2>&1 )
@@ -95,16 +110,13 @@ bench() {
 # Run NCL on files in parallel using hyperslabs
 nclparallel() {
   local name1 name2 glob1 glob2 ts t
-  name1=${1%.nc}
-  name2=${1%/*}/isentropes_ncl
+  name1="${1%.nc}"
+  name2="${1%/*}"/isentropes_ncl
   np=0
   pmax=1000
   pmax=1 # NOTE: try without background parallelization!
   nsplit=10
   ts=$(command ncdump -h ${name1}.nc | grep 'UNLIMITED' | sed 's/[^0-9]//g') # number of timesteps
-  # for t in $(seq 0 $((ts - 1))); do
-  # ncks -O -h --no-abc -d time,$t,$t ${name1}.nc ${name1}-${t}.nc
-  # ncl -Q -n "filename=\"${name1}-${t}.nc\"" "outname=\"${name2}-${t}.nc\"" ${name}.ncl
   for ni in $(seq 1 $nsplit); do
     let np+=1
     t1=$(((ni - 1)*ts/nsplit)) # e.g. nsplit=10, ts=200, goes 0, 20, 40, 60
@@ -116,8 +128,8 @@ nclparallel() {
     [ $((np % pmax)) -eq 0 ] && wait
   done
   wait
-  glob1=$name1'-*.nc'
-  glob2=$name2'-*.nc'
-  ncrcat -O $glob2 ${name2}_parallel.nc
+  glob1="$name1"'-*.nc'
+  glob2="$name2"'-*.nc'
+  ncrcat -O $glob2 "${name2}_parallel.nc"
   rm $glob1 $glob2
 }

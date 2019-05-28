@@ -21,10 +21,12 @@ v = f->v
 if (toint(large) .eq. 1) then
   setfileoption("nc", "Format", "LargeFile") 
 end if
-dir = str_split(filename, "/")
-dir := dir(0)
-system("rm " + dir + "/fluxes_ncl.nc 2>/dev/null") ; remove file
-o = addfile(dir + "/fluxes_ncl.nc", "c") ; create new file; don't want to read old values or anything
+; dir = str_split(filename, "/")
+; dir := dir(0)
+; out = dir + "/fluxes_ncl.nc"
+out = "out/fluxes_ncl.nc"
+system("rm " + out + " 2>/dev/null") ; remove file
+o = addfile(out, "c") ; create new file; don't want to read old values or anything
 
 ; Calculate fluxes
 ; tbar := conform(t, dim_avg_n(t, dimlon), (/0, 1, 2/)

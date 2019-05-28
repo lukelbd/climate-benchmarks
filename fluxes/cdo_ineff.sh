@@ -3,10 +3,9 @@
 # Get eddy fluxes
 ################################################################################
 filename=$1
-dir=${filename%/*}
 flags=${@:2}
 [ -z "$filename" ] && echo "Error: Must provide filename." && exit 1
-out=$dir/fluxes_cdo.nc
+out=out/fluxes_cdo.nc
 
 # Calculate
 flags="$flags -O -s" # quiet, and overwrite

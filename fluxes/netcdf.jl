@@ -3,7 +3,7 @@
 # Julia script for getting fluxes
 # See fluxes_ncdatasets for more notes
 ################################################################################
-module fluxes_netcdf
+module netcdf
   # Dependencies
   export fluxes  # makes it *publicly* available
   import NetCDF # netcdf
@@ -50,8 +50,9 @@ module fluxes_netcdf
     ehf = ehf[1,:,:,:]
 
     # Create new file, and save
-    dir = split(filename, "/")[1]
-    outname = dir * "/fluxes_jl.nc"
+    # dir = split(filename, "/")[1]
+    #= outname = dir * "/fluxes_jl.nc" =#
+    outname = "out/fluxes_jl.nc"
     if isfile(outname)
       rm(outname)
     end

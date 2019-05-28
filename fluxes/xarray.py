@@ -7,7 +7,6 @@ import os
 import sys
 import xarray as xr
 filename = sys.argv[1]
-dir = filename.split('/')[0]
 nt = int(sys.argv[2]) # number of time chunks; 0 to disable chunking
 if nt: # 1 chunk per level
     N = 100000 # max chunk size for lon/lat dimensions; want to chunk each 2D slice separately
@@ -27,7 +26,7 @@ ehf.attrs = {'long_name':'eddy heat flux', 'units':'K*m/s'}
 
 # Save file
 out = xr.Dataset({'emf':emf, 'ehf':ehf})
-outname = f'{dir}/fluxes_xr{nt}.nc'
+outname = f'out/fluxes_xr{nt}.nc'
 if os.path.exists(outname):
     os.remove(outname)
 out.to_netcdf(outname, mode='w') # specify whether we did chunking

@@ -10,6 +10,7 @@
 nmax=50
 debug=false
 source ./header.sh
+cd slice
 for data in ${datas[@]}; do
   # Header
   printhead $data

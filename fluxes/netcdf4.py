@@ -7,7 +7,6 @@ import os
 import sys
 import netCDF4 as nc4
 filename = sys.argv[1]
-dir = filename.split('/')[0]
 get_dict = lambda obj: {key:value for key,value in obj.__dict__.items() if key[:1]!='_'}
 with nc4.Dataset(filename, 'r') as f:
     # Dimensions
@@ -37,7 +36,7 @@ emf = ((u - u.mean(axis=-1, keepdims=True)) * (v - v.mean(axis=-1, keepdims=True
 ehf = ((t - t.mean(axis=-1, keepdims=True)) * (v - v.mean(axis=-1, keepdims=True))).mean(axis=-1)
 
 # Save file
-outname = f'{dir}/fluxes_nc4.nc'
+outname = 'out/fluxes_nc4.nc'
 if os.path.exists(outname):
     os.remove(outname)
 with nc4.Dataset(outname, 'w') as f:

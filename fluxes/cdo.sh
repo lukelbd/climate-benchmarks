@@ -5,10 +5,9 @@
 # how you should use CDO in the future.
 ################################################################################
 filename=$1
-dir=${filename%/*}
 flags=${@:2}
 [ -z "$filename" ] && echo "Error: Must provide filename." && exit 1
-out=$dir/fluxes_cdo.nc
+out=out/fluxes_cdo.nc
 
 # Calculate
 # NOTE: When doing math and magnitudes of values change a lot, sometimes

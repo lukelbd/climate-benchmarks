@@ -18,9 +18,10 @@ program main
   ! NOTE: Unidata recommend wrapping in check, so exit happens if non-zero
   ! exit code is returned, but requires 2003 standard
   ! filename = trim(get_command_argument(1))
+  ! idx = scan(filename, '/')
+  ! outname = filename(:idx) // 'fluxes_f90.nc'
   call getarg(1, filename)
-  idx = scan(filename, '/')
-  outname = filename(:idx) // 'fluxes_f90.nc'
+  outname = 'out/fluxes_f90.nc'
   ! Load
   ret = nf90_open(trim(filename), NF90_NOWRITE, ncid )
   ! Get ids

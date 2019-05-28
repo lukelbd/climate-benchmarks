@@ -6,8 +6,8 @@ if ~exist('filename')
   error('Filename undefined.')
 end
 % Coordinates
-dir_ = strsplit(filename, '/');
-dir_ = dir_{1}; % means extract from the cell array
+% dir_ = strsplit(filename, '/');
+% dir_ = dir_{1}; % extract from the cell array
 time = ncread(filename, 'time');
 plev = ncread(filename, 'plev');
 lon  = ncread(filename, 'lon');
@@ -39,7 +39,8 @@ emf = squeeze(emf);
 ehf = squeeze(ehf);
 
 % Save file
-outname = [dir_ 'fluxes_m.nc'];
+%{ outname = [dir_ 'fluxes_m.nc']; %}
+outname = 'out/fluxes_m.nc';
 if exist(outname, 'file')==2
   delete(outname);
 end
