@@ -169,7 +169,11 @@ for reso in 20 10 7.5 5 3 2 1.5; do ./DataGenerator.py 60lev $reso; done
 where the numbers refer to the latitude/longitude grid spacing.
 
 # Benchmark scripts
-Benchmarks are calculated by running shell scripts in the top-level directory. To calculate benchmarks, use e.g. `./TestName.sh 60lev`, where `60lev` is the directory containing the sample NetCDF files.
+Benchmarks are calculated by running shell scripts in the top-level directory. Example usage:
+```
+./TestName.sh 60lev
+```
+where `60lev` is the directory containing the sample NetCDF files.
 
 `TestName.sh` first sources the helper script `header.sh`. This script declares some bash functions and `cd`s into the `testname` directory, where the language-specific test scripts must be stored.
 
