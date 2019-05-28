@@ -13,11 +13,10 @@ source ./header.sh
 cd slice
 for data in ${datas[@]}; do
   # Header
-  printhead $data
+  header $data
 
   # Python
-  # WARNING: File name must differ from module name
-  bench "XArray" python xr.py $data $nmax
+  bench "XArray" python xarray.py $data $nmax
 
   # NCL
   export DYLD_LIBRARY_PATH="/opt/local/lib/libgcc"

@@ -10,10 +10,10 @@ debug=true
 source ./header.sh
 for data in ${datas[@]}; do
   # Header
-  printhead $data
+  header $data
 
-  # # Fortran method
-  # # NOTE: Assumes fortran installed with MacPorts, port install netcdf and port install netcdf-fortran
+  # Fortran method
+  # NOTE: Assumes fortran installed with MacPorts, port install netcdf and port install netcdf-fortran
   # gfortran -I/opt/local/include -L/opt/local/lib -lnetcdff -lnetcdf fortran.f90 -o fortran
   # bench "Fortran" fortran $data
   # rm fortran 2>/dev/null
@@ -34,16 +34,16 @@ for data in ${datas[@]}; do
   bench "Python netCDF4" python nc4.py $data 0
 
   # Python with xarray method
-  # WARNING: File name must differ from module name
-  bench "XArray without dask" python xr.py $data 0
+  bench "XArray without dask" python xarray.py $data 0
+  exit 0
 
   # Python with xarray and Dask chunking by 2D slice
   if [ ${dir##*/} == 1lev ]; then
-    bench "XArray 100 step chunks" python xr.py $data 100
-    bench "XArray 10 step chunks" python xr.py $data 20
+    bench "XArray 100 step chunks" python xarray.py $data 100
+    bench "XArray 10 step chunks" python xarray.py $data 20
   elif [ ${dir##*/} == 60lev ]; then
-    bench "XArray 20 step chunks" python xr.py $data 20
-    bench "XArray 2 step chunks" python xr.py $data 2
+    bench "XArray 20 step chunks" python xarray.py $data 20
+    bench "XArray 2 step chunks" python xarray.py $data 2
   else
     echo "Error: Unknown chunk combos for sample data in dir \"$dir\"."
     exit 1

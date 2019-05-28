@@ -162,11 +162,20 @@ there will be one day.
 <!-- evidently there is a lot of work to do. -->
 
 # Sample data
-The sample data was generated using
+Sample data can be generated with the `DataGenerator.py` script. For the tests discussed below, the data was generated with
 ```
-for reso in 20 10 7.5 5 3 2 1.5; do ./DataGenerator 60lev $reso; done
+for reso in 20 10 7.5 5 3 2 1.5; do ./DataGenerator.py 60lev $reso; done
 ```
 where the numbers refer to the latitude/longitude grid spacing.
+
+# Benchmark scripts
+Benchmark scripts named `TestName.sh` are found in the top-level directory. To calculate benchmarks, use e.g. `./TestName.sh 60lev`, where `60lev` is the directory containing the sample NetCDF files.
+
+`TestName.sh` first sources the header file `header.sh`. This file declares some Bash functions and `cd`s into the `TestName` directory, where the language-specific test scripts must be stored.
+
+`TestName.sh` then iterates through the NetCDF files in `60lev`. It calls the `header` function at the top of the loop, then calls the `benchmark` function for each language-specific test script, with the command-line call signature as an argument. For example, to run `python test.py file.nc`, you would write `benchmark python test.py file.nc`. Note that `header.sh` also declares a `python` wrapper function, which lets you name your python files the same name as existing python packages (for example, `xarray.py`).
+
+Results from the benchmark scripts are discussed below.
 
 # Eddy fluxes
 For this benchmark, we use an assortment of languages to

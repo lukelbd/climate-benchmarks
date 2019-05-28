@@ -5,7 +5,7 @@
 source ./header.sh
 for data in ${datas[@]}; do
   # Header
-  printhead $data
+  header $data
 
   # Python with MetPy method
   bench "MetPy" python met.py $data 0
