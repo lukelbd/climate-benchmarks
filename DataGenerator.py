@@ -91,7 +91,6 @@ for param in data.variables.values():
     param.encoding.update({'_FillValue':None}) # disable default fill value
 
 # Save
-# Diabled follwoing instructions here: http://xarray.pydata.org/en/stable/io.html
 # formats = {3:'NETCDF3_CLASSIC', 4:'NETCDF4'}
 formats = {3:'NETCDF3_CLASSIC'} # differences are minor and 'classic' is everywhere, so just use this
 for num,format in formats.items():
