@@ -98,9 +98,9 @@ less efficient than much older, but more powerful and expressive, tools.
 -->
 
 ## NCAR Command Language (NCL)
-NCAR command language is a favorite among many atmospheric scientists, myself included.  It is certainly not the fastest language -- in fact, it is usually the slowest after the native NetCDF operators -- but it is relatively easy-to-use, concise, and provides specialized tools for atmospheric scientists. Just like everything in MATLAB is an array, and everything in Python is an "object", everything in NCL is a dataset with named dimensions. But with the recent [end-of-life announcement](https://www.ncl.ucar.edu/Document/Pivot_to_Python/NCL_Pivot_to_Python_Report_and_Roadmap.pdf), it may be advisable to move away from NCL over the coming years. The NCL documentation can
-be found [here](https://www.ncl.ucar.edu/Document/).
+NCAR command language is a favorite among many atmospheric scientists, myself included.  It is certainly not the fastest language -- in fact, it is usually the slowest after the native NetCDF operators -- but it is relatively easy-to-use, concise, and provides specialized tools for atmospheric scientists. Just like everything in MATLAB is an array, and everything in Python is an "object", everything in NCL is a dataset with named dimensions. This is very handy for us geophysical scientists! The NCL documentation can be found [here](https://www.ncl.ucar.edu/Document/).
 
+Unfortunately, with the recent [end-of-life announcement](https://www.ncl.ucar.edu/Document/Pivot_to_Python/NCL_Pivot_to_Python_Report_and_Roadmap.pdf), it may be necessary to move away from NCL over the coming years.
 <!--
 Note that using the NCL feature `setfileoption("nc", "Format", "LargeFile")` made **neglibile** difference in final wall-clock time. Also note there are no options to improve large file processing, and the official recommendation is to split files up by level or time. See [this NCL talk post](https://www.ncl.ucar.edu/Support/talk_archives/2011/2636.html) and [this stackoverflow post](https://stackoverflow.com/questions/44474507/read-large-netcdf-data-by-ncl).
 -->
