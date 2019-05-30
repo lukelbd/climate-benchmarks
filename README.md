@@ -129,8 +129,7 @@ the startup time.
 <!-- I have access to MATLAB 2014a through a license from my university. -->
 
 ## Python
-Python is the high-level, expressive, programming language that is
-quickly becoming the favorite of academics and data scientists everywhere.
+Python is the high-level, expressive, object-oriented programming language that is quickly becoming the favorite of academics and data scientists everywhere.
 Almost all scientific computing Python tools are based around the 
 array manipulation package "[numpy](http://www.numpy.org/)".
 There are two packages (at least two well-known ones) for reading NetCDF files:
