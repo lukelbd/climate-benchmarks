@@ -81,13 +81,8 @@ $(cat "$1")
 
 # Run time command
 bench() {
-  # NOTE: Discard stderr, beause don't care about warnings; for debugging
-  # you may need to play with this!
-  # NOTE: Preserve stdout, because have Matlab print stuff after startup
-  # is complete so we can get better estimate
-  # res=$( (time "${@:2}") 2>&1 )
   local real user sys
-  [ -z "$debug" ] && debug=false
+  [ -z "$debug" ] && debug=false # global debug command
   if $debug; then
     # Debug mode
     # res=$("${@:2}" 2>&1)
