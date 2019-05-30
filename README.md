@@ -120,7 +120,7 @@ performance and speed.
 
 MATLAB has one major sticking point (well, it actually has a bunch, but this is the one that bothers me the most).
 Even when the Java Virtual Manager and GUI display
-are disabled with `-nojvm -nodisplay`, MATLAB scripts run from
+are disabled (the `-nojvm -nodisplay` flags), MATLAB scripts run from
 the command line are delayed by several seconds!
 Thus, running a series of MATLAB commands
 on small files for small tasks becomes quickly impractical.
