@@ -54,9 +54,9 @@ To make your own `TestName.sh` benchmark, start by copying an existing benchmark
 1. Source the helper script `header.sh`. This script declares some bash functions and `cd`s into the `testname` directory, where the language-specific test scripts must be stored.
 2. Iterate through the NetCDF files in `DIR`.
     * Call the `init` bash function at the top of the loop.
-    * Call the `benchmark` function for each test script in the `testname` directory, with the command-line call signature as the argument. For example: to run `python test.py file.nc`, we use `benchmark python test.py file.nc`. If the benchmark requires saving data, it should be saved into the `out` folder inside the `testname` directory.
+    * Call the `benchmark` function for each test script in the `testname` directory, with the command-line call signature as the argument. For example: to run `python test.py file.nc`, we use `benchmark python test.py file.nc`.
 
-Note that `header.sh` also creates a special `python` function that lets you name your python files the same name as existing python packages. For example: `xarray.py` is a valid file name.
+If the benchmark requires saving data, it should be saved into the `out` folder inside the `testname` directory. Note that `header.sh` also creates a special `python` function that lets you name your python files the same name as existing python packages. For example: `xarray.py` is a valid file name.
 
 ## Interpreting results
 Results for each file are saved to markdown-style tables in the `results` directory. To generate plots of these tables (see below for an example), use the `plots.ipynb` IPython notebook. This requires the [numpy](https://numpydoc.readthedocs.io/en/latest/) and [ProPlot](https://proplot.readthedocs.io/en/latest) packages. ProPlot is a matplotlib wrapper I developed.
