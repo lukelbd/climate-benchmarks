@@ -28,7 +28,7 @@ see [TOOLS.md](TOOLS.md).
 <!-- some general notes. -->
 
 # Usage
-## Sample data
+## Generating data
 To run benchmarks, you must first generate sample data. This is done with the `DataGenerator.py` script. It generates NetCDF files of arbitrary resolution containing artificial temperature, zonal wind, and meridional wind data. It requires `xarray` and `dask`.
 
 Usage:
@@ -40,7 +40,7 @@ For the below results, data was generated as follows:
 for reso in 20 10 7.5 5 3 2 1.5; do ./DataGenerator.py $reso; done
 ```
 
-## Benchmark scripts
+## Running
 To run your own benchmarks, use the shell scripts in the top-level directory.
 
 Example usage:
