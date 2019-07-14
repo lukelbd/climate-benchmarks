@@ -12,19 +12,22 @@
 shopt -s nullglob
 cwd="$(pwd)"
 name="$0"
-name="${name%.sh}"
+name=$(echo "${name%.sh}" | tr '[A-Z]' '[a-z]')
 dir="$1" # directories where data is stored
 dir="$cwd/${dir##*/}"
-header="| nlat | size | name | real (s) | user (s) | sys (s) |\n| --- | --- | --- | --- | --- | --- |\n"
-output="$cwd/logs/"$(echo "$name" | tr A-Z a-z)"_${dir}_${HOSTNAME%%.*}.log" # store here
-[ "$#" -ne 1 ] && echo "Error: Usage is ./Benchmark <dir> where <dir> is the location of NetCDFs for globbing/testing." && exit 1
+initline="| nlat | size | name | real (s) | user (s) | sys (s) |\n| --- | --- | --- | --- | --- | --- |\n"
+output="$cwd/results/${name}_${dir}_${HOSTNAME%%.*}.log" # store here
+if [ "$#" -ne 1 ] || [[ " $@ " =~ " -h " ]] || [[ " $@ " =~ " --help " ]]; then
+  echo "Usage: ./${0##*/} DIR where DIR is the location of NetCDFs for globbing/testing. Scripts for each language must be located in the \"$name\" folder."
+  exit 1
+fi
 
 # Input data
-! [ -d "$dir" ] && echo "Error: Directory \"$dir\" not found." && exit 1
+! [ -d "$dir" ] && echo "Error: Data directory \"$dir\" not found." && exit 1
 datas=("$dir"/data*.nc)
 [ ${#datas[@]} -eq 0 ] && echo "Error: Data directory \"$dir\" is empty." && exit 1
 # Output directory
-! [ -d "$name" ] && echo "Error: Directory \"$name\" not found." && exit 1
+! [ -d "$name" ] && echo "Error: Benchmarks script directory \"$name\" not found." && exit 1
 ! [ -d "$name/out" ] && mkdir "$name/out" # in same folder as project
 cd "$name" # into directory with all the files
 
@@ -51,13 +54,13 @@ fi
 
 # Header
 # NOTE: Critical that 'size' and 'nlat' are global variables here
-header() {
+init() {
   size=$(command $du $1 | xargs | cut -d' ' -f1)
   nlat=${1#*N}
   nlat=$(printf '%.0f' ${nlat%T*})
   echo && echo "Dataset: $1 ($size)"
   echo "Logfile: $output"
-  printf "\n$header" >>$output # add header for each new file
+  printf "\n$initline" >>$output # add header for each new file
 }
 
 # Convert time command output to raw seconds

@@ -1,37 +1,48 @@
 #!/usr/bin/env python3
-# Generate random datasets with xarray and Dask, easiest way
-# Then can test some very simple operations across several different methods
+"""
+Generate random geophysical datasets containing the variables "t"
+(temperature), "u" (zonal wind), and "v" (meridional wind) with
+longitude, latitude, time, and optional pressure level dimensions.
+"""
+# Declare arguments
 import os
-import numpy as np
-import dask.array as da
-import xarray as xr
-import datetime
-import sys
+import argparse
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--reso', '-r', type=int, help='The horizontal resolution: the latitude and longitude spacing of the resulting dataset grid.')
+parser.add_argument('--nlev', '-l', type=int, default=60, help='The number of vertical pressure levels.')
+parser.add_argument('--ntime', '-t', type=int, default=200, help='The number of time steps.')
+parser.add_argument('--dir', '-d', type=str, default=None, help='The output directory. Defaults to "{NLEV}lev".')
+args = parser.parse_args()
 
-# Check
-try:
-    dir = sys.argv[1]
-    reso = float(sys.argv[2])
-except ValueError:
-    raise ValueError('Usage is ./DataGenerator <directory> <resolution>.')
+# Pull out arguments
+dir = args.dir
+reso = args.reso
+nlev = args.nlev
+ntime = args.ntime
+if reso is None or nlev is None or ntime is None:
+    print('hi', __doc__)
+    exit(1)
+if dir is None:
+    dir = f'{nlev}lev'
 if not os.path.isdir(dir):
     os.mkdir(dir)
 print(f'Directory: {dir} Resolution: {reso}')
 
+# Imports
+import datetime
+import numpy as np
+import dask.array as da
+import xarray as xr
+
 # Dimensions
-print('Initial stuff.')
 dtype = np.float32
-step = 2
-if dir=='1lev':
-    ntime = 1000
+tstep = 2
+if max(nlev,1)==1:
     plev = np.array([500.0], dtype=dtype)
-elif dir=='60lev':
-    ntime = 200
-    plev = np.linspace(0, 1013.25, 61, dtype=dtype)
-    plev = (plev[1:] + plev[:-1])/2
 else:
-    raise ValueError('Unknown configuration for data generator "{dir}". Add to this script.')
-time = np.arange(1/step, ntime, dtype=dtype)/step
+    plev = np.linspace(0, 1013.25, nlev+1, dtype=dtype)
+    plev = (plev[1:] + plev[:-1])/2
+time = np.arange(1, ntime, dtype=dtype)/tstep # in days
 lat = np.arange(-90 + reso/2, 90, reso, dtype=dtype)
 lon = np.arange(-180 + reso/2, 180, reso, dtype=dtype)
 # Variables

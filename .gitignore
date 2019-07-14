@@ -1,14 +1,15 @@
-# Ignore many files #
-#####################*
 # Executables
 *
 !*.*
 !*/
+
 # Data
 *.nc
+
 # Qsub output
 *.o[0-9]*
 *.e[0-9]*
+
 # Compiled julia code
 *.dylib
 *.a
@@ -19,12 +20,11 @@ snoop.csv
 # Hidden
 tests
 todo
-*.tmp
 
 # Vim sessions
 .vimsession
 
-# Temp
+# Python
 __pycache__
 .ipynb_checkpoints
 
