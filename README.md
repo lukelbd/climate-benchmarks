@@ -53,8 +53,8 @@ To make your own `TestName.sh` benchmark, start by copying an existing benchmark
 
 1. Source the helper script `header.sh`. This script declares some bash functions and `cd`s into the `testname` directory, where the language-specific test scripts must be stored.
 2. Iterate through the NetCDF files in `DIR`.
-    * Call the `init` bash function at the top of the loop.
-    * For each script in the `testname` directory, pass the command-line call signature to the `benchmark` function. For example: to run `python test.py file.nc`, we use `benchmark python test.py file.nc`.
+    * Run the `init` bash function at the top of the loop.
+    * For each script in the `testname` directory, pass the command-line call signature to the `benchmark` bash function. For example: to run `python test.py file.nc`, we use `benchmark python test.py file.nc`.
 
 If the benchmark requires saving data, it should be saved into the `out` folder inside the `testname` directory. Note that `header.sh` also creates a special `python` function that lets you name your python files the same name as existing python packages. For example: `xarray.py` is a valid file name.
 

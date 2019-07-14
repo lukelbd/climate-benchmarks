@@ -10,7 +10,7 @@ debug=true
 source ./header.sh
 for data in ${datas[@]}; do
   # Header
-  header $data
+  init $data
 
   # Fortran method
   # NOTE: Assumes fortran installed with MacPorts, port install netcdf and port install netcdf-fortran

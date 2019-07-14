@@ -13,7 +13,7 @@ source ./header.sh
 cd slice
 for data in ${datas[@]}; do
   # Header
-  header $data
+  init $data
 
   # Python
   bench "XArray" python xarray.py $data $nmax
