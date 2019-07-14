@@ -28,7 +28,7 @@ see [BACKGROUND.md](BACKGROUND.md).
 <!-- some general notes. -->
 
 # Usage
-## Generating sample data
+## Sample data
 To run benchmarks, you must first generate sample data. This is done with the `DataGenerator.py` script. It generates NetCDF files of arbitrary resolution containing artificial temperature, zonal wind, and meridional wind data. It requires `xarray` and `dask`.
 
 Usage:
@@ -40,7 +40,7 @@ For the below results, data was generated as follows:
 for reso in 20 10 7.5 5 3 2 1.5; do ./DataGenerator.py $reso; done
 ```
 
-## Running benchmarks
+## Benchmark scripts
 To run your own benchmarks, use the shell scripts in the top-level directory.
 
 Example usage:
@@ -58,7 +58,7 @@ To make your own `TestName.sh` benchmark, start by copying an existing benchmark
 
 If the benchmark requires saving data, it should be saved into the `out` folder inside the `testname` directory. Note that `header.sh` also creates a special `python` function that lets you name your python files the same name as existing python packages. For example: `xarray.py` is a valid file name.
 
-## Interpreting results
+## Results
 Results for each file are saved to markdown-style tables in the `results` directory. To generate plots of these tables (see below for an example), use the `plots.ipynb` IPython notebook. This requires the [numpy](https://numpydoc.readthedocs.io/en/latest/) and [ProPlot](https://proplot.readthedocs.io/en/latest) packages. ProPlot is a matplotlib wrapper I developed.
 
 # Benchmarks
