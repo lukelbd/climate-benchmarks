@@ -33,7 +33,7 @@ To run benchmarks, you must first generate sample data. This is done with the `D
 
 Usage:
 ```
-./DataGenerator.py [-h|--help] RESO [-l|--lev=NLEV] [-t|--time=NTIME] [-d|--dir=DIR]
+./DataGenerator.py RESO [-h|--help] [-l|--lev=NLEV] [-t|--time=NTIME] [-d|--dir=DIR]
 ```
 For the below results, data was generated as follows:
 ```
