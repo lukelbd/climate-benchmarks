@@ -2,11 +2,9 @@
 Below is an overview of the languages and tools used with this project, and
 some possibly contentious opinions on how these languages compare.
 
-## NetCDF versions
-All benchmarks described here
-involve reading and writing to the NetCDF file format, used for storage of multi-dimensional
+Note that all benchmarks described here involve reading and writing to the **NetCDF** file format, used for storage of multi-dimensional
 scientific datasets. There are two major versions of this file
-format: version 3 and version 4. Performance differences were generally
+format: version 3 and version 4. The performance differences were always
 minor, and since most large general circulation models still use
 the older-format NetCDF3 files, this type is used for all tests.
 
@@ -49,7 +47,7 @@ NetCDF data. But as it turns out, other tools are often much faster.
 ## Climate Data Operators (CDO)
 The climate data operators (CDO) are another series of command-line
 tools for manipulating NetCDF files. But CDO commands are invoked
-with any of several **hundred** "subcommands" -- e.g. `cdo timmean file.nc out.nc`. "Operator chaining" is a notable improvement over NCO -- e.g. `cdo -timmean -zonmean file.nc out.nc`. The documentation can be found [here](https://code.mpimet.mpg.de/projects/cdo/wiki/Cdo#Documentation).
+with any of several hundred "subcommands" -- e.g. `cdo timmean file.nc out.nc`. "Operator chaining" is a notable improvement over NCO -- e.g. `cdo -timmean -zonmean file.nc out.nc`. The documentation can be found [here](https://code.mpimet.mpg.de/projects/cdo/wiki/Cdo#Documentation).
 
 The functionality of CDO overlaps somewhat with NCO, and
 CDO places restrictions on the dataset format:

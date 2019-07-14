@@ -23,7 +23,7 @@ accomplished with several different tools:
 * MATLAB
 
 For an in-depth description and comparison of these tools,
-see [BACKGROUND.md](BACKGROUND.md).
+see [TOOLS.md](TOOLS.md).
 <!-- languages. -->
 <!-- some general notes. -->
 
