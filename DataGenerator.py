@@ -8,25 +8,22 @@ longitude, latitude, time, and optional pressure level dimensions.
 import os
 import argparse
 parser = argparse.ArgumentParser(description=__doc__)
-parser.add_argument('--reso', '-r', type=int, help='The horizontal resolution: the latitude and longitude spacing of the resulting dataset grid.')
-parser.add_argument('--nlev', '-l', type=int, default=60, help='The number of vertical pressure levels.')
-parser.add_argument('--ntime', '-t', type=int, default=200, help='The number of time steps.')
+parser.add_argument('reso', type=int, help='The horizontal resolution, i.e. the latitude and longitude spacing of the resulting dataset grid.')
 parser.add_argument('--dir', '-d', type=str, default=None, help='The output directory. Defaults to "{NLEV}lev".')
+parser.add_argument('--nlev', '-l', type=int, default=60, help='The number of vertical levels. Defaults to 60.')
+parser.add_argument('--ntime', '-t', type=int, default=200, help='The number of time steps. Defaults to 200.')
 args = parser.parse_args()
 
 # Pull out arguments
-dir = args.dir
 reso = args.reso
 nlev = args.nlev
 ntime = args.ntime
-if reso is None or nlev is None or ntime is None:
-    print('hi', __doc__)
-    exit(1)
-if dir is None:
-    dir = f'{nlev}lev'
-if not os.path.isdir(dir):
-    os.mkdir(dir)
-print(f'Directory: {dir} Resolution: {reso}')
+directory = args.dir
+if directory is None:
+    directory = f'{nlev}lev'
+if not os.path.isdir(directory):
+    os.mkdir(directory)
+print(f'Directory: {directory} Resolution: {reso}')
 
 # Imports
 import datetime
@@ -105,7 +102,7 @@ for param in data.variables.values():
 # formats = {3:'NETCDF3_CLASSIC', 4:'NETCDF4'}
 formats = {3:'NETCDF3_CLASSIC'} # differences are minor and 'classic' is everywhere, so just use this
 for num,format in formats.items():
-    out = f'{dir}/dataN{lat.size:04d}T{ntime}_{num}.nc'
+    out = f'{directory}/dataN{lat.size:04d}T{ntime}_{num}.nc'
     if os.path.exists(out):
         os.remove(out)
     print(f'Writing to {out}.')
