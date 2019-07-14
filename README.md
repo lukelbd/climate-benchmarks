@@ -45,7 +45,7 @@ To run your own benchmarks, use the shell scripts in the top-level directory.
 
 Example usage:
 ```
-./TestName.sh [DIR]
+./TestName.sh DIR
 ```
 `DIR` is the directory containing the sample NetCDF files.
 
