@@ -37,7 +37,7 @@ Usage:
 ```
 For the below results, data was generated as follows:
 ```
-for reso in 20 10 7.5 5 3 2 1.5; do ./DataGenerator.py $reso; done
+for reso in 20 10 7.5 5 3 2 1.5; do ./DataGenerator.py $reso -l=60 -t=200; done
 ```
 
 ## Running

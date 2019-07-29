@@ -9,9 +9,9 @@ import os
 import argparse
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('reso', type=int, help='The horizontal resolution, i.e. the latitude and longitude spacing of the resulting dataset grid.')
-parser.add_argument('--dir', '-d', type=str, default=None, help='The output directory. Defaults to "{NLEV}lev".')
-parser.add_argument('--nlev', '-l', type=int, default=60, help='The number of vertical levels. Defaults to 60.')
-parser.add_argument('--ntime', '-t', type=int, default=200, help='The number of time steps. Defaults to 200.')
+parser.add_argument('-d', '--dir', type=str, default=None, help='The output directory. Defaults to "{NLEV}lev".')
+parser.add_argument('-l', '--nlev', type=int, default=60, help='The number of vertical levels. Defaults to 60.')
+parser.add_argument('-t', '--ntime', type=int, default=200, help='The number of time steps. Defaults to 200.')
 args = parser.parse_args()
 
 # Pull out arguments
