@@ -8,10 +8,14 @@ longitude, latitude, time, and optional pressure level dimensions.
 import os
 import argparse
 parser = argparse.ArgumentParser(description=__doc__)
-parser.add_argument('reso', type=int, help='The horizontal resolution, i.e. the latitude and longitude spacing of the resulting dataset grid.')
-parser.add_argument('-d', '--dir', type=str, default=None, help='The output directory. Defaults to "{NLEV}lev".')
-parser.add_argument('-l', '--nlev', type=int, default=60, help='The number of vertical levels. Defaults to 60.')
-parser.add_argument('-t', '--ntime', type=int, default=200, help='The number of time steps. Defaults to 200.')
+parser.add_argument('reso', type=int,
+        help='The horizontal resolution, i.e. the latitude and longitude spacing of the resulting dataset grid.')
+parser.add_argument('-d', '--dir', type=str, default='<NLEV>lev',
+        help='The output directory.')
+parser.add_argument('-l', '--nlev', type=int, default=60,
+        help='The number of vertical levels.')
+parser.add_argument('-t', '--ntime', type=int, default=200,
+        help='The number of time steps.')
 args = parser.parse_args()
 
 # Pull out arguments
@@ -19,11 +23,11 @@ reso = args.reso
 nlev = args.nlev
 ntime = args.ntime
 directory = args.dir
-if directory is None:
+if directory == '<NLEV>lev':
     directory = f'{nlev}lev'
 if not os.path.isdir(directory):
     os.mkdir(directory)
-print(f'Directory: {directory} Resolution: {reso}')
+print(f'Directory: {directory!r} Resolution: {reso}')
 
 # Imports
 import datetime
