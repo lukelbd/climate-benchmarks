@@ -8,10 +8,10 @@ for data in ${datas[@]}; do
   init $data
 
   # Python with MetPy method
-  bench "MetPy" python met.py $data 0
+  bench "MetPy" python metpy.py $data 0
 
   # Python with MetPy method
-  bench "MetPy + Dask" python met.py $data 10
+  bench "MetPy + Dask" python metpy.py $data 10
 
   # NCL method
   # NOTE: NCL needs special dyld library path but so does brew, screws
