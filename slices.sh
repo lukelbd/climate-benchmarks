@@ -1,16 +1,8 @@
 #!/usr/bin/env bash
-################################################################################
-# For *this task*, we get the the eddy heat flux and eddy momentum flux
-# Use this to call successively call the different task1.x files, then time
-# them, so we can compare their output. Consider automatically appending
-# results to a markdown table or something
-################################################################################
-# Loop over datasets with different resolutions
-# nmax=100
+# Take different time slices
 nmax=50
 debug=false
 source ./header.sh
-cd slice
 for data in ${datas[@]}; do
   # Header
   init $data

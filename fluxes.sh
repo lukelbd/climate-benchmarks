@@ -1,11 +1,5 @@
 #!/usr/bin/env bash
-################################################################################
-# For *this task*, we get the the eddy heat flux and eddy momentum flux
-# Use this to call successively call the different task1.x files, then time
-# them, so we can compare their output. Consider automatically appending
-# results to a markdown table or something
-################################################################################
-# Loop over datasets with different resolutions
+# Get the eddy heat and momentum fluxes
 debug=true
 source ./header.sh
 for data in ${datas[@]}; do
@@ -50,19 +44,18 @@ for data in ${datas[@]}; do
   fi
 
   # CDO method
-  # NOTE: On mac just run with serial IO
-  # NOTE: Serial IO turned out to be really small difference
+  # NOTE: On mac just run with serial IO (but turned out to be really small difference)
   bench "CDO" ./cdo.sh $data
 
   # NCL method
-  # NOTE: NCL needs special dyld library path but so does brew, screws up
-  # Homebrew if we set it, so set it locally
+  # NOTE: NCL needs special dyld library path but so does brew, screws up Homebrew
+  # if we set it, so set it locally.
   export DYLD_LIBRARY_PATH="/opt/local/lib/libgcc"
   bench "NCL" ncl -Q -n "filename=\"$data\"" "large=\"0\"" ncl.ncl
   export DYLD_LIBRARY_PATH=""
 
   # NCO method with NCAP
-  # Add options for handling large files; see: http://nco.sourceforge.net/nco.html#Temporary-Output-Files
+  # See: http://nco.sourceforge.net/nco.html#Temporary-Output-Files
   # NOTE: Turned out no tmp file made pretty much zero difference
   # NOTE: We can 'open' or 'create' in RAM to prevent issues with overwrites
   # (2nd example). In this case we aren't writing to the same file so we don't

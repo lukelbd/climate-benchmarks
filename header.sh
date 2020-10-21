@@ -1,22 +1,13 @@
 #!/usr/bin/env bash
-#------------------------------------------------------------------------------#
-# Utilities used for all benchmarks
-# NOTE: Sourcing this with no arguments is just as if you copied and pasted these
-# lines in the original script, *unless* you also pass arguments in the source
-# command and all the $@ are overwritten, but weirdly $0 still refers to the
-# original script invoking source no matter what.
-#------------------------------------------------------------------------------#
-# Initial stuff
-#------------------------------------------------------------------------------#
-# Global variables
+# Variables and functions used for all benchmarks
 shopt -s nullglob
 cwd=$(pwd)
-name=$0
+name=$0  # when sourcing a file, this is the original script name
 name=$(echo "${name%.sh}" | tr '[:upper:]' '[:lower:]')
-dir=$1 # directories where data is stored
+dir=$1  # directories where data is stored
 dir=$cwd/${dir##*/}
 initline="| nlat | size | name | real (s) | user (s) | sys (s) |\n| --- | --- | --- | --- | --- | --- |\n"
-output=$cwd/results/${name}_${dir##*/}_${HOSTNAME%%.*}.log  # store here
+output=$cwd/results/${name}_${dir##*/}_${HOSTNAME%%.*}.log   # store here
 if [ "$#" -ne 1 ] || [[ " $* " =~ " -h " ]] || [[ " $* " =~ " --help " ]]; then
   echo "Usage: ./${0##*/} DIR where DIR is the location of NetCDFs for globbing/testing. Scripts for each language must be located in the \"$name\" folder."
   exit 1
@@ -36,9 +27,6 @@ cd "$name" || { echo "Failed to cd to ${name}."; exit 1; } # into directory with
 rm "$output" 2>/dev/null
 rm "$dir"/*-*.nc 2>/dev/null # remove parallel-produced files
 
-#------------------------------------------------------------------------------#
-# Functions
-#------------------------------------------------------------------------------#
 # The 'disk usage' often very different from the 'apparent size' ls -l.
 # Former depends on internals, and on Cheyenne, ends up way bigger. See:
 # * https://unix.stackexchange.com/a/106278/112647
@@ -53,7 +41,7 @@ else
   du='du --apparent-size -h'
 fi
 
-# Header
+# Print header
 # NOTE: Critical that 'size' and 'nlat' are global variables here
 init() {
   size=$(command $du $1 | xargs | cut -d' ' -f1)
@@ -124,4 +112,3 @@ bench() {
     echo ${real}s
   fi
 }
-

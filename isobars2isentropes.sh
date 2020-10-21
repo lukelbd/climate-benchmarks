@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
-################################################################################
-# Isentropic surface interpolation as function of file size
-################################################################################
+# Interpolate to isentropic surfaces
 source ./header.sh
 for data in ${datas[@]}; do
   # Header
