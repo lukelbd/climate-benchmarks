@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
-################################################################################
 # Use NCAP2 to get eddy fluxes
 # See documentation; the -v flag says to only output user-defined variables
-################################################################################
 # Great examples from documentation are below
 # Example 1:
 #   n1=pow(2,3.0f)    // n1 type float
@@ -19,12 +17,8 @@
 #   // Create RAM variables from the variables three and four in Input.
 #   // Multiply three by 10 and add it to four.
 #   *four+=*three*=10; // three=30, four=34
-################################################################################
-# Entire thing just takes one line
-filename=$1
-flags=${@:2} # optionally pass flags; e.g. --no_tmp_fl for no tmp files; see http://nco.sourceforge.net/nco.html#Temporary-Output-Files
-[ -z "$filename" ] && echo "Error: Must provide filename." && exit 1
-ncap2 -O -v -s '
+[ -z "$1" ] && echo "Error: Must provide filename." && exit 1
+ncap2 -O -v -s "${@:2}" '
   emf = ((u - u.avg($lon)) * (v - v.avg($lon))).avg($lon);
   ehf = ((t - t.avg($lon)) * (v - v.avg($lon))).avg($lon);
-  ' $filename out/nco.nc
+  ' "$1" out/nco.nc

@@ -32,39 +32,36 @@
 #     seemed to fail: https://github.com/JuliaLang/julia/issues/28557
 # For Julia REPL info see: https://en.wikibooks.org/wiki/Introducing_Julia/The_REPL#Help_and_searching_for_help
 # Example random number generation (after 'using Random')
-# a = rand(Float32, 5, 3)
-# a = zeros(5, 3)
-# rand!(a) # populates array
-# NOTE: To re-install packages after you change underlying OS libraries
-# e.g. NetCDF, just use Pkg.build("name")
+#   a = rand(Float32, 5, 3)
+#   a = zeros(5, 3)
+#   rand!(a)  # populates array
+# NOTE: To re-install packages after you change underlying OS libraries use Pkg.build("name")
 ################################################################################
-# NOTE: Module name must be same as file name
-# __precompile__()
 module ncdatasets
   # Dependencies
-  export fluxes  # makes it *publicly* available
-  import NCDatasets # netcdf
-  nc = NCDatasets   # syntastic 'import as' sugar not yet available
+  export fluxes  # make it *publicly* available
+  import NCDatasets
+  nc = NCDatasets
 
   # First the dummy function
   # The snoop file is ***critical***, otherwise no performance increases!
-  Base.@ccallable function julia_main(ARGS::Vector{String})::Cint # returns just 0 if success
+  Base.@ccallable function julia_main(ARGS::Vector{String})::Cint  # returns just 0 if success
     fluxes(ARGS[1])
     return 0
   end
 
   # The main function
   function fluxes(filename::String)
-    # A Dataset is a special mapping that returns NCDataset::Variable types,
-    # iterates with "for (varname, variable) in data"; load data as in NetCDF4
-    # which we extract into arrays loaded on memory with colon index
-    # NOTE: For do block syntax see: https://alexander-barth.github.io/NCDatasets.jl/stable/#Variables-1
-    # NOTE: Number type in NCDataset::Variables is Union{Missing, Float32}, a
-    # mixed type (thought it was incompatible with Statitistics operations but was wrong).
-    #   * See discussion here: https://github.com/JuliaLang/julia/issues/29693
-    #   * To convert these, use nomissing(da, value) or nomissing(da).
-    #   * See documentation here: https://alexander-barth.github.io/NCDatasets.jl/stable/#Utility-functions-1
-    # dir = split(filename, "/")[1]
+    # A Dataset is a special mapping that returns NCDataset::Variable types, iterates
+    # with "for (varname, variable) in data". Load data as in NetCDF4, which we extract
+    # into arrays loaded on memory with colon index.
+    # NOTE: For do block syntax see:
+    # https://alexander-barth.github.io/NCDatasets.jl/stable/#Variables-1
+    # NOTE: Number type in NCDataset::Variables is Union{Missing, Float32}, a mixed type
+    # (thought it was incompatible with Statitistics operations but was wrong).
+    # * See discussion here: https://github.com/JuliaLang/julia/issues/29693
+    # * To convert these, use nomissing(da, value) or nomissing(da).
+    # * See documentation here: https://alexander-barth.github.io/NCDatasets.jl/stable/#Utility-functions-1
     data = nc.Dataset(filename, "r")
 
     # Dimensions and dimension attributes
@@ -90,39 +87,51 @@ module ncdatasets
     nc.close(data)
 
     # Calculate
-    # NOTE: Julia is column major which means everything gets permuted
-    # when loaded by NCDatasets
-    # NOTE: Array broadcasting is totally different in Julia, requires
-    # dotted operators or broadcast(+, a1, a2); see https://docs.julialang.org/en/latest/manual/arrays/#Broadcasting-1
-    # Also for more on vectorization see: https://docs.julialang.org/en/latest/manual/functions/#man-vectorized-1
-    # NOTE: Julia axis operations by default leave a singleton dimension
-    # This behavior is contested right now; see: https://github.com/JuliaLang/julia/issues/16606
-    # Also note the 'dims' keyword argument *must be specified*; don't have fluid
-    # differentiation between position args and kwargs like in python
-    # import Statistics # basic stats
+    # NOTE: Julia is column major which means everything gets permuted when loaded by
+    # NCDatasets.
+    # NOTE: Array broadcasting is totally different in Julia, requires dotted operators
+    # or broadcast(+, a1, a2): https://docs.julialang.org/en/latest/manual/arrays/
+    # NOTE: For more on vectorization see:
+    # https://docs.julialang.org/en/latest/manual/functions/#man-vectorized-1
+    # NOTE: Julia axis operations by default leave a singleton dimension. This behavior
+    # is contested right now; see: https://github.com/JuliaLang/julia/issues/16606.
+    # NOTE: The 'dims' keyword argument *must be specified*; don't have fluid
+    # differentiation between position args and kwargs like in python.
+    emf = sum(
+      (u .- sum(u, dims=1) / nlon) .*
+      (v .- sum(v, dims=1) / nlon),
+      dims=1
+     ) / nlon
+    ehf = sum(
+        (t .- sum(t, dims=1) / nlon) .*
+        (v .- sum(v, dims=1) / nlon),
+        dims=1
+    ) / nlon
+    emf = emf[1, :, :, :]
+    ehf = ehf[1, :, :, :]
+
+    # Calculate with statistics module
+    # import Statistics
     # stat = Statistics
-    # emf = stat.mean((u .- stat.mean(u, dims=1)) .*
-    #                 (v .- stat.mean(v, dims=1)), dims=1)
-    # ehf = stat.mean((t .- stat.mean(t, dims=1)) .*
-    #                 (v .- stat.mean(v, dims=1)), dims=1)
-    emf = sum((u .- sum(u, dims=1)/nlon) .*
-              (v .- sum(v, dims=1)/nlon), dims=1)/nlon
-    ehf = sum((t .- sum(t, dims=1)/nlon) .*
-              (v .- sum(v, dims=1)/nlon), dims=1)/nlon
-    emf = emf[1,:,:,:] # sum does not reduce dims
-    ehf = ehf[1,:,:,:]
+    # emf = stat.mean(
+    #   (u .- stat.mean(u, dims=1)) .*
+    #   (v .- stat.mean(v, dims=1)),
+    #   dims=1
+    # )
+    # ehf = stat.mean(
+    #   (t .- stat.mean(t, dims=1)) .*
+    #   (v .- stat.mean(v, dims=1)),
+    #   dims=1
+    # )
 
     # Create new file, and save
-    # NOTE: Use * for string concatenation;
-    # see: https://docs.julialang.org/en/v1/manual/strings/index.html
-    # NOTE: Use ncgen(filename) to get the code necessary to generate
-    # that same NetCDF file. Super handy!!!
-    # NOTE: The thing after the colon is a symbol; for more info see
-    # the stackoverflow post: https://stackoverflow.com/a/23482257/4970632
-    # WARNING: Thought I found some undefined/unstable/strange behavior when we
-    # define variables and declare them to have their own dimension in the same
-    # breath; had mysterious failures below, can't reproduce anymore
-    # outname = dir * "/ncdatasets.nc"
+    # NOTE: Use ncgen(filename) to get the code necessary to generate that same NetCDF
+    # file. Super handy!!!
+    # NOTE: The thing after the colon is a symbol. For more info see the stackoverflow
+    # post: https://stackoverflow.com/a/23482257/4970632
+    # WARNING: Thought I found some undefined/unstable/strange behavior when we define
+    # variables and declare them to have their own dimension in the same breath. Had
+    # mysterious failures below, can't reproduce anymore.
     outname = "out/ncdatasets.nc"
     if isfile(outname)
       rm(outname)
@@ -133,7 +142,6 @@ module ncdatasets
     nc.defVar(out, "lat",  lat,  ("lat",),  attrib=latt)
     nc.defVar(out, "plev", plev, ("plev",), attrib=patt)
     nc.defVar(out, "time", time, ("time",), attrib=tatt)
-    # nc.defVar(out, "lon",  Float32.([0]), ("lon",), attrib=["long_name" => "longitude"]) # note we apply Float32 as elementwise function there
 
     # Define variables
     nc.defVar(out, "emf", emf, dims, attrib=["long_name" => "eddy momentum flux", "units" => "m**2/s**2"])

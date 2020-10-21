@@ -1,39 +1,42 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Get eddy fluxes
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; First read file and variables
-qq = integertochar(34) ; a double quote; only way to put inside string! yuck.
+qq = integertochar(34)  ; a double quote -- this is the only way to put inside string!
 demo = "ncl 'filename=" + qq + "foobar" + qq + "' or " + qq + "filename=\" + qq + "foobar\" + qq + qq + "."
 if (.not. isvar("filename")) then
     print("fatal:File name must be passed as variable 'filename' as follows: " + demo)
-    exit ; almost impossible to put double-quote in string
+    exit
 end if
 if (.not. isvar("large")) then
     print("fatal:Variable 'large' must be passed as follows: " + demo)
-    exit ; almost impossible to put double-quote in string
+    exit
 end if
-f = addfile(filename, "r") ; just read data from here
+
+; Read file and variables
+f = addfile(filename, "r")
 t = f->t
 u = f->u
 v = f->v
 
-; Optionally turn on large file mode
+; Turn on large file mode
 if (toint(large) .eq. 1) then
   setfileoption("nc", "Format", "LargeFile") 
 end if
-; dir = str_split(filename, "/")
-; dir := dir(0)
-; out = dir + "/ncl.nc"
 out = "out/ncl.nc"
-system("rm " + out + " 2>/dev/null") ; remove file
-o = addfile(out, "c") ; create new file; don't want to read old values or anything
+system("rm " + out + " 2>/dev/null")  ; remove existing file
+o = addfile(out, "c")
 
 ; Calculate fluxes
-; tbar := conform(t, dim_avg_n(t, dimlon), (/0, 1, 2/)
-emf = dim_avg_n((u - conform(u, dim_avg_n(u, 3), (/0, 1, 2/))) \
-              * (v - conform(v, dim_avg_n(v, 3), (/0, 1, 2/))), 3)
-ehf = dim_avg_n((t - conform(t, dim_avg_n(t, 3), (/0, 1, 2/))) \
-              * (v - conform(v, dim_avg_n(v, 3), (/0, 1, 2/))), 3)
+emf = dim_avg_n( \
+  (u - conform(u, dim_avg_n(u, 3), (/0, 1, 2/))) \
+  * (v - conform(v, dim_avg_n(v, 3), (/0, 1, 2/))), \
+  3 \
+)
+ehf = dim_avg_n( \
+  (t - conform(t, dim_avg_n(t, 3), (/0, 1, 2/))) \
+  * (v - conform(v, dim_avg_n(v, 3), (/0, 1, 2/))), \
+  3 \
+)
+
+; Save fluxes
 avevar = v(:,:,:,0) ; possibly needs to be its own var
 copy_VarCoords(avevar, emf)
 copy_VarCoords(avevar, ehf)
