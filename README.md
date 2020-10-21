@@ -21,7 +21,8 @@ sporadic errors. However looks like *performance with thread locking is often fa
 anyway*.
 -->
 
-# Introduction
+Introduction
+============
 
 This repo provides benchmarks for common data analysis tasks in atmospheric science
 accomplished with several different tools:
@@ -39,9 +40,11 @@ see [TOOLS.md](TOOLS.md).
 <!-- languages. -->
 <!-- some general notes. -->
 
-# Usage
+Usage
+=====
 
-## Generating data
+Generating data
+---------------
 
 To run benchmarks, you must first generate sample data. This is done with the
 `data_generator.py` script. It generates NetCDF files of arbitrary resolution containing
@@ -57,7 +60,8 @@ For the below results, data was generated as follows:
 for reso in 20 10 7.5 5 3 2 1.5; do ./data_generator.py $reso -l=60 -t=200; done
 ```
 
-## Running
+Running
+-------
 
 To run your own benchmarks, use the shell scripts in the top-level directory.
 
@@ -67,23 +71,24 @@ Example usage:
 ```
 `DIR` is the directory containing the sample NetCDF files.
 
-To make your own `test_name.sh` benchmark, start by copying an existing benchmark and work from there. Each `test_name.sh` benchmark does the following:
+To make your own `test_name.sh` benchmark, start by copying an existing benchmark and
+work from there. Each `test_name.sh` benchmark does the following:
 
 1. Source the helper script `header.sh`. This script declares some bash functions and
    `cd`s into the `testname` directory, where the language-specific test scripts must be
    stored.
-2. Iterate through the NetCDF files in `DIR`.
-   * Run the `init` bash function at the top of the loop.
-   * For each script in the `testname` directory, pass the command-line call signature
-     to the `benchmark` bash function. For example: to run `python test.py file.nc`, we
-     use `benchmark python test.py file.nc`.
+2. Iterate through the NetCDF files in `DIR`. Run the `init` bash function at the top
+   of the loop, then for each script in the `testname` directory, pass the command-line
+   call signature to the `benchmark` bash function. For example: to run
+   `python test.py file.nc`, we use `benchmark python test.py file.nc`.
 
 If the benchmark requires saving data, it should be saved into the `out` folder inside
 the `testname` directory. Note that `header.sh` also creates a special `python` function
 that lets you name your python files the same name as existing python packages. For
 example: `xarray.py` is a valid file name.
 
-## Results
+Results
+-------
 
 Results for each file are saved to markdown-style tables in the `results` directory. To
 generate plots of these tables (see below for an example), use the `plots.ipynb` IPython
@@ -91,17 +96,20 @@ notebook. This requires the [numpy](https://numpydoc.readthedocs.io/en/latest/) 
 [ProPlot](https://proplot.readthedocs.io/en/latest) packages. ProPlot is a matplotlib
 wrapper I developed.
 
-# Benchmarks
+Benchmarks
+==========
 
-## fluxes.sh
+fluxes.sh
+---------
 
 For this benchmark, eddy fluxes of heat and momentum were calculated and saved into new
 NetCDF files.
 
 Climate Data Operators (CDO) is the clear winner here, followed closely by MATLAB,
 Fortran, and python in the same pack, depending on the file size. For files smaller than
-100MB though, the differences are never that large, and the NCAR Command Language (NCL)
-and NetCDF Operators (NCO) appear to be acceptable choices.
+100MB though, the differences are pretty small, and the NCAR Command Language (NCL) and
+NetCDF Operators (NCO) are acceptable choices. Xarray combined with dasks really
+shines when used on machines with lots of cores.
 
 The benchmark was run on my macbook (first plot), and on the Cheyenne HPC compute
 cluster interactive node (second plot), which is a shared resource consisting of
@@ -128,43 +136,41 @@ approximately 72 cores.
    - then the calculations can proceed quickly. Another issue could have been the necessary
    - disk reads (5) for the CDO script, compared to just 1 NCL disk read. -->
 
-## slices.sh
+slices.sh
+---------
 
-For this benchmark, the first quarter of timesteps
-were selected and saved into a new NetCDF file.
+For this benchmark, the first quarter of timesteps were selected and saved into a new
+NetCDF file.
 
-The results here were particularly interesting -- NCO
-is the winner for small files, but CDO beats it for
-large files, at which point the time required
-for overhead operations
-is negligible. XArray is the slowest across all file sizes.
-<!-- This was a simple test comparing the performance
-   - of various tools for selecting the first one quarter
-   - timesteps and saving the result  -->
-<!-- slicing data across the longitude dimensions, compared
-   - between xarray and NCO. This test is a work-in-progress. -->
+The results here were interesting. NCO is the winner for small files, but CDO beats it
+for large files, at which point the time required for overhead operations is negligible.
+XArray is the slowest across all file sizes.
 
 <img src="results/slices_60lev_uriah.png" width="700">
 
-## empirical_orthogonal_functions.sh
+empirical_orthogonal_functions.sh
+---------------------------------
 
 Coming soon!
 
-## spectral_decompositions.sh
+spectral_decompositions.sh
+--------------------------
 
 Coming soon!
 
-## model2isobars.sh
+model2isobars.sh
+----------------
 
 Coming soon!
 
-## isobars2isentropes.sh
+isobars2isentropes.sh
+---------------------
 
-There are only two obvious tools for interpolating between isobars and isentropes: NCL,
-and python using the MetPy package. This benchmark compares them.
+This benchmark compares the only two obvious tools for interpolating between isobars and
+isentropes: NCL, and python using the MetPy package.
 
-This time, NCL was the clear winner! The MetPy script was also raising a bunch of
-strange errors when it ran. Evidently, the kinks in the MetPy algorithm haven't been
-ironed out yet.
+This time, NCL was the clear winner! The MetPy script was also issuing a bunch of
+warnings when it ran. Evidently, the kinks in the MetPy algorithm haven't been ironed
+out yet.
 
 <img src="results/isobars2isentropes_60lev_uriah.png" width="700">
