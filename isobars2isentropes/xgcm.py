@@ -64,52 +64,52 @@ if os.path.exists(outname):
 out.to_netcdf(outname, mode="w")  # specify whether we did chunking
 
 
-# # assert that the results are the same
-# # the ordering seems to be the other way around for metpy
-# thlev = [265, 275, 285, 300, 315, 330, 350, 370, 395, 430, 475, 530, 600, 700, 850]
-# thlev = np.array(thlev)
+# # # assert that the results are the same
+# # # the ordering seems to be the other way around for metpy
+# # thlev = [265, 275, 285, 300, 315, 330, 350, 370, 395, 430, 475, 530, 600, 700, 850]
+# # thlev = np.array(thlev)
 
-# from metpy.units import units
-# import metpy.calc as mcalc
-
-
-# # # First check if the theta values come out the same...Seems very close
-# # theta_test = mcalc.potential_temperature(plev, t)
-
-# # Coordinates
-# time = data['time']
-# plev = data['plev']
-# lat = data['lat']
-# lon = data['lon']
-
-# # Variables
-# u = data['u']
-# v = data['v']
-# t = data['t']
-# t = t * units.kelvin
-# thlev = thlev.astype('float32') * units.kelvin
-plev = plev.values.astype('float32') * units.hectopascals
-
-# Interpolation
-# The returned 'p' are pressure along each isentrope
-p, t_th, u_th, v_th = mcalc.isentropic_interpolation(
-    thlev, plev, t.values * units.kelvin, u.values, v.values, axis=1, tmpk_out=True
-)
-dims = ('time', 'thlev', 'lat', 'lon')
-p = xr.Variable(dims, p.astype('float32'), {'long_name': 'pressure', 'units': 'hPa'})
-t_th = xr.Variable(dims, t_th.astype('float32'), t.attrs)
-u_th = xr.Variable(dims, u_th.astype('float32'), u.attrs)
-v_th = xr.Variable(dims, v_th.astype('float32'), v.attrs)
+# # from metpy.units import units
+# # import metpy.calc as mcalc
 
 
+# # # # First check if the theta values come out the same...Seems very close
+# # # theta_test = mcalc.potential_temperature(plev, t)
 
-# Make dataset, add variables and coordinates
-# NOTE: Put coordinates in first, so they come first in ncdump
-thlev = xr.Variable(
-    "thlev", thlev, {"long_name": "potential_temperature", "units": "K"}
-)
-out_check = xr.Dataset({}, coords={"time": time, "thlev": thlev, "lat": lat, "lon": lon})
-for name, data in zip(("p", "t", "u", "v"), (p, t_th, u_th, v_th)):
-    out_check[name] = data
+# # # Coordinates
+# # time = data['time']
+# # plev = data['plev']
+# # lat = data['lat']
+# # lon = data['lon']
 
-print(out_check)
+# # # Variables
+# # u = data['u']
+# # v = data['v']
+# # t = data['t']
+# # t = t * units.kelvin
+# # thlev = thlev.astype('float32') * units.kelvin
+# plev = plev.values.astype('float32') * units.hectopascals
+
+# # Interpolation
+# # The returned 'p' are pressure along each isentrope
+# p, t_th, u_th, v_th = mcalc.isentropic_interpolation(
+#     thlev, plev, t.values * units.kelvin, u.values, v.values, axis=1, tmpk_out=True
+# )
+# dims = ('time', 'thlev', 'lat', 'lon')
+# p = xr.Variable(dims, p.astype('float32'), {'long_name': 'pressure', 'units': 'hPa'})
+# t_th = xr.Variable(dims, t_th.astype('float32'), t.attrs)
+# u_th = xr.Variable(dims, u_th.astype('float32'), u.attrs)
+# v_th = xr.Variable(dims, v_th.astype('float32'), v.attrs)
+
+
+
+# # Make dataset, add variables and coordinates
+# # NOTE: Put coordinates in first, so they come first in ncdump
+# thlev = xr.Variable(
+#     "thlev", thlev, {"long_name": "potential_temperature", "units": "K"}
+# )
+# out_check = xr.Dataset({}, coords={"time": time, "thlev": thlev, "lat": lat, "lon": lon})
+# for name, data in zip(("p", "t", "u", "v"), (p, t_th, u_th, v_th)):
+#     out_check[name] = data
+
+# print(out_check)
