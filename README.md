@@ -115,8 +115,8 @@ The benchmark was run on my macbook (first plot), and on the Cheyenne HPC comput
 cluster interactive node (second plot), which is a shared resource consisting of
 approximately 72 cores.
 
-<img src="results/fluxes_60lev_uriah.png" width="700">
-<img src="results/fluxes_60lev_cheyenne4.png" width="700">
+<img src="results/fluxes_60lev_uriah_flat.png" width="700">
+<img src="results/fluxes_60lev_cheyenne4_flat.png" width="700">
 
 <!-- # Hybrid-to-pressure interpolation benchmarks
    - I have yet to formalize this benchmark, but performed some tests for my research.
@@ -146,7 +146,7 @@ The results here were interesting. NCO is the winner for small files, but CDO be
 for large files, at which point the time required for overhead operations is negligible.
 XArray is the slowest across all file sizes.
 
-<img src="results/slices_60lev_uriah.png" width="700">
+<img src="results/slices_60lev_uriah_flat.png" width="700">
 
 empirical_orthogonal_functions.sh
 ---------------------------------
@@ -173,4 +173,4 @@ This time, NCL was the clear winner! The MetPy script was also issuing a bunch o
 warnings when it ran. Evidently, the kinks in the MetPy algorithm haven't been ironed
 out yet.
 
-<img src="results/isobars2isentropes_60lev_uriah.png" width="700">
+<img src="results/isobars2isentropes_60lev_uriah_flat.png" width="700">
