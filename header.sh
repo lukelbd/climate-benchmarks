@@ -9,12 +9,12 @@
 # Initial stuff
 #------------------------------------------------------------------------------#
 # Global variables
-name=$0
+name=$(echo $0 | tr [A-Z] [a-z])
 dir=$1 # directories where data is stored
 [ -z "$dir" ] && echo "Error: Please enter location of NetCDFs for globbing/testing." && exit 1
 ! [ -d "$dir" ] && echo "Error: Directory \"$dir\" not found." && exit 1
 header="| nlat | size | name | real (s) | user (s) | sys (s) |\n| --- | --- | --- | --- | --- | --- |\n"
-output=logs/$(echo $name | tr [A-Z] [a-z])_${dir}_${HOSTNAME%%.*}.log # store here
+output=logs/${name}_${dir}_${HOSTNAME%%.*}.log # store here
 datas=($dir/data*.nc)
 # Remove old stuff
 rm $output 2>/dev/null
