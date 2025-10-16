@@ -1,24 +1,30 @@
-# Ignore many files #
-#####################
+# Executables
+*
+!*.*
+!*/
+
 # Data
 *.nc
+
 # Qsub output
 *.o[0-9]*
 *.e[0-9]*
+
 # Compiled julia code
 *.dylib
 *.a
 precompiled.jl
 julia_main.jl
 snoop.csv
-# Interactive NCO
+
+# Hidden
+tests
 todo
-*.tmp
 
 # Vim sessions
 .vimsession
 
-# Temp
+# Python
 __pycache__
 .ipynb_checkpoints
 

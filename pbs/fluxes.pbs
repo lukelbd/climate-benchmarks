@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+################################################################################
+# Example usage for submitting batch processes to Cheyenne
+################################################################################
+# Job name, account, email
+#PBS -N 4x10
+#PBS -A UCSU0071
+#PBS -M lukelbd@gmail.com
+#PBS -q regular
+#PBS -l walltime=00:30:00
+#PBS -l select=36:ncpus=1
+#PBS -k n
+# Run
+../Fluxes 60lev &>fluxes.log
